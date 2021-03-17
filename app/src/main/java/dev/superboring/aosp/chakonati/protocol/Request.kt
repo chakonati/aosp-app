@@ -2,14 +2,16 @@ package dev.superboring.aosp.chakonati.protocol
 
 import org.msgpack.core.MessagePacker
 import org.msgpack.core.MessageUnpacker
+import kotlin.reflect.KClass
 
-private var nextId: Long = 0L
+typealias RequestId = Long
+private var nextId: RequestId = 0L
 
-abstract class Request(
+abstract class Request<R : Response>(
     var action: String,
     var argLen: Int = 0,
-    private var id: Long = nextId++,
-) : Packable<Request>, PackSerializable {
+    var id: RequestId = nextId++,
+) : Packable<Request<R>>, PackSerializable {
     override fun serialize(): ByteArray {
         return packer().apply {
             packMapHeader(3)
@@ -43,5 +45,7 @@ abstract class Request(
     override fun unpack(unpacker: MessageUnpacker) {
 
     }
+
+    abstract fun newResponse(): R
 
 }

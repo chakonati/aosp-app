@@ -3,16 +3,19 @@ package dev.superboring.aosp.chakonati.protocol
 import org.msgpack.core.MessagePacker
 import org.msgpack.core.MessageUnpacker
 
+const val headerSize = 2
+const val dataKey = "data"
+
 abstract class Response(
     var argLen: Int = 0,
-    private var id: Long = 0L,
+    var id: RequestId = 0L,
 ) : Packable<Response>, PackSerializable {
     override fun serialize(): ByteArray {
         return packer().apply {
-            packMapHeader(3)
+            packMapHeader(headerSize + argLen)
             packString(::id.name)
             packLong(id)
-            packString("data")
+            packString(dataKey)
             packArrayHeader(argLen)
             pack(this)
         }.toByteArray()
@@ -21,11 +24,20 @@ abstract class Response(
     override fun deserialize(bytes: ByteArray) {
         unpacker(bytes).run {
             unpackMapHeader()
-            unpackString()
-            id = unpackLong()
-            unpackString()
-            argLen = unpackArrayHeader()
-            unpack(this)
+            for (i in 0 until headerSize) {
+                try {
+                    when (unpackString()) {
+                        ::id.name -> id = unpackLong()
+                        dataKey -> {
+                            argLen = unpackArrayHeader()
+                            unpack(this)
+                        }
+                    }
+                } catch (e: Exception) {
+                    throw RuntimeException("Exception during unpack at index $i", e)
+                }
+            }
+
         }
     }
 

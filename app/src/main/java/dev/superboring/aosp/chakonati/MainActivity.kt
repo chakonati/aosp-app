@@ -11,8 +11,16 @@ import androidx.compose.material.TopAppBar
 import dev.superboring.aosp.chakonati.protocol.requests.EchoRequest
 import dev.superboring.aosp.chakonati.service.Communicator
 import dev.superboring.aosp.chakonati.ui.theme.DefaultTheme
+import kotlinx.coroutines.*
+import kotlin.coroutines.CoroutineContext
 
-class MainActivity : ComponentActivity() {
+class MainActivity : ComponentActivity(), CoroutineScope {
+
+    private var job: Job = Job()
+
+    override val coroutineContext: CoroutineContext
+        get() = Dispatchers.Main + job
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
@@ -28,9 +36,9 @@ class MainActivity : ComponentActivity() {
             }
         }
 
-        Thread {
+        launch(Dispatchers.IO) {
             val communicator = Communicator("192.168.2.110:4560")
             communicator send EchoRequest("test value yes")
-        }.start()
+        }
     }
 }

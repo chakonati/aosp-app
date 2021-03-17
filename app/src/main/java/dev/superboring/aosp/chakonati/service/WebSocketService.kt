@@ -5,6 +5,7 @@ import dev.superboring.aosp.chakonati.logging.ATP
 import dev.superboring.aosp.chakonati.protocol.PackSerializable
 import dev.superboring.aosp.chakonati.protocol.Packable
 import dev.superboring.aosp.chakonati.protocol.requests.HelloResponse
+import kotlinx.coroutines.Deferred
 import okhttp3.*
 import java.util.concurrent.TimeUnit
 import okhttp3.Response
@@ -15,6 +16,8 @@ import okio.ByteString
 private val TAG = ATP + WebSocketService::class.simpleName
 
 class WebSocketService(private val uri: String) : WebSocketListener() {
+
+    private val listeners = arrayListOf<WebSocketServiceListener>()
 
     private val webSocket: WebSocket by lazy {
         val client = OkHttpClient.Builder()
@@ -47,8 +50,10 @@ class WebSocketService(private val uri: String) : WebSocketListener() {
     }
 
     override fun onMessage(webSocket: WebSocket, bytes: ByteString) {
-        val response = HelloResponse()
-        response.deserialize(bytes.toByteArray())
-        println(response.reply)
+        listeners.forEach { it.onMessage(bytes.toByteArray()) }
+    }
+
+    fun addListener(listener: WebSocketServiceListener) {
+        listeners += listener
     }
 }
