@@ -8,11 +8,11 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.material.TopAppBar
-import dev.superboring.aosp.chakonati.protocol.requests.EchoRequest
 import dev.superboring.aosp.chakonati.service.Communicator
 import dev.superboring.aosp.chakonati.services.GlobalBasics
 import dev.superboring.aosp.chakonati.ui.theme.DefaultTheme
 import kotlinx.coroutines.*
+import dev.superboring.aosp.chakonati.signal.signalExample
 import kotlin.coroutines.CoroutineContext
 
 class MainActivity : ComponentActivity(), CoroutineScope {
@@ -40,6 +40,7 @@ class MainActivity : ComponentActivity(), CoroutineScope {
         launch(Dispatchers.IO) {
             mainCommunicator = Communicator("192.168.2.110:4560")
             println(GlobalBasics.echo("what's up, server :)"))
+            signalExample()
         }
     }
 }
