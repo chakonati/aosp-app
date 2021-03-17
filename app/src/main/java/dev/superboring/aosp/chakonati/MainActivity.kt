@@ -10,6 +10,7 @@ import androidx.compose.material.Text
 import androidx.compose.material.TopAppBar
 import dev.superboring.aosp.chakonati.protocol.requests.EchoRequest
 import dev.superboring.aosp.chakonati.service.Communicator
+import dev.superboring.aosp.chakonati.services.GlobalBasics
 import dev.superboring.aosp.chakonati.ui.theme.DefaultTheme
 import kotlinx.coroutines.*
 import kotlin.coroutines.CoroutineContext
@@ -37,8 +38,8 @@ class MainActivity : ComponentActivity(), CoroutineScope {
         }
 
         launch(Dispatchers.IO) {
-            val communicator = Communicator("192.168.2.110:4560")
-            communicator send EchoRequest("test value yes")
+            mainCommunicator = Communicator("192.168.2.110:4560")
+            println(GlobalBasics.echo("what's up, server :)"))
         }
     }
 }

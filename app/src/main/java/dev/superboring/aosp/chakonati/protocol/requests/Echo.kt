@@ -20,4 +20,8 @@ class EchoRequest(var value: String) : Request<EchoResponse>("Echo", argLen) {
     override fun newResponse() = EchoResponse()
 }
 
-class EchoResponse : Response(argLen)
+class EchoResponse(var echo: String = "") : Response(argLen) {
+    override fun unpack(unpacker: MessageUnpacker) = unpacker.run {
+        echo = unpackString()
+    }
+}
