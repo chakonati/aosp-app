@@ -1,5 +1,7 @@
 package dev.superboring.aosp.chakonati.signal
 
+import dev.superboring.aosp.chakonati.services.KeyExchange
+import kotlinx.coroutines.runBlocking
 import org.whispersystems.libsignal.SessionBuilder
 import org.whispersystems.libsignal.SessionCipher
 import org.whispersystems.libsignal.SignalProtocolAddress
@@ -14,37 +16,35 @@ private val ALICE_ADDRESS = SignalProtocolAddress("alice", 1)
 private val BOB_ADDRESS = SignalProtocolAddress("bob", 1)
 
 const val originalMessage = "cool!"
-val receivingStore = ProtocolStore()
+val store = ProtocolStore()
 val sendingStore = ProtocolStore()
 
-fun handlePreKeys() {
-    val receivingPreKey: ECKeyPair = Curve.generateKeyPair()
-    val receivingSignedPreKeyPair: ECKeyPair = Curve.generateKeyPair()
-    val receivingSignedPreKeySignature = Curve.calculateSignature(
-        receivingStore.identityKeyPair.privateKey,
-        receivingSignedPreKeyPair.publicKey.serialize()
+suspend fun handlePreKeys() {
+    val preKeyPair: ECKeyPair = Curve.generateKeyPair()
+    val signedPreKeyPair: ECKeyPair = Curve.generateKeyPair()
+    val signedPreKeySignature = Curve.calculateSignature(
+        store.identityKeyPair.privateKey,
+        signedPreKeyPair.publicKey.serialize()
     )
 
-    val receivingPreKeyBundle = PreKeyBundle(
-        receivingStore.localRegistrationId, 1,
-        31337, receivingPreKey.publicKey,
-        22, receivingSignedPreKeyPair.publicKey,
-        receivingSignedPreKeySignature,
-        receivingStore.identityKeyPair.publicKey
+    val preKeyBundle = PreKeyBundle(
+        store.localRegistrationId, 1,
+        31337, preKeyPair.publicKey,
+        22, signedPreKeyPair.publicKey,
+        signedPreKeySignature,
+        store.identityKeyPair.publicKey
     )
-    receivingStore.storePreKey(31337, PreKeyRecord(receivingPreKeyBundle.preKeyId, receivingPreKey))
-    receivingStore.storeSignedPreKey(
+    KeyExchange.publishPreKeyBundle(preKeyBundle)
+
+    store.storePreKey(31337, PreKeyRecord(preKeyBundle.preKeyId, preKeyPair))
+    store.storeSignedPreKey(
         22,
-        SignedPreKeyRecord(22, System.currentTimeMillis(), receivingSignedPreKeyPair, receivingSignedPreKeySignature)
+        SignedPreKeyRecord(22, System.currentTimeMillis(), signedPreKeyPair, signedPreKeySignature)
     )
-
-    SessionBuilder(sendingStore, BOB_ADDRESS).apply {
-        process(receivingPreKeyBundle)
-    }
 }
 
 fun sendMessage() {
-    val bobSessionCipher = SessionCipher(receivingStore, ALICE_ADDRESS)
+    val bobSessionCipher = SessionCipher(store, ALICE_ADDRESS)
     val aliceSessionCipher = SessionCipher(sendingStore, BOB_ADDRESS)
 
     val outgoingMessage = aliceSessionCipher.encrypt(originalMessage.toByteArray())
@@ -55,7 +55,7 @@ fun sendMessage() {
     println("Received message: ${String(plaintext)}")
 }
 
-fun signalExample() {
+suspend fun signalExample() {
     handlePreKeys()
     sendMessage()
 }

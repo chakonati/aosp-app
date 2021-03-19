@@ -13,3 +13,9 @@ interface Packable<T> : PackableBase {
 
 fun <T> Packable<T>.packer() = MessagePack.newDefaultBufferPacker()
 fun <T> Packable<T>.unpacker(bytes: ByteArray) = MessagePack.newDefaultUnpacker(bytes)
+
+
+fun MessagePacker.packByteArray(bytes: ByteArray) {
+    packBinaryHeader(bytes.size)
+    writePayload(bytes)
+}

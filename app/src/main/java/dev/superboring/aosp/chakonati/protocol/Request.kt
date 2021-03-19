@@ -2,7 +2,6 @@ package dev.superboring.aosp.chakonati.protocol
 
 import org.msgpack.core.MessagePacker
 import org.msgpack.core.MessageUnpacker
-import kotlin.reflect.KClass
 
 typealias RequestId = Long
 private var nextId: RequestId = 0L

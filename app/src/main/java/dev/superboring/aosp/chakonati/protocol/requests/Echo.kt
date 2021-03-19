@@ -8,7 +8,7 @@ import kotlin.reflect.KClass
 
 const val argLen = 1
 
-class EchoRequest(var value: String) : Request<EchoResponse>("Echo", argLen) {
+class EchoRequest(var value: String) : Request<EchoResponse>("echo", argLen) {
     override fun unpack(unpacker: MessageUnpacker) = unpacker.run {
         value = unpackString()
     }
