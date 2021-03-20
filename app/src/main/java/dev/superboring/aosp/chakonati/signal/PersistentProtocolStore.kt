@@ -1,8 +1,6 @@
 package dev.superboring.aosp.chakonati.signal
 
-import dev.superboring.aosp.chakonati.persistence.dao.get
-import dev.superboring.aosp.chakonati.persistence.dao.insertWithIdentityKey
-import dev.superboring.aosp.chakonati.persistence.dao.save
+import dev.superboring.aosp.chakonati.persistence.dao.*
 import dev.superboring.aosp.chakonati.persistence.db
 import dev.superboring.aosp.chakonati.persistence.entities.*
 import kotlinx.coroutines.runBlocking
@@ -75,7 +73,7 @@ class PersistentProtocolStore : SignalProtocolStore {
     ) = db.remoteAddresses().exists(address.deviceId, address.name)
 
     override fun getIdentity(address: SignalProtocolAddress) =
-        db.remoteAddresses().get(address.deviceId, address.name).identityKey.signalIdentityKey
+        db.remoteAddresses().get(address.deviceId, address.name).identityKey!!.signalIdentityKey
 
     override fun loadPreKey(preKeyId: Int) =
         db.localPreKeys().byPreKeyId(preKeyId).signalPreKeyRecord
@@ -94,28 +92,32 @@ class PersistentProtocolStore : SignalProtocolStore {
     override fun removePreKey(preKeyId: Int) =
         db.localPreKeys() deleteByPreKeyId preKeyId
 
-    override fun loadSession(address: SignalProtocolAddress?): SessionRecord {
-        TODO("Not yet implemented")
-    }
+    override fun loadSession(address: SignalProtocolAddress) =
+        db.signalSessions().run {
+            if (hasSession(address.deviceId, address.name)) {
+                get(address.deviceId, address.name).signalSession
+            } else {
+                SessionRecord()
+            }
+        }
 
-    override fun getSubDeviceSessions(name: String?): MutableList<Int> {
-        TODO("Not yet implemented")
-    }
+    override fun getSubDeviceSessions(name: String) =
+        db.signalSessions().getDeviceIds(name).toMutableList()
 
-    override fun storeSession(address: SignalProtocolAddress?, record: SessionRecord?) {
-        TODO("Not yet implemented")
-    }
+    override fun storeSession(address: SignalProtocolAddress, record: SessionRecord) =
+        db.signalSessions().insertWithAddress(
+            SignalSession from record,
+            db.remoteAddresses().get(address.deviceId, address.name).address,
+        )
 
-    override fun containsSession(address: SignalProtocolAddress?): Boolean {
-        TODO("Not yet implemented")
-    }
+    override fun containsSession(address: SignalProtocolAddress) =
+        db.signalSessions().hasSession(RemoteAddress from address)
 
-    override fun deleteSession(address: SignalProtocolAddress?) {
-        TODO("Not yet implemented")
-    }
+    override fun deleteSession(address: SignalProtocolAddress) =
+        db.signalSessions() deleteByRemoteAddress(RemoteAddress from address)
 
-    override fun deleteAllSessions(name: String?) {
-        TODO("Not yet implemented")
+    override fun deleteAllSessions(name: String) = runBlocking {
+        db.signalSessions() deleteByAddressName name
     }
 
     override fun loadSignedPreKey(signedPreKeyId: Int) =

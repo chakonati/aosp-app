@@ -45,6 +45,7 @@ interface RemoteAddressDao {
 suspend infix fun RemoteAddressDao.insertWithIdentityKey(
     addressWithKey: RemoteAddressAndIdentityKey
 ) {
+    addressWithKey.identityKey ?: throw MissingIdentityKey()
     db.run {
         withTransaction {
             remoteIdentityKeys() insert addressWithKey.identityKey
@@ -52,3 +53,5 @@ suspend infix fun RemoteAddressDao.insertWithIdentityKey(
         }
     }
 }
+
+class MissingIdentityKey : RuntimeException("the identity key is missing in the RemoteAddress")

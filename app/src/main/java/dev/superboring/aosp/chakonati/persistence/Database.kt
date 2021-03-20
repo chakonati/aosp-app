@@ -12,6 +12,7 @@ import dev.superboring.aosp.chakonati.persistence.entities.*
         LocalSignedPreKey::class,
         RemoteIdentityKey::class,
         RemoteAddress::class,
+        SignalSession::class,
     ], version = 1
 )
 abstract class AppDatabase : RoomDatabase() {
@@ -20,6 +21,7 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun localSignedPreKeys(): LocalSignedPreKeyDao
     abstract fun remoteIdentityKeys(): RemoteIdentityKeyDao
     abstract fun remoteAddresses(): RemoteAddressDao
+    abstract fun signalSessions(): SignalSessionDao
 }
 
 lateinit var db: AppDatabase

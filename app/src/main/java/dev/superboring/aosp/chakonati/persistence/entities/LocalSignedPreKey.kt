@@ -9,7 +9,7 @@ typealias SignedPreKey = ByteArray
 
 @Entity(tableName = "local_signed_pre_keys")
 data class LocalSignedPreKey(
-    @ColumnInfo(name = "id") @PrimaryKey var preKeyId: Int = 0,
+    @ColumnInfo(name = "id") @PrimaryKey(autoGenerate = true) var preKeyId: Int = 0,
     @ColumnInfo(name = "signed_pre_key") var signedPreKey: SignedPreKey,
 ) {
     val signalSignedPreKeyRecord

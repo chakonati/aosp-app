@@ -56,6 +56,7 @@ suspend fun sendMessage() {
     val preKeyBundle = KeyExchange.preKeyBundle()
 
     sendingStore.saveIdentity(BOB_ADDRESS, preKeyBundle.identityKey)
+    store.saveIdentity(ALICE_ADDRESS, preKeyBundle.identityKey)
 
     val aliceSessionBuilder = SessionBuilder(sendingStore, BOB_ADDRESS)
     aliceSessionBuilder.process(preKeyBundle)

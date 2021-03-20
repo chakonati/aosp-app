@@ -15,14 +15,14 @@ import org.whispersystems.libsignal.SignalProtocolAddress
     )]
 )
 data class RemoteAddress(
-    @ColumnInfo(name = "id") @PrimaryKey val Id: Int = 0,
+    @ColumnInfo(name = "id") @PrimaryKey(autoGenerate = true) val Id: Int = 0,
     @ColumnInfo(name = "device_id") val deviceId: Int,
     @ColumnInfo(name = "address") val address: String,
 
     @ColumnInfo(name = "identity_key_id") val identityKeyId: Int = 0,
 ) {
     companion object {
-        infix fun from(signalAddress: SignalProtocolAddress): RemoteAddress =
+        infix fun from(signalAddress: SignalProtocolAddress) =
             RemoteAddress(deviceId = signalAddress.deviceId, address = signalAddress.name)
     }
 }
@@ -33,5 +33,5 @@ data class RemoteAddressAndIdentityKey(
         parentColumn = "identity_key_id",
         entityColumn = "id"
     )
-    val identityKey: RemoteIdentityKey
+    val identityKey: RemoteIdentityKey?
 )

@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "10a73955525ec5c01da853faef47bfdd",
+    "identityHash": "9b1007dfa6bd27099ff0bd862547c4bd",
     "entities": [
       {
         "tableName": "my_setup",
@@ -44,7 +44,7 @@
       },
       {
         "tableName": "local_pre_keys",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER NOT NULL, `public_key` BLOB NOT NULL, `private_key` BLOB NOT NULL, PRIMARY KEY(`id`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `public_key` BLOB NOT NULL, `private_key` BLOB NOT NULL)",
         "fields": [
           {
             "fieldPath": "preKeyId",
@@ -69,14 +69,14 @@
           "columnNames": [
             "id"
           ],
-          "autoGenerate": false
+          "autoGenerate": true
         },
         "indices": [],
         "foreignKeys": []
       },
       {
         "tableName": "local_signed_pre_keys",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER NOT NULL, `signed_pre_key` BLOB NOT NULL, PRIMARY KEY(`id`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `signed_pre_key` BLOB NOT NULL)",
         "fields": [
           {
             "fieldPath": "preKeyId",
@@ -95,14 +95,14 @@
           "columnNames": [
             "id"
           ],
-          "autoGenerate": false
+          "autoGenerate": true
         },
         "indices": [],
         "foreignKeys": []
       },
       {
         "tableName": "remote_identity_keys",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER NOT NULL, `public_key` BLOB NOT NULL, PRIMARY KEY(`id`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `public_key` BLOB NOT NULL)",
         "fields": [
           {
             "fieldPath": "id",
@@ -121,14 +121,14 @@
           "columnNames": [
             "id"
           ],
-          "autoGenerate": false
+          "autoGenerate": true
         },
         "indices": [],
         "foreignKeys": []
       },
       {
         "tableName": "remote_addresses",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER NOT NULL, `device_id` INTEGER NOT NULL, `address` TEXT NOT NULL, `identity_key_id` INTEGER NOT NULL, PRIMARY KEY(`id`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `device_id` INTEGER NOT NULL, `address` TEXT NOT NULL, `identity_key_id` INTEGER NOT NULL)",
         "fields": [
           {
             "fieldPath": "Id",
@@ -159,7 +159,7 @@
           "columnNames": [
             "id"
           ],
-          "autoGenerate": false
+          "autoGenerate": true
         },
         "indices": [
           {
@@ -173,12 +173,53 @@
           }
         ],
         "foreignKeys": []
+      },
+      {
+        "tableName": "signal_sessions",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `session_data` BLOB NOT NULL, `remote_address_id` INTEGER NOT NULL)",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "sessionData",
+            "columnName": "session_data",
+            "affinity": "BLOB",
+            "notNull": true
+          },
+          {
+            "fieldPath": "remoteAddressId",
+            "columnName": "remote_address_id",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "id"
+          ],
+          "autoGenerate": true
+        },
+        "indices": [
+          {
+            "name": "index_signal_sessions_remote_address_id",
+            "unique": false,
+            "columnNames": [
+              "remote_address_id"
+            ],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_signal_sessions_remote_address_id` ON `${TABLE_NAME}` (`remote_address_id`)"
+          }
+        ],
+        "foreignKeys": []
       }
     ],
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '10a73955525ec5c01da853faef47bfdd')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '9b1007dfa6bd27099ff0bd862547c4bd')"
     ]
   }
 }

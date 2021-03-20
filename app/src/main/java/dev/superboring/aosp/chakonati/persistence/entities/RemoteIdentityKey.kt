@@ -8,7 +8,7 @@ import org.whispersystems.libsignal.IdentityKey
 
 @Entity(tableName = "remote_identity_keys")
 data class RemoteIdentityKey(
-    @ColumnInfo(name = "id") @PrimaryKey var id: Int = 0,
+    @ColumnInfo(name = "id") @PrimaryKey(autoGenerate = true) var id: Int = 0,
     @ColumnInfo(name = "public_key") var publicKey: IdentityPublicKey,
 ) {
 
