@@ -26,7 +26,7 @@ private fun generateRegistrationId(): Int {
     return KeyHelper.generateRegistrationId(false)
 }
 
-class PersistentProtocolStore : SignalProtocolStore {
+object PersistentProtocolStore : SignalProtocolStore {
 
     val hasLocalRegistrationId
         get() = db.mySetup().get().registrationId != -1

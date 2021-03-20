@@ -12,8 +12,7 @@ import androidx.room.Room
 import dev.superboring.aosp.chakonati.persistence.AppDatabase
 import dev.superboring.aosp.chakonati.persistence.db
 import dev.superboring.aosp.chakonati.service.Communicator
-import dev.superboring.aosp.chakonati.services.GlobalBasics
-import dev.superboring.aosp.chakonati.signal.signalExample
+import dev.superboring.aosp.chakonati.signal.handlePreKeys
 import dev.superboring.aosp.chakonati.ui.theme.DefaultTheme
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -51,8 +50,7 @@ class MainActivity : ComponentActivity(), CoroutineScope {
 
         launch(Dispatchers.IO) {
             ownRelayCommunicator = Communicator("192.168.2.110:4560")
-            println(GlobalBasics.echo("what's up, server :)"))
-            signalExample()
+            handlePreKeys()
         }
     }
 }
