@@ -8,6 +8,9 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.material.TopAppBar
+import androidx.room.Room
+import dev.superboring.aosp.chakonati.persistence.AppDatabase
+import dev.superboring.aosp.chakonati.persistence.db
 import dev.superboring.aosp.chakonati.service.Communicator
 import dev.superboring.aosp.chakonati.services.GlobalBasics
 import dev.superboring.aosp.chakonati.ui.theme.DefaultTheme
@@ -36,6 +39,12 @@ class MainActivity : ComponentActivity(), CoroutineScope {
                 }
             }
         }
+
+        db = Room.databaseBuilder(
+            this,
+            AppDatabase::class.java,
+            "main"
+        ).build()
 
         launch(Dispatchers.IO) {
             ownRelayCommunicator = Communicator("192.168.2.110:4560")

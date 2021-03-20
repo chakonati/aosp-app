@@ -1,8 +1,6 @@
 package dev.superboring.aosp.chakonati.signal
 
-import androidx.compose.ui.input.key.Key
 import dev.superboring.aosp.chakonati.services.KeyExchange
-import kotlinx.coroutines.runBlocking
 import org.whispersystems.libsignal.SessionBuilder
 import org.whispersystems.libsignal.SessionCipher
 import org.whispersystems.libsignal.SignalProtocolAddress
@@ -12,14 +10,23 @@ import org.whispersystems.libsignal.protocol.PreKeySignalMessage
 import org.whispersystems.libsignal.state.PreKeyBundle
 import org.whispersystems.libsignal.state.PreKeyRecord
 import org.whispersystems.libsignal.state.SignedPreKeyRecord
+import org.whispersystems.libsignal.util.KeyHelper
+import java.security.SecureRandom
 
 private val ALICE_ADDRESS = SignalProtocolAddress("alice", 1)
 private val BOB_ADDRESS = SignalProtocolAddress("bob", 1)
 
 const val originalMessage = "cool!"
-val store = ProtocolStore()
+val store = PersistentProtocolStore()
 
 suspend fun handlePreKeys() {
+    if (!store.hasIdentityKey) {
+        store.saveIdentityKeyPair(generateIdentityKeyPair())
+    }
+    if (!store.hasLocalRegistrationId) {
+        store.saveLocalRegistrationId(KeyHelper.generateRegistrationId(true))
+    }
+
     val preKeyPair: ECKeyPair = Curve.generateKeyPair()
     val signedPreKeyPair: ECKeyPair = Curve.generateKeyPair()
     val signedPreKeySignature = Curve.calculateSignature(
@@ -28,23 +35,24 @@ suspend fun handlePreKeys() {
     )
 
     val preKeyBundle = PreKeyBundle(
-        store.localRegistrationId, 1,
-        31337, preKeyPair.publicKey,
-        22, signedPreKeyPair.publicKey,
+        store.localRegistrationId, SecureRandom().nextInt(Short.MAX_VALUE.toInt()),
+        SecureRandom().nextInt(Short.MAX_VALUE.toInt()), preKeyPair.publicKey,
+        SecureRandom().nextInt(Short.MAX_VALUE.toInt()), signedPreKeyPair.publicKey,
         signedPreKeySignature,
         store.identityKeyPair.publicKey
     )
     KeyExchange.publishPreKeyBundle(preKeyBundle)
 
-    store.storePreKey(31337, PreKeyRecord(preKeyBundle.preKeyId, preKeyPair))
+    store.storePreKey(preKeyBundle.preKeyId, PreKeyRecord(preKeyBundle.preKeyId, preKeyPair))
     store.storeSignedPreKey(
-        22,
-        SignedPreKeyRecord(22, System.currentTimeMillis(), signedPreKeyPair, signedPreKeySignature)
+        preKeyBundle.signedPreKeyId,
+        SignedPreKeyRecord(preKeyBundle.signedPreKeyId,
+            System.currentTimeMillis(), signedPreKeyPair, signedPreKeySignature)
     )
 }
 
 suspend fun sendMessage() {
-    val sendingStore = ProtocolStore()
+    val sendingStore = PersistentProtocolStore()
     val preKeyBundle = KeyExchange.preKeyBundle()
 
     val aliceSessionBuilder = SessionBuilder(sendingStore, BOB_ADDRESS)
