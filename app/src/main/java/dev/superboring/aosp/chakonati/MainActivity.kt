@@ -38,7 +38,7 @@ class MainActivity : ComponentActivity(), CoroutineScope {
         }
 
         launch(Dispatchers.IO) {
-            mainCommunicator = Communicator("192.168.2.110:4560")
+            ownRelayCommunicator = Communicator("192.168.2.110:4560")
             println(GlobalBasics.echo("what's up, server :)"))
             signalExample()
         }

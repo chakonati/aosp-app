@@ -19,3 +19,15 @@ fun MessagePacker.packByteArray(bytes: ByteArray) {
     packBinaryHeader(bytes.size)
     writePayload(bytes)
 }
+
+fun MessageUnpacker.unpackByteArray(): ByteArray {
+    val size = unpackBinaryHeader()
+    return readPayload(size)
+}
+
+fun MessageUnpacker.unpackError(): Error {
+    if (!tryUnpackNil()) {
+        return unpackString()
+    }
+    return null
+}

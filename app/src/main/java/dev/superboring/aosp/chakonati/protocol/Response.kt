@@ -3,6 +3,8 @@ package dev.superboring.aosp.chakonati.protocol
 import org.msgpack.core.MessagePacker
 import org.msgpack.core.MessageUnpacker
 
+typealias Error = String?
+
 const val headerSize = 2
 const val dataKey = "data"
 
@@ -50,3 +52,4 @@ abstract class Response(
     }
 
 }
+

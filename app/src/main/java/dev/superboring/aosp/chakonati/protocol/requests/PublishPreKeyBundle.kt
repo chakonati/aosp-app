@@ -1,11 +1,9 @@
 package dev.superboring.aosp.chakonati.protocol.requests
 
+import dev.superboring.aosp.chakonati.protocol.ErrorResponse
 import dev.superboring.aosp.chakonati.protocol.Request
-import dev.superboring.aosp.chakonati.protocol.Response
 import dev.superboring.aosp.chakonati.protocol.packByteArray
 import org.msgpack.core.MessagePacker
-import org.msgpack.core.MessageUnpacker
-import org.whispersystems.libsignal.IdentityKey
 import org.whispersystems.libsignal.state.PreKeyBundle
 
 class PreKeyBundlePublishRequest(var preKeyBundle: PreKeyBundle) :
@@ -30,10 +28,4 @@ class PreKeyBundlePublishRequest(var preKeyBundle: PreKeyBundle) :
 
 }
 
-class PreKeyBundlePublishResponse(var error: String? = null) : Response(1) {
-    override fun unpack(unpacker: MessageUnpacker) = unpacker.run {
-        if (!tryUnpackNil()) {
-            error = unpackString()
-        }
-    }
-}
+class PreKeyBundlePublishResponse : ErrorResponse()

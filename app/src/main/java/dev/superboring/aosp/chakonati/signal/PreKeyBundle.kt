@@ -1,5 +1,6 @@
 package dev.superboring.aosp.chakonati.signal
 
+import androidx.compose.ui.input.key.Key
 import dev.superboring.aosp.chakonati.services.KeyExchange
 import kotlinx.coroutines.runBlocking
 import org.whispersystems.libsignal.SessionBuilder
@@ -17,7 +18,6 @@ private val BOB_ADDRESS = SignalProtocolAddress("bob", 1)
 
 const val originalMessage = "cool!"
 val store = ProtocolStore()
-val sendingStore = ProtocolStore()
 
 suspend fun handlePreKeys() {
     val preKeyPair: ECKeyPair = Curve.generateKeyPair()
@@ -43,7 +43,13 @@ suspend fun handlePreKeys() {
     )
 }
 
-fun sendMessage() {
+suspend fun sendMessage() {
+    val sendingStore = ProtocolStore()
+    val preKeyBundle = KeyExchange.preKeyBundle()
+
+    val aliceSessionBuilder = SessionBuilder(sendingStore, BOB_ADDRESS)
+    aliceSessionBuilder.process(preKeyBundle)
+
     val bobSessionCipher = SessionCipher(store, ALICE_ADDRESS)
     val aliceSessionCipher = SessionCipher(sendingStore, BOB_ADDRESS)
 
