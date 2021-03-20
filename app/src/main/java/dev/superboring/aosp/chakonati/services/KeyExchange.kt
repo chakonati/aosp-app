@@ -4,6 +4,8 @@ import dev.superboring.aosp.chakonati.ownRelayCommunicator
 import dev.superboring.aosp.chakonati.protocol.exceptions.RequestFailure
 import dev.superboring.aosp.chakonati.protocol.requests.PreKeyBundlePublishRequest
 import dev.superboring.aosp.chakonati.protocol.requests.RetrievePreKeyBundleRequest
+import dev.superboring.aosp.chakonati.service.Communicator
+import dev.superboring.aosp.chakonati.service.RemoteService
 import org.whispersystems.libsignal.state.PreKeyBundle
 
 class PreKeyBundlePublishFailed(error: String) :
@@ -20,9 +22,12 @@ object KeyExchange {
         }
     }
 
+}
+
+class RemoteKeyExchange(private val communicator: Communicator) : RemoteService(communicator) {
+
     suspend fun preKeyBundle(): PreKeyBundle {
-        // TODO: use foreign communicators
-        ownRelayCommunicator.send(RetrievePreKeyBundleRequest()).let {
+        communicator.send(RetrievePreKeyBundleRequest()).let {
             it.error?.let { error -> throw PreKeyBundleRetrieveFailed(error) }
             return it.bundle
         }
