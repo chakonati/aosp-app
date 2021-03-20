@@ -4,6 +4,7 @@ import org.msgpack.core.MessagePacker
 import org.msgpack.core.MessageUnpacker
 
 typealias RequestId = Long
+
 private var nextId: RequestId = 0L
 
 abstract class Request<R : Response>(

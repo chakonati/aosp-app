@@ -46,8 +46,10 @@ suspend fun handlePreKeys() {
     store.storePreKey(preKeyBundle.preKeyId, PreKeyRecord(preKeyBundle.preKeyId, preKeyPair))
     store.storeSignedPreKey(
         preKeyBundle.signedPreKeyId,
-        SignedPreKeyRecord(preKeyBundle.signedPreKeyId,
-            System.currentTimeMillis(), signedPreKeyPair, signedPreKeySignature)
+        SignedPreKeyRecord(
+            preKeyBundle.signedPreKeyId,
+            System.currentTimeMillis(), signedPreKeyPair, signedPreKeySignature
+        )
     )
 }
 

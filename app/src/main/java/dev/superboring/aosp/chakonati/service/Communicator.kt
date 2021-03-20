@@ -8,7 +8,6 @@ import dev.superboring.aosp.chakonati.protocol.exceptions.UntrackedResponsePacke
 import dev.superboring.aosp.chakonati.protocol.requests.HelloRequest
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.Deferred
-import kotlinx.coroutines.runBlocking
 
 class Communicator(private val server: String) : WebSocketServiceListener {
 

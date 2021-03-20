@@ -16,9 +16,12 @@ data class LocalPreKey(
     @ColumnInfo(name = "public_key") var prePublicKey: PrePublicKey,
     @ColumnInfo(name = "private_key") var prePrivateKey: PrePrivateKey,
 ) {
-    val signalPreKeyRecord get() =
-        PreKeyRecord(preKeyId, ECKeyPair(
-            Curve.decodePoint(prePublicKey, 0),
-            Curve.decodePrivatePoint(prePrivateKey)
-        ))
+    val signalPreKeyRecord
+        get() =
+            PreKeyRecord(
+                preKeyId, ECKeyPair(
+                    Curve.decodePoint(prePublicKey, 0),
+                    Curve.decodePrivatePoint(prePrivateKey)
+                )
+            )
 }

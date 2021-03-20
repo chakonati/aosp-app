@@ -13,7 +13,7 @@ import org.whispersystems.libsignal.state.*
 import org.whispersystems.libsignal.util.KeyHelper
 
 
-fun generateIdentityKeyPair() : IdentityKeyPair {
+fun generateIdentityKeyPair(): IdentityKeyPair {
     val identityKeyPairKeys: ECKeyPair = Curve.generateKeyPair()
 
     return IdentityKeyPair(
@@ -114,7 +114,7 @@ class PersistentProtocolStore : SignalProtocolStore {
         db.signalSessions().hasSession(RemoteAddress from address)
 
     override fun deleteSession(address: SignalProtocolAddress) =
-        db.signalSessions() deleteByRemoteAddress(RemoteAddress from address)
+        db.signalSessions() deleteByRemoteAddress (RemoteAddress from address)
 
     override fun deleteAllSessions(name: String) = runBlocking {
         db.signalSessions() deleteByAddressName name

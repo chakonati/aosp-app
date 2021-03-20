@@ -13,9 +13,12 @@ import dev.superboring.aosp.chakonati.persistence.AppDatabase
 import dev.superboring.aosp.chakonati.persistence.db
 import dev.superboring.aosp.chakonati.service.Communicator
 import dev.superboring.aosp.chakonati.services.GlobalBasics
-import dev.superboring.aosp.chakonati.ui.theme.DefaultTheme
-import kotlinx.coroutines.*
 import dev.superboring.aosp.chakonati.signal.signalExample
+import dev.superboring.aosp.chakonati.ui.theme.DefaultTheme
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
 import kotlin.coroutines.CoroutineContext
 
 class MainActivity : ComponentActivity(), CoroutineScope {

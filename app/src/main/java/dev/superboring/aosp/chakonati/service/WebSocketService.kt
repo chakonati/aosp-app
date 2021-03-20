@@ -1,17 +1,10 @@
 package dev.superboring.aosp.chakonati.service
 
-import android.util.Log
 import dev.superboring.aosp.chakonati.logging.ATP
 import dev.superboring.aosp.chakonati.protocol.PackSerializable
-import dev.superboring.aosp.chakonati.protocol.Packable
-import dev.superboring.aosp.chakonati.protocol.requests.HelloResponse
-import kotlinx.coroutines.Deferred
 import okhttp3.*
-import java.util.concurrent.TimeUnit
-import okhttp3.Response
-
-import okhttp3.WebSocket
 import okio.ByteString
+import java.util.concurrent.TimeUnit
 
 private val TAG = ATP + WebSocketService::class.simpleName
 
