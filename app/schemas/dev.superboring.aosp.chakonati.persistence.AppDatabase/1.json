@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "bfdff8f1acf83a9ceae29bce47afd852",
+    "identityHash": "10a73955525ec5c01da853faef47bfdd",
     "entities": [
       {
         "tableName": "my_setup",
@@ -99,12 +99,86 @@
         },
         "indices": [],
         "foreignKeys": []
+      },
+      {
+        "tableName": "remote_identity_keys",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER NOT NULL, `public_key` BLOB NOT NULL, PRIMARY KEY(`id`))",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "publicKey",
+            "columnName": "public_key",
+            "affinity": "BLOB",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "id"
+          ],
+          "autoGenerate": false
+        },
+        "indices": [],
+        "foreignKeys": []
+      },
+      {
+        "tableName": "remote_addresses",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER NOT NULL, `device_id` INTEGER NOT NULL, `address` TEXT NOT NULL, `identity_key_id` INTEGER NOT NULL, PRIMARY KEY(`id`))",
+        "fields": [
+          {
+            "fieldPath": "Id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "deviceId",
+            "columnName": "device_id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "address",
+            "columnName": "address",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "identityKeyId",
+            "columnName": "identity_key_id",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "id"
+          ],
+          "autoGenerate": false
+        },
+        "indices": [
+          {
+            "name": "index_remote_addresses_device_id_address",
+            "unique": false,
+            "columnNames": [
+              "device_id",
+              "address"
+            ],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_remote_addresses_device_id_address` ON `${TABLE_NAME}` (`device_id`, `address`)"
+          }
+        ],
+        "foreignKeys": []
       }
     ],
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'bfdff8f1acf83a9ceae29bce47afd852')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '10a73955525ec5c01da853faef47bfdd')"
     ]
   }
 }

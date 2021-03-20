@@ -13,8 +13,8 @@ import org.whispersystems.libsignal.state.SignedPreKeyRecord
 import org.whispersystems.libsignal.util.KeyHelper
 import java.security.SecureRandom
 
-private val ALICE_ADDRESS = SignalProtocolAddress("alice", 1)
-private val BOB_ADDRESS = SignalProtocolAddress("bob", 1)
+private val ALICE_ADDRESS = SignalProtocolAddress("chat.alice.tld", 1)
+private val BOB_ADDRESS = SignalProtocolAddress("chat.bob.tld", 1)
 
 const val originalMessage = "cool!"
 val store = PersistentProtocolStore()
@@ -54,6 +54,8 @@ suspend fun handlePreKeys() {
 suspend fun sendMessage() {
     val sendingStore = PersistentProtocolStore()
     val preKeyBundle = KeyExchange.preKeyBundle()
+
+    sendingStore.saveIdentity(BOB_ADDRESS, preKeyBundle.identityKey)
 
     val aliceSessionBuilder = SessionBuilder(sendingStore, BOB_ADDRESS)
     aliceSessionBuilder.process(preKeyBundle)

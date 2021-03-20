@@ -1,20 +1,18 @@
 package dev.superboring.aosp.chakonati.signal
 
 import dev.superboring.aosp.chakonati.persistence.dao.get
+import dev.superboring.aosp.chakonati.persistence.dao.insertWithIdentityKey
 import dev.superboring.aosp.chakonati.persistence.dao.save
 import dev.superboring.aosp.chakonati.persistence.db
-import dev.superboring.aosp.chakonati.persistence.entities.LocalPreKey
-import dev.superboring.aosp.chakonati.persistence.entities.LocalSignedPreKey
+import dev.superboring.aosp.chakonati.persistence.entities.*
+import kotlinx.coroutines.runBlocking
 import org.whispersystems.libsignal.IdentityKey
 import org.whispersystems.libsignal.IdentityKeyPair
 import org.whispersystems.libsignal.SignalProtocolAddress
 import org.whispersystems.libsignal.ecc.Curve
 import org.whispersystems.libsignal.ecc.ECKeyPair
-import org.whispersystems.libsignal.ecc.ECPrivateKey
 import org.whispersystems.libsignal.state.*
-import org.whispersystems.libsignal.state.impl.InMemorySignalProtocolStore
 import org.whispersystems.libsignal.util.KeyHelper
-import kotlin.math.sign
 
 
 fun generateIdentityKeyPair() : IdentityKeyPair {
@@ -57,26 +55,30 @@ class PersistentProtocolStore : SignalProtocolStore {
 
     override fun getLocalRegistrationId() = db.mySetup().get().registrationId
 
-    override fun saveIdentity(address: SignalProtocolAddress?, identityKey: IdentityKey?): Boolean {
-        TODO("Not yet implemented")
+    override fun saveIdentity(address: SignalProtocolAddress, identityKey: IdentityKey): Boolean {
+        val existed = db.remoteAddresses().exists(address.deviceId, address.name)
+        runBlocking {
+            db.remoteAddresses() insertWithIdentityKey RemoteAddressAndIdentityKey(
+                address = RemoteAddress from address,
+                identityKey = RemoteIdentityKey(
+                    publicKey = identityKey.serialize()
+                )
+            )
+        }
+        return existed
     }
 
     override fun isTrustedIdentity(
-        address: SignalProtocolAddress?,
-        identityKey: IdentityKey?,
+        address: SignalProtocolAddress,
+        identityKey: IdentityKey,
         direction: IdentityKeyStore.Direction?
-    ): Boolean {
-        // TODO: implement
-        return true
-    }
+    ) = db.remoteAddresses().exists(address.deviceId, address.name)
 
-    override fun getIdentity(address: SignalProtocolAddress?): IdentityKey {
-        TODO("Not yet implemented")
-    }
+    override fun getIdentity(address: SignalProtocolAddress) =
+        db.remoteAddresses().get(address.deviceId, address.name).identityKey.signalIdentityKey
 
-    override fun loadPreKey(preKeyId: Int): PreKeyRecord {
-        TODO("Not yet implemented")
-    }
+    override fun loadPreKey(preKeyId: Int) =
+        db.localPreKeys().byPreKeyId(preKeyId).signalPreKeyRecord
 
     override fun storePreKey(preKeyId: Int, record: PreKeyRecord) {
         db.localPreKeys() insert LocalPreKey(
@@ -86,13 +88,11 @@ class PersistentProtocolStore : SignalProtocolStore {
         )
     }
 
-    override fun containsPreKey(preKeyId: Int): Boolean {
-        TODO("Not yet implemented")
-    }
+    override fun containsPreKey(preKeyId: Int) =
+        db.localPreKeys().hasKey(preKeyId)
 
-    override fun removePreKey(preKeyId: Int) {
-        TODO("Not yet implemented")
-    }
+    override fun removePreKey(preKeyId: Int) =
+        db.localPreKeys() deleteByPreKeyId preKeyId
 
     override fun loadSession(address: SignalProtocolAddress?): SessionRecord {
         TODO("Not yet implemented")
@@ -118,9 +118,8 @@ class PersistentProtocolStore : SignalProtocolStore {
         TODO("Not yet implemented")
     }
 
-    override fun loadSignedPreKey(signedPreKeyId: Int): SignedPreKeyRecord {
-        TODO("Not yet implemented")
-    }
+    override fun loadSignedPreKey(signedPreKeyId: Int) =
+        db.localSignedPreKeys().byPreKeyId(signedPreKeyId).signalSignedPreKeyRecord
 
     override fun loadSignedPreKeys(): MutableList<SignedPreKeyRecord> =
         db.localSignedPreKeys().all().map {
