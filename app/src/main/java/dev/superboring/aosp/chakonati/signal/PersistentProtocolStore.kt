@@ -79,11 +79,11 @@ class PersistentProtocolStore : SignalProtocolStore {
     }
 
     override fun storePreKey(preKeyId: Int, record: PreKeyRecord) {
-        db.localPreKeys().insert(LocalPreKey(
+        db.localPreKeys() insert LocalPreKey(
             preKeyId = preKeyId,
             prePublicKey = record.keyPair.publicKey.serialize(),
             prePrivateKey = record.keyPair.privateKey.serialize(),
-        ))
+        )
     }
 
     override fun containsPreKey(preKeyId: Int): Boolean {
@@ -123,21 +123,21 @@ class PersistentProtocolStore : SignalProtocolStore {
     }
 
     override fun loadSignedPreKeys(): MutableList<SignedPreKeyRecord> =
-        db.localSignedPreKeys().all().toList().map {
+        db.localSignedPreKeys().all().map {
             SignedPreKeyRecord(it.signedPreKey)
         }.toMutableList()
 
     override fun storeSignedPreKey(signedPreKeyId: Int, record: SignedPreKeyRecord) {
-        db.localSignedPreKeys().insert(LocalSignedPreKey(
+        db.localSignedPreKeys() insert LocalSignedPreKey(
             preKeyId = signedPreKeyId,
             signedPreKey = record.serialize(),
-        ))
+        )
     }
 
     override fun containsSignedPreKey(signedPreKeyId: Int) =
-        db.localSignedPreKeys().hasKey(signedPreKeyId)
+        db.localSignedPreKeys() hasKey signedPreKeyId
 
     override fun removeSignedPreKey(signedPreKeyId: Int) =
-        db.localSignedPreKeys().deleteByPreKeyId(signedPreKeyId)
+        db.localSignedPreKeys() deleteByPreKeyId signedPreKeyId
 
 }

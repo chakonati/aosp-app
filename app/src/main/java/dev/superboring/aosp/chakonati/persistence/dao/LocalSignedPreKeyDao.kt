@@ -16,13 +16,13 @@ interface LocalSignedPreKeyDao {
     fun byPreKeyId(id: Int): LocalSignedPreKey
 
     @Insert
-    fun insert(key: LocalSignedPreKey)
+    infix fun insert(key: LocalSignedPreKey)
 
     @Delete
-    fun delete(key: LocalSignedPreKey)
+    infix fun delete(key: LocalSignedPreKey)
 
     @Query("delete from local_signed_pre_keys where id = :id")
-    fun deleteByPreKeyId(id: Int)
+    infix fun deleteByPreKeyId(id: Int)
 
     @Query("select count(id) from local_signed_pre_keys where id = :id")
     infix fun hasKey(id: Int): Boolean

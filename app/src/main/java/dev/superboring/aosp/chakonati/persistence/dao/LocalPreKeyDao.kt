@@ -16,13 +16,13 @@ interface LocalPreKeyDao {
     fun byPreKeyId(id: Int): LocalPreKey
 
     @Insert
-    fun insert(key: LocalPreKey)
+    infix fun insert(key: LocalPreKey)
 
     @Delete
-    fun delete(key: LocalPreKey)
+    infix fun delete(key: LocalPreKey)
 
     @Query("delete from local_pre_keys where id = :id")
-    fun deleteByPreKeyId(id: Int)
+    infix fun deleteByPreKeyId(id: Int)
 
     @Query("select count(id) from local_pre_keys where id = :id")
     infix fun hasKey(id: Int): Boolean
