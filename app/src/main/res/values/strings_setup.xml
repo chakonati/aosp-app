@@ -38,4 +38,10 @@
     <string name="setup_relay_server__title">
         Relay Server
     </string>
+    <string name="setup_relay_server__enter_address_desc">
+        Enter your relay server address below.
+        \n
+        \nThe relay server has been set up either by you or
+        by someone you trust.
+    </string>
 </resources>

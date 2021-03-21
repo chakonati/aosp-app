@@ -7,9 +7,14 @@ import androidx.compose.material.lightColors
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 
+data class AdditionalColors(
+    val actionBarWindowBackground: Color,
+    val intermediaryBackground: Color,
+)
+
 val DarkColorPalette = darkColors(
-    primary = Blue700,
-    primaryVariant = Blue600,
+    primary = Blue600,
+    primaryVariant = Blue700,
     secondary = Gray900,
     secondaryVariant = Gray700,
 
@@ -26,8 +31,8 @@ val DarkColorPalette = darkColors(
 val LightColorPalette = lightColors(
     primary = Gray900,
     primaryVariant = Gray700,
-    secondary = Blue700,
-    secondaryVariant = Blue500,
+    secondary = Blue600,
+    secondaryVariant = Blue700,
 
     background = Gray50,
     surface = Color.White,
@@ -48,6 +53,20 @@ fun colors() =
         DarkColorPalette
     } else {
         LightColorPalette
+    }
+
+@Composable
+fun additionalColors() =
+    if (isInDarkTheme()) {
+        AdditionalColors(
+            actionBarWindowBackground = colors().background,
+            intermediaryBackground = Gray950,
+        )
+    } else {
+        AdditionalColors(
+            actionBarWindowBackground = DarkColorPalette.primary,
+            intermediaryBackground = Gray20,
+        )
     }
 
 @Composable
