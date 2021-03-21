@@ -11,12 +11,15 @@
             android:networkSecurityConfig="@xml/network_security_config"
             android:roundIcon="@mipmap/ic_launcher_round"
             android:supportsRtl="true"
-            android:theme="@style/Theme.Chakonati">
+            android:theme="@style/Theme.Chakonati"
+            android:windowSoftInputMode="adjustResize"
+        >
         <activity
                 android:name=".activities.SetupActivity"
                 android:exported="true"
                 android:label="@string/title_activity_setup"
-                android:theme="@style/Theme.Chakonati.NoActionBar">
+                android:theme="@style/Theme.Chakonati.NoActionBar"
+                android:windowSoftInputMode="adjustResize">
         </activity>
         <activity
                 android:name=".activities.MainActivity"

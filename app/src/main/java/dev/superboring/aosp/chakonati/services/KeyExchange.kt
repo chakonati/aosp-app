@@ -1,11 +1,11 @@
 package dev.superboring.aosp.chakonati.services
 
-import dev.superboring.aosp.chakonati.ownRelayCommunicator
 import dev.superboring.aosp.chakonati.protocol.exceptions.RequestFailure
 import dev.superboring.aosp.chakonati.protocol.requests.PreKeyBundlePublishRequest
 import dev.superboring.aosp.chakonati.protocol.requests.RetrievePreKeyBundleRequest
 import dev.superboring.aosp.chakonati.service.Communicator
 import dev.superboring.aosp.chakonati.service.RemoteService
+import dev.superboring.aosp.chakonati.service.ownRelayCommunicator
 import org.whispersystems.libsignal.state.PreKeyBundle
 
 class PreKeyBundlePublishFailed(error: String) :

@@ -44,4 +44,10 @@
         \nThe relay server has been set up either by you or
         by someone you trust.
     </string>
+    <string name="setup_relay_server__connecting_to_relay_server">
+        Connecting to relay server %s…
+    </string>
+    <string name="setup_relay_server__connection_failed">
+        Connection to %s failed: %s
+    </string>
 </resources>

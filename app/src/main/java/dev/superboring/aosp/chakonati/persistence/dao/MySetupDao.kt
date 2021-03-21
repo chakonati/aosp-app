@@ -6,6 +6,7 @@ import androidx.room.Query
 import androidx.room.Update
 import dev.superboring.aosp.chakonati.persistence.db
 import dev.superboring.aosp.chakonati.persistence.entities.MySetup
+import dev.superboring.aosp.chakonati.service.prepareOwnRelayCommunicator
 
 @Dao
 interface MySetupDao : SingleEntryDao<MySetup> {
@@ -15,10 +16,9 @@ interface MySetupDao : SingleEntryDao<MySetup> {
             identityPrivateKey = byteArrayOf(),
             identityPublicKey = byteArrayOf(),
             registrationId = -1,
+            relayServer = "",
+            isSetUp = false,
         )
-
-    val isSetUp
-        get() = count() != 0
 
     @Query("select * from my_setup limit 1")
     override fun getValue(): MySetup
@@ -33,4 +33,10 @@ interface MySetupDao : SingleEntryDao<MySetup> {
     override infix fun update(element: MySetup)
 }
 
+fun MySetupDao.saveRelayServer(relayServer: String) {
+    db.mySetup().get().apply {
+        this.relayServer = relayServer
+    }.save()
+    prepareOwnRelayCommunicator()
+}
 fun MySetup.save() = db.mySetup() save this

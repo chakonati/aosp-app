@@ -37,7 +37,12 @@ class SetupActivity : ComponentActivity() {
         val nav = rememberNavController()
         NavHost(nav, startDestination = Routes.WELCOME) {
             composable(Routes.WELCOME) { WelcomeSetup { nav.navigate(Routes.RELAY_SERVER) } }
-            composable(Routes.RELAY_SERVER) { RelayServerSetup() }
+            composable(Routes.RELAY_SERVER) {
+                RelayServerSetup(
+                    onPrevClick = { nav.navigate(Routes.WELCOME) },
+                    onNextClick = { }
+                )
+            }
         }
     }
 }

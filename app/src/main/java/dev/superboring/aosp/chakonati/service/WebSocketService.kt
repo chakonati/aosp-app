@@ -1,12 +1,9 @@
 package dev.superboring.aosp.chakonati.service
 
-import dev.superboring.aosp.chakonati.logging.ATP
 import dev.superboring.aosp.chakonati.protocol.PackSerializable
 import okhttp3.*
 import okio.ByteString
 import java.util.concurrent.TimeUnit
-
-private val TAG = ATP + WebSocketService::class.simpleName
 
 class WebSocketService(private val uri: String) : WebSocketListener() {
 
@@ -19,14 +16,12 @@ class WebSocketService(private val uri: String) : WebSocketListener() {
         val request = Request.Builder()
             .url(uri)
             .build()
-        client.newWebSocket(request, this).apply {
-
-        }
+        client.newWebSocket(request, this)
     }
 
     fun send(data: PackSerializable) {
         if (!webSocket.send(ByteString.of(*data.serialize()))) {
-            throw RuntimeException("Failed to send websocket message")
+            throw RuntimeException("Failed to send WebSocket message")
         }
     }
 
@@ -39,7 +34,7 @@ class WebSocketService(private val uri: String) : WebSocketListener() {
     }
 
     override fun onFailure(webSocket: WebSocket, t: Throwable, response: Response?) {
-        t.printStackTrace()
+        listeners.forEach { it.onError(t) }
     }
 
     override fun onMessage(webSocket: WebSocket, bytes: ByteString) {
@@ -48,5 +43,9 @@ class WebSocketService(private val uri: String) : WebSocketListener() {
 
     fun addListener(listener: WebSocketServiceListener) {
         listeners += listener
+    }
+
+    fun disconnect() {
+        webSocket.close(1000, "normal close")
     }
 }

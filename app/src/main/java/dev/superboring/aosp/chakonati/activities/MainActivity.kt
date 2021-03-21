@@ -16,6 +16,8 @@ import dev.superboring.aosp.chakonati.persistence.AppDatabase
 import dev.superboring.aosp.chakonati.persistence.db
 import dev.superboring.aosp.chakonati.activities.ui.theme.DefaultTheme
 import dev.superboring.aosp.chakonati.extensions.android.view.useTranslucentBars
+import dev.superboring.aosp.chakonati.persistence.dao.get
+import dev.superboring.aosp.chakonati.service.prepareOwnRelayCommunicator
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -41,8 +43,9 @@ class MainActivity : ComponentActivity(), CoroutineScope {
         ).build()
 
         launch(Dispatchers.IO) {
-            if (db.mySetup().isSetUp) {
+            if (db.mySetup().get().isSetUp) {
                 applyContent()
+                prepareOwnRelayCommunicator()
             } else {
                 startActivity(
                     Intent(this@MainActivity, SetupActivity::class.java).apply {

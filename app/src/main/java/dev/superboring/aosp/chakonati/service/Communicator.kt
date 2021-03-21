@@ -23,7 +23,7 @@ class Communicator(private val server: String) : WebSocketServiceListener {
         }
     }
 
-    private suspend fun doHandshake() {
+    suspend fun doHandshake() {
         val response = sendAsync(HelloRequest()).await()
         println("Received reply: ${response.reply}")
         hasSentHello = true
@@ -51,6 +51,15 @@ class Communicator(private val server: String) : WebSocketServiceListener {
             deserialize(bytes)
             openRequest.deferredResponse.complete(this)
         }
+    }
+
+    override fun onError(t: Throwable) {
+        disconnect()
+        openRequests.forEach { it.value.deferredResponse.completeExceptionally(t) }
+    }
+
+    fun disconnect() {
+        webSocketService.disconnect()
     }
 
 }

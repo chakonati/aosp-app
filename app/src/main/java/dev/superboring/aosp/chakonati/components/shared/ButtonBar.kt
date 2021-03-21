@@ -16,6 +16,8 @@ fun ButtonBar(
     endButtonText: @Composable () -> Unit,
     onStartButtonClick: () -> Unit,
     onEndButtonClick: () -> Unit,
+    startButtonDisabled: Boolean = false,
+    endButtonDisabled: Boolean = false,
 ) {
     Surface(color = additionalColors().intermediaryBackground) {
         Box(
@@ -29,14 +31,15 @@ fun ButtonBar(
             ) {
                 TextButton(
                     onClick = onStartButtonClick,
-                    modifier = Modifier.height(40.dp)
+                    modifier = Modifier.height(40.dp),
+                    enabled = !startButtonDisabled,
                 ) {
                     startButtonText()
                 }
                 TextButton(
                     onClick = onEndButtonClick,
-                    modifier = Modifier
-                        .height(40.dp)
+                    modifier = Modifier.height(40.dp),
+                    enabled = !endButtonDisabled,
                 ) {
                     endButtonText()
                 }

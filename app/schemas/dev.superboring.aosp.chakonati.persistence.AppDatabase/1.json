@@ -2,11 +2,11 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "9b1007dfa6bd27099ff0bd862547c4bd",
+    "identityHash": "0aa1c5d89df6a71bda5d997b89e59e34",
     "entities": [
       {
         "tableName": "my_setup",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER NOT NULL, `identity_public_key` BLOB NOT NULL, `identity_private_key` BLOB NOT NULL, `registration_id` INTEGER NOT NULL, PRIMARY KEY(`id`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER NOT NULL, `identity_public_key` BLOB NOT NULL, `identity_private_key` BLOB NOT NULL, `registration_id` INTEGER NOT NULL, `relay_server` TEXT NOT NULL, `is_set_up` INTEGER NOT NULL, PRIMARY KEY(`id`))",
         "fields": [
           {
             "fieldPath": "id",
@@ -29,6 +29,18 @@
           {
             "fieldPath": "registrationId",
             "columnName": "registration_id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "relayServer",
+            "columnName": "relay_server",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "isSetUp",
+            "columnName": "is_set_up",
             "affinity": "INTEGER",
             "notNull": true
           }
@@ -219,7 +231,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '9b1007dfa6bd27099ff0bd862547c4bd')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '0aa1c5d89df6a71bda5d997b89e59e34')"
     ]
   }
 }
