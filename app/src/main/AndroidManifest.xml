@@ -16,7 +16,9 @@
                 android:name=".activities.SetupActivity"
                 android:exported="true"
                 android:label="@string/title_activity_setup"
-                android:theme="@style/Theme.Chakonati.NoActionBar"></activity>
+                android:theme="@style/Theme.Chakonati.NoActionBar">
+
+        </activity>
         <activity
                 android:name=".activities.MainActivity"
                 android:exported="true"

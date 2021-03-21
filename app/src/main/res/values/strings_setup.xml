@@ -1,18 +1,41 @@
 <resources>
-    <string name="setup_welcome_title">Welcome to %s</string>
-    <string name="setup_welcome_app_desc">
+    <!-- Welcome -->
+    <string name="setup_welcome__title">Welcome to %s</string>
+    <string name="setup_welcome__app_desc">
         %s is a decentralized end-to-end-encrypted chat app that
         uses the Signal protocol for encryption.
     </string>
-    <string name="setup_welcome_reg_info">
-        You don\'t to register anywhere to get started –
+    <string name="setup_welcome__reg_info">
+        You don\'t need to register anywhere to get started –
         in the next step you will specify your relay server
         to get started with receiving messages.
     </string>
-    <string name="setup_welcome_setup_now">
-        Setup now
+    <string name="setup_welcome__setup_now">
+        Set up now
     </string>
-    <string name="setup_welcome_skip_step">
+    <string name="setup_welcome__skip_step">
         Skip this step
+    </string>
+
+    <string name="setup_welcome__skip_step_dialog__title">
+        Limited functionality
+    </string>
+    <string name="setup_welcome__skip_step_dialog__text">
+        You need a relay server to receive messages.
+        \nIf you skip this step, you will only be able to
+        send messages, but not receive them.
+        \n\nAre you sure you want to skip setting up your relay server?
+        \n\nYou can configure your relay server later in the settings.
+    </string>
+    <string name="setup_welcome__skip_step_dialog__yes">
+        Yes, skip this step
+    </string>
+    <string name="setup_welcome__skip_step_dialog__no">
+        No, set up now
+    </string>
+
+    <!-- Relay Server -->
+    <string name="setup_relay_server__title">
+        Relay Server
     </string>
 </resources>

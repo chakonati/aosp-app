@@ -4,6 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.layout.Column
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
@@ -14,6 +15,7 @@ import dev.superboring.aosp.chakonati.R
 import dev.superboring.aosp.chakonati.persistence.AppDatabase
 import dev.superboring.aosp.chakonati.persistence.db
 import dev.superboring.aosp.chakonati.activities.ui.theme.DefaultTheme
+import dev.superboring.aosp.chakonati.extensions.android.view.useTranslucentBars
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -30,6 +32,8 @@ class MainActivity : ComponentActivity(), CoroutineScope {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        window.useTranslucentBars()
+
         db = Room.databaseBuilder(
             this,
             AppDatabase::class.java,
@@ -40,7 +44,12 @@ class MainActivity : ComponentActivity(), CoroutineScope {
             if (db.mySetup().isSetUp) {
                 applyContent()
             } else {
-                startActivity(Intent(this@MainActivity, SetupActivity::class.java))
+                startActivity(
+                    Intent(this@MainActivity, SetupActivity::class.java).apply {
+                        flags = Intent.FLAG_ACTIVITY_NEW_TASK + Intent.FLAG_ACTIVITY_TASK_ON_HOME
+                    }
+                )
+                finish()
             }
         }
     }
