@@ -1,4 +1,4 @@
-package dev.superboring.aosp.chakonati.ui.theme
+package dev.superboring.aosp.chakonati.activities.ui.theme
 
 import androidx.compose.material.Typography
 import androidx.compose.ui.text.TextStyle

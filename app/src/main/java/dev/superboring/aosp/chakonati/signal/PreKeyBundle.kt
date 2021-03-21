@@ -15,7 +15,9 @@ suspend fun handlePreKeys() {
         PersistentProtocolStore.saveIdentityKeyPair(generateIdentityKeyPair())
     }
     if (!PersistentProtocolStore.hasLocalRegistrationId) {
-        PersistentProtocolStore.saveLocalRegistrationId(KeyHelper.generateRegistrationId(true))
+        PersistentProtocolStore.saveLocalRegistrationId(
+            KeyHelper.generateRegistrationId(true)
+        )
 
         val preKeyPair: ECKeyPair = Curve.generateKeyPair()
         val signedPreKeyPair: ECKeyPair = Curve.generateKeyPair()
@@ -25,7 +27,8 @@ suspend fun handlePreKeys() {
         )
 
         val preKeyBundle = PreKeyBundle(
-            PersistentProtocolStore.localRegistrationId, SecureRandom().nextInt(Short.MAX_VALUE.toInt()),
+            PersistentProtocolStore.localRegistrationId,
+            SecureRandom().nextInt(Short.MAX_VALUE.toInt()),
             SecureRandom().nextInt(Short.MAX_VALUE.toInt()), preKeyPair.publicKey,
             SecureRandom().nextInt(Short.MAX_VALUE.toInt()), signedPreKeyPair.publicKey,
             signedPreKeySignature,

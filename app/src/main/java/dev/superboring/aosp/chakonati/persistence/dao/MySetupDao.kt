@@ -17,6 +17,9 @@ interface MySetupDao : SingleEntryDao<MySetup> {
             registrationId = -1,
         )
 
+    val isSetUp
+        get() = count() != 0
+
     @Query("select * from my_setup limit 1")
     override fun getValue(): MySetup
 

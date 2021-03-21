@@ -1,30 +1,36 @@
-package dev.superboring.aosp.chakonati.ui.theme
+package dev.superboring.aosp.chakonati.activities.ui.theme
 
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.darkColors
 import androidx.compose.material.lightColors
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.graphics.Color
 
 private val DarkColorPalette = darkColors(
-    primary = Gray900,
-    primaryVariant = Gray700,
-    secondary = Blue200
+    primary = Blue700,
+    primaryVariant = Blue600,
+    secondary = Gray900,
+
+    background = Gray900,
+    surface = Gray980,
+    onPrimary = Color.White,
+    onSecondary = Color.White,
+    onBackground = Color.White,
+    onSurface = Gray20,
 )
 
 private val LightColorPalette = lightColors(
     primary = Gray900,
     primaryVariant = Gray700,
-    secondary = Blue700
+    secondary = Blue700,
 
-    /* Other default colors to override
-    background = Color.White,
+    background = Gray50,
     surface = Color.White,
     onPrimary = Color.White,
-    onSecondary = Color.Black,
+    onSecondary = Color.White,
     onBackground = Color.Black,
-    onSurface = Color.Black,
-    */
+    onSurface = Gray980,
 )
 
 @Composable

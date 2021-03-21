@@ -1,4 +1,4 @@
-package dev.superboring.aosp.chakonati.ui.theme
+package dev.superboring.aosp.chakonati.activities.ui.theme
 
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Shapes

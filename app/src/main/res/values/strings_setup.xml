@@ -1,0 +1,18 @@
+<resources>
+    <string name="setup_welcome_title">Welcome to %s</string>
+    <string name="setup_welcome_app_desc">
+        %s is a decentralized end-to-end-encrypted chat app that
+        uses the Signal protocol for encryption.
+    </string>
+    <string name="setup_welcome_reg_info">
+        You don\'t to register anywhere to get started –
+        in the next step you will specify your relay server
+        to get started with receiving messages.
+    </string>
+    <string name="setup_welcome_setup_now">
+        Setup now
+    </string>
+    <string name="setup_welcome_skip_step">
+        Skip this step
+    </string>
+</resources>

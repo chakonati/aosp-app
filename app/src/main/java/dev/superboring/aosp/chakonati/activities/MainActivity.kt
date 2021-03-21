@@ -1,5 +1,6 @@
-package dev.superboring.aosp.chakonati
+package dev.superboring.aosp.chakonati.activities
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -9,11 +10,10 @@ import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.material.TopAppBar
 import androidx.room.Room
+import dev.superboring.aosp.chakonati.R
 import dev.superboring.aosp.chakonati.persistence.AppDatabase
 import dev.superboring.aosp.chakonati.persistence.db
-import dev.superboring.aosp.chakonati.service.Communicator
-import dev.superboring.aosp.chakonati.signal.handlePreKeys
-import dev.superboring.aosp.chakonati.ui.theme.DefaultTheme
+import dev.superboring.aosp.chakonati.activities.ui.theme.DefaultTheme
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -29,6 +29,23 @@ class MainActivity : ComponentActivity(), CoroutineScope {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        db = Room.databaseBuilder(
+            this,
+            AppDatabase::class.java,
+            "main"
+        ).build()
+
+        launch(Dispatchers.IO) {
+            if (db.mySetup().isSetUp) {
+                applyContent()
+            } else {
+                startActivity(Intent(this@MainActivity, SetupActivity::class.java))
+            }
+        }
+    }
+
+    private fun applyContent() {
         setContent {
             DefaultTheme {
                 // A surface container using the 'background' color from the theme
@@ -40,17 +57,6 @@ class MainActivity : ComponentActivity(), CoroutineScope {
                     }
                 }
             }
-        }
-
-        db = Room.databaseBuilder(
-            this,
-            AppDatabase::class.java,
-            "main"
-        ).build()
-
-        launch(Dispatchers.IO) {
-            ownRelayCommunicator = Communicator("192.168.2.110:4560")
-            handlePreKeys()
         }
     }
 }
