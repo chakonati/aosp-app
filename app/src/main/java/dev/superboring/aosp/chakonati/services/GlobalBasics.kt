@@ -1,6 +1,6 @@
 package dev.superboring.aosp.chakonati.services
 
-import dev.superboring.aosp.chakonati.protocol.requests.EchoRequest
+import dev.superboring.aosp.chakonati.protocol.requests.basic.EchoRequest
 import dev.superboring.aosp.chakonati.service.ownRelayCommunicator
 
 object GlobalBasics {

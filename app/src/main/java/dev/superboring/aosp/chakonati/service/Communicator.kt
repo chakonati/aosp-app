@@ -5,7 +5,7 @@ import dev.superboring.aosp.chakonati.protocol.RequestId
 import dev.superboring.aosp.chakonati.protocol.Response
 import dev.superboring.aosp.chakonati.protocol.ResponseHeader
 import dev.superboring.aosp.chakonati.protocol.exceptions.UntrackedResponsePacketException
-import dev.superboring.aosp.chakonati.protocol.requests.HelloRequest
+import dev.superboring.aosp.chakonati.protocol.requests.basic.HelloRequest
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.Deferred
 

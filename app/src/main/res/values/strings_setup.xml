@@ -48,6 +48,36 @@
         Connecting to relay server %s…
     </string>
     <string name="setup_relay_server__connection_failed">
-        Connection to %s failed: %s
+        Connection to %1$s failed: %2$s
+     </string>
+
+    <string name="setup_relay_server__password_desc_new">
+        You are using this relay server for the first time.
+        \nA password has been generated for you to use in the future.
+        \nMake sure you keep this password safe and secure as you
+        will need it in case you reinstall the app or delete its data.
+        \nIt\'s recommended to store it in a password manager
+        \n\nDo not share this password with anyone otherwise they will
+        be able to send messages and manage your relay server on your behalf!
     </string>
+    <string name="setup_relay_server__tap_on_pw_to_copy">
+        Long-press on the password to copy it to the clipboard.
+    </string>
+    <string name="setup_relay_server__keep_password_safe">
+        Store it in a secure place and keep it safe.
+    </string>
+
+    <string name="setup_relay_server__password_desc_pw_exists">
+        This relay server has already been set up and thus you
+        need to provide the password that was provided to you
+        during the initial setup.
+    </string>
+    <string name="setup_relay_server__password_placeholder">
+        Password (looks random)
+    </string>
+    <string name="setup_relay_server__no_password_todo">
+        If you don\'t know the password, you have to reset your
+        relay server to get provided a new password.
+    </string>
+
 </resources>

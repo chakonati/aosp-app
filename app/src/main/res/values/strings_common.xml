@@ -3,4 +3,5 @@
     <string name="common__previous">Previous</string>
     <string name="common__next">Next</string>
     <string name="common__back">Back</string>
+    <string name="common__password">Passwort</string>
 </resources>

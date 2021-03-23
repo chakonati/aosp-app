@@ -1,4 +1,4 @@
-package dev.superboring.aosp.chakonati.protocol.requests
+package dev.superboring.aosp.chakonati.protocol.requests.basic
 
 import dev.superboring.aosp.chakonati.protocol.Request
 import dev.superboring.aosp.chakonati.protocol.Response

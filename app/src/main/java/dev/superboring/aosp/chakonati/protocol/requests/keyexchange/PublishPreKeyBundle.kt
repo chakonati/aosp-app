@@ -1,4 +1,4 @@
-package dev.superboring.aosp.chakonati.protocol.requests
+package dev.superboring.aosp.chakonati.protocol.requests.keyexchange
 
 import dev.superboring.aosp.chakonati.protocol.ErrorResponse
 import dev.superboring.aosp.chakonati.protocol.Request
