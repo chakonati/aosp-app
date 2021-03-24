@@ -62,5 +62,5 @@ suspend fun ComponentActivity.finishSetup() {
     db.mySetup().get().apply { isSetUp = true }.save()
 
     showToast(R.string.setup_relay_server__setup_finished)
-    replaceActivity(MainActivity::class)
+    replaceActivity(ChatListActivity::class)
 }

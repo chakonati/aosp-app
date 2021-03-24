@@ -4,13 +4,12 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.Column
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Surface
-import androidx.compose.material.Text
-import androidx.compose.material.TopAppBar
+import androidx.compose.material.*
 import androidx.room.Room
 import dev.superboring.aosp.chakonati.R
 import dev.superboring.aosp.chakonati.activities.ui.theme.DefaultTheme
+import dev.superboring.aosp.chakonati.components.fragments.chatlist.ChatListView
+import dev.superboring.aosp.chakonati.components.shared.base.BareSurface
 import dev.superboring.aosp.chakonati.extensions.android.view.useTranslucentBars
 import dev.superboring.aosp.chakonati.extensions.kotlinx.coroutines.launchIO
 import dev.superboring.aosp.chakonati.persistence.AppDatabase
@@ -23,7 +22,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlin.coroutines.CoroutineContext
 
-class MainActivity : ComponentActivity(), CoroutineScope {
+class ChatListActivity : ComponentActivity(), CoroutineScope {
 
     private var job: Job = Job()
 
@@ -35,11 +34,7 @@ class MainActivity : ComponentActivity(), CoroutineScope {
 
         window.useTranslucentBars()
 
-        db = Room.databaseBuilder(
-            this,
-            AppDatabase::class.java,
-            "main"
-        ).build()
+        prepareDB()
 
         launchIO {
             if (db.mySetup().get().isSetUp) {
@@ -56,15 +51,26 @@ class MainActivity : ComponentActivity(), CoroutineScope {
     private fun applyContent() {
         setContent {
             DefaultTheme {
-                // A surface container using the 'background' color from the theme
-                Surface(color = MaterialTheme.colors.background) {
-                    Column {
-                        TopAppBar(
-                            title = { Text(getString(R.string.app_name)) }
-                        )
+                BareSurface(addPadding = false) {
+                    Scaffold(
+                        topBar = {
+                            TopAppBar(
+                                title = { Text(getString(R.string.app_name)) }
+                            )
+                        }
+                    ) {
+                        ChatListView()
                     }
                 }
             }
         }
+    }
+
+    private fun prepareDB() {
+        db = Room.databaseBuilder(
+            this,
+            AppDatabase::class.java,
+            "main"
+        ).build()
     }
 }

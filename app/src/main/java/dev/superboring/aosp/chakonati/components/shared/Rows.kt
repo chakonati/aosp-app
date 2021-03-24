@@ -6,41 +6,41 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 
 @Composable
-fun CenteredColumn(
+fun CenteredRow(
     modifier: Modifier = Modifier,
-    content: @Composable ColumnScope.() -> Unit
+    content: @Composable RowScope.() -> Unit
 ) {
-    Column(
+    Row(
         modifier = modifier
             .fillMaxSize()
             .wrapContentSize(Alignment.Center),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center,
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.Center,
         content = content
     )
 }
 
 
 @Composable
-fun HorizontallyCenteredColumn(
+fun VerticallyCenteredRow(
     modifier: Modifier = Modifier,
-    content: @Composable ColumnScope.() -> Unit
+    content: @Composable RowScope.() -> Unit
 ) {
-    Column(
+    Row(
         modifier = modifier
-            .fillMaxWidth()
-            .wrapContentWidth(Alignment.CenterHorizontally),
-        horizontalAlignment = Alignment.CenterHorizontally,
+            .fillMaxHeight()
+            .wrapContentHeight(Alignment.CenterVertically),
+        verticalAlignment = Alignment.CenterVertically,
         content = content
     )
 }
 
 @Composable
-fun FullWidthColumn(
+fun FullWidthRow(
     modifier: Modifier = Modifier,
-    content: @Composable ColumnScope.() -> Unit
+    content: @Composable RowScope.() -> Unit
 ) {
-    Column(
+    Row(
         modifier = modifier.fillMaxWidth(),
         content = content
     )
