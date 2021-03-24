@@ -40,4 +40,5 @@ suspend fun MySetupDao.saveRelayServer(relayServer: String) {
     }.save()
     prepareOwnRelayCommunicator()
 }
+
 suspend fun MySetup.save() = db.mySetup() save this

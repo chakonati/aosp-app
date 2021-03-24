@@ -9,7 +9,6 @@ import dev.superboring.aosp.chakonati.components.fragments.setup.WelcomeSetup
 import dev.superboring.aosp.chakonati.extensions.android.view.useTranslucentBars
 import dev.superboring.aosp.chakonati.extensions.kotlinx.coroutines.launchIO
 import dev.superboring.aosp.chakonati.x.activity.replaceActivity
-import kotlinx.coroutines.launch
 
 class WelcomeActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {

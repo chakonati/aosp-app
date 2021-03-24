@@ -3,7 +3,6 @@ package dev.superboring.aosp.chakonati.signal
 import dev.superboring.aosp.chakonati.persistence.dao.get
 import dev.superboring.aosp.chakonati.persistence.db
 import dev.superboring.aosp.chakonati.services.KeyExchange
-import org.whispersystems.libsignal.SignalProtocolAddress
 import org.whispersystems.libsignal.ecc.Curve
 import org.whispersystems.libsignal.ecc.ECKeyPair
 import org.whispersystems.libsignal.state.PreKeyBundle
@@ -38,7 +37,10 @@ suspend fun generateAndPublishPreKeys() {
         )
         KeyExchange.publishPreKeyBundle(preKeyBundle, db.mySetup().get().relayServerPassword)
 
-        PersistentProtocolStore.storePreKey(preKeyBundle.preKeyId, PreKeyRecord(preKeyBundle.preKeyId, preKeyPair))
+        PersistentProtocolStore.storePreKey(
+            preKeyBundle.preKeyId,
+            PreKeyRecord(preKeyBundle.preKeyId, preKeyPair)
+        )
         PersistentProtocolStore.storeSignedPreKey(
             preKeyBundle.signedPreKeyId,
             SignedPreKeyRecord(

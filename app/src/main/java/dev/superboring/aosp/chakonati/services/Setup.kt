@@ -2,7 +2,6 @@ package dev.superboring.aosp.chakonati.services
 
 import dev.superboring.aosp.chakonati.protocol.requests.setup.IsPasswordSetupRequest
 import dev.superboring.aosp.chakonati.protocol.requests.setup.IsPasswordValidRequest
-import dev.superboring.aosp.chakonati.protocol.requests.setup.IsPasswordValidResponse
 import dev.superboring.aosp.chakonati.protocol.requests.setup.SetPasswordRequest
 import dev.superboring.aosp.chakonati.service.ownRelayCommunicator
 

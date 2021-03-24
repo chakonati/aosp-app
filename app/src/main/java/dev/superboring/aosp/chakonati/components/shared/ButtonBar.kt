@@ -4,11 +4,9 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.material.Surface
 import androidx.compose.material.TextButton
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import dev.superboring.aosp.chakonati.activities.ui.theme.additionalColors
-import dev.superboring.aosp.chakonati.activities.ui.theme.colors
 
 @Composable
 fun ButtonBar(

@@ -1,10 +1,8 @@
 package dev.superboring.aosp.chakonati.activities
 
-import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.layout.Column
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
@@ -12,19 +10,17 @@ import androidx.compose.material.Text
 import androidx.compose.material.TopAppBar
 import androidx.room.Room
 import dev.superboring.aosp.chakonati.R
-import dev.superboring.aosp.chakonati.persistence.AppDatabase
-import dev.superboring.aosp.chakonati.persistence.db
 import dev.superboring.aosp.chakonati.activities.ui.theme.DefaultTheme
 import dev.superboring.aosp.chakonati.extensions.android.view.useTranslucentBars
 import dev.superboring.aosp.chakonati.extensions.kotlinx.coroutines.launchIO
+import dev.superboring.aosp.chakonati.persistence.AppDatabase
 import dev.superboring.aosp.chakonati.persistence.dao.get
+import dev.superboring.aosp.chakonati.persistence.db
 import dev.superboring.aosp.chakonati.service.prepareOwnRelayCommunicator
-import dev.superboring.aosp.chakonati.services.Setup
 import dev.superboring.aosp.chakonati.x.activity.replaceActivity
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.launch
 import kotlin.coroutines.CoroutineContext
 
 class MainActivity : ComponentActivity(), CoroutineScope {

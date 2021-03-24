@@ -19,8 +19,6 @@ import dev.superboring.aosp.chakonati.persistence.dao.save
 import dev.superboring.aosp.chakonati.persistence.db
 import dev.superboring.aosp.chakonati.x.activity.replaceActivity
 import dev.superboring.aosp.chakonati.x.toast.showToast
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 
 private object Routes {
     const val WELCOME = "welcome"

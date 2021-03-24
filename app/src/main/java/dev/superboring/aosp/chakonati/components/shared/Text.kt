@@ -16,7 +16,6 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.sp
-import dev.superboring.aosp.chakonati.R
 import dev.superboring.aosp.chakonati.activities.ui.theme.colors
 import dev.superboring.aosp.chakonati.compose.stringRes
 
