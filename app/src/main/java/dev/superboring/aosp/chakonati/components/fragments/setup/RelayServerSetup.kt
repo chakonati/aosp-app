@@ -1,32 +1,44 @@
 package dev.superboring.aosp.chakonati.components.fragments.setup
 
+import android.content.ClipData
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.material.MaterialTheme.typography
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import dev.superboring.aosp.chakonati.R
 import dev.superboring.aosp.chakonati.activities.ui.theme.additionalColors
-import dev.superboring.aosp.chakonati.activities.ui.theme.colors
-import dev.superboring.aosp.chakonati.components.shared.ButtonBar
-import dev.superboring.aosp.chakonati.components.shared.ResText
+import dev.superboring.aosp.chakonati.components.shared.*
 import dev.superboring.aosp.chakonati.components.shared.base.BareSurface
+import dev.superboring.aosp.chakonati.compose.currentContext
 import dev.superboring.aosp.chakonati.compose.stringRes
+import dev.superboring.aosp.chakonati.persistence.dao.get
+import dev.superboring.aosp.chakonati.persistence.dao.save
+import dev.superboring.aosp.chakonati.persistence.dao.saveRelayServer
+import dev.superboring.aosp.chakonati.persistence.db
 import dev.superboring.aosp.chakonati.service.Communicator
 import dev.superboring.aosp.chakonati.service.ownRelayCommunicator
+import dev.superboring.aosp.chakonati.service.prepareOwnRelayCommunicator
 import dev.superboring.aosp.chakonati.services.Setup
+import dev.superboring.aosp.chakonati.signal.generateAndPublishPreKeys
+import dev.superboring.aosp.chakonati.x.clipboard.clipboard
+import dev.superboring.aosp.chakonati.x.handler.postMain
+import dev.superboring.aosp.chakonati.x.toast.showToast
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 @Composable
 fun RelayServerSetup(
     onPrevClick: () -> Unit, onNextClick: () -> Unit,
-    onNoWayBack: () -> Unit,
 ) {
     val coroutineScope = rememberCoroutineScope()
     var isVerifying by remember { mutableStateOf(false) }
@@ -34,13 +46,84 @@ fun RelayServerSetup(
     var failedRelayServer by remember { mutableStateOf("") }
     var verificationFailed by remember { mutableStateOf(false) }
     var verificationSucceeded by remember { mutableStateOf(false) }
-    val verificationFinished = verificationFailed || verificationSucceeded
     var failureReason by remember { mutableStateOf(null as String?) }
-    val isValid = relayServer.isNotEmpty()
+    val isRelayServerValid = relayServer.isNotEmpty()
 
-    var hasCheckedPassword by remember { mutableStateOf(false) }
+    var hasCheckedPasswordSet by remember { mutableStateOf(false) }
     var isPasswordAlreadySet by remember { mutableStateOf(false) }
     var setupPassword by remember { mutableStateOf("") }
+
+    var isSubmittingPassword by remember { mutableStateOf(false) }
+    var hasCheckedSubmittedPassword by remember { mutableStateOf(false) }
+    var isEnteredPasswordValid by remember { mutableStateOf(false) }
+
+    var isSubmittingPreKeys by remember { mutableStateOf(false) }
+
+    val relayServerInputPage = verificationFailed || !verificationSucceeded && !isVerifying
+    val verificationPage = isVerifying
+    val setupPasswordPage = hasCheckedPasswordSet && !isSubmittingPreKeys
+    val submittingPreKeysPage = isEnteredPasswordValid && isSubmittingPreKeys
+    val isSubmittingAnything = isVerifying || isSubmittingPassword || isSubmittingPreKeys
+    val nextButtonDisabled = !isRelayServerValid || isSubmittingAnything
+
+    val nextButtonClick: () -> Unit = {
+        verificationFailed = false
+        failureReason = null
+        failedRelayServer = ""
+        when {
+            relayServerInputPage -> {
+                isVerifying = true
+                coroutineScope.launch(Dispatchers.IO) {
+                    ownRelayCommunicator = Communicator(relayServer)
+                    val result = verifyRelayServer { password, isSet ->
+                        setupPassword = password
+                        isPasswordAlreadySet = isSet
+                        hasCheckedPasswordSet = true
+                    }
+                    failureReason = result.second
+                    failedRelayServer = relayServer
+                    verificationFailed = !result.first
+                    verificationSucceeded = result.first
+                    isVerifying = false
+                }
+            }
+            setupPasswordPage && isPasswordAlreadySet -> {
+                isSubmittingPassword = true
+                coroutineScope.launch(Dispatchers.IO) {
+                    isEnteredPasswordValid = Setup.isPasswordValid(setupPassword)
+                    hasCheckedSubmittedPassword = true
+                    isSubmittingPassword = false
+                    if (isEnteredPasswordValid) {
+                        db.mySetup().run {
+                            saveRelayServer(relayServer)
+                            get().apply {
+                                relayServerPassword = setupPassword
+                            }.save()
+                        }
+
+                        // Now submit the pre-keys
+                        isSubmittingPreKeys = true
+                        generateAndPublishPreKeys()
+
+                        postMain(onNextClick)
+                    }
+
+                }
+            }
+
+            else -> onNextClick()
+        }
+    }
+    val buttonBar = @Composable {
+        ButtonBar(
+            startButtonText = { ResText(R.string.common__back) },
+            endButtonText = { ResText(R.string.common__next) },
+            onStartButtonClick = onPrevClick,
+            onEndButtonClick = nextButtonClick,
+            hideStartButton = true,
+            endButtonDisabled = nextButtonDisabled,
+        )
+    }
 
     Surface(color = additionalColors().actionBarWindowBackground) {
         BareSurface(addPadding = false) {
@@ -50,43 +133,11 @@ fun RelayServerSetup(
                         title = { ResText(R.string.setup_relay_server__title) }
                     )
                 },
-                bottomBar = {
-                    ButtonBar(
-                        startButtonText = { ResText(R.string.common__back) },
-                        endButtonText = { ResText(R.string.common__next) },
-                        onStartButtonClick = onPrevClick,
-                        onEndButtonClick = {
-                            verificationFailed = false
-                            failureReason = null
-                            failedRelayServer = ""
-                            if (!isVerifying) {
-                                onNoWayBack()
-                                isVerifying = true
-                                coroutineScope.launch(Dispatchers.IO) {
-                                    ownRelayCommunicator = Communicator(relayServer)
-                                    val result = verifyRelayServer { password, isSet ->
-                                        setupPassword = password
-                                        isPasswordAlreadySet = isSet
-                                        hasCheckedPassword = true
-                                    }
-                                    failureReason = result.second
-                                    failedRelayServer = relayServer
-                                    verificationFailed = !result.first
-                                    verificationSucceeded = result.first
-                                    isVerifying = false
-                                }
-                            } else {
-                                onNextClick()
-                            }
-                        },
-                        startButtonDisabled = isVerifying || verificationFinished,
-                        endButtonDisabled = !isValid || isVerifying,
-                    )
-                }
+                bottomBar = buttonBar
             ) {
                 BareSurface(fill = true) {
                     when {
-                        verificationFailed || !verificationSucceeded && !isVerifying ->
+                        relayServerInputPage ->
                             EditForm(
                                 relayServer = relayServer,
                                 onRelayServerChange = { relayServer = it },
@@ -94,12 +145,19 @@ fun RelayServerSetup(
                                 failureReason = failureReason,
                                 failedRelayServer = failedRelayServer,
                             )
-                        isVerifying ->
+                        verificationPage ->
                             Verification(
                                 relayServer = relayServer
                             )
-                        hasCheckedPassword ->
-                            PasswordSetup(setupPassword, isPasswordAlreadySet)
+                        setupPasswordPage ->
+                            PasswordSetup(
+                                setupPassword, isPasswordAlreadySet, isSubmittingPassword,
+                                hasCheckedSubmittedPassword, isEnteredPasswordValid,
+                            ) {
+                                setupPassword = it
+                            }
+                        submittingPreKeysPage ->
+                            SubmittingPreKeys()
                     }
                 }
             }
@@ -133,14 +191,12 @@ private fun EditForm(
             )
             if (verificationFailed) {
                 Spacer(Modifier.height(1.dp))
-                Text(
-                    text = String.format(
+                TextFieldErrorText(
+                    String.format(
                         R.string.setup_relay_server__connection_failed.stringRes(),
                         failedRelayServer,
                         failureReason!!
                     ),
-                    fontSize = 12.sp,
-                    color = colors().error,
                 )
             }
         }
@@ -179,10 +235,18 @@ private suspend fun verifyRelayServer(
 }
 
 @Composable
-private fun PasswordSetup(password: String, isPasswordAlreadySet: Boolean) {
-    Column {
+private fun PasswordSetup(
+    password: String, isPasswordAlreadySet: Boolean,
+    isCheckingPassword: Boolean, hasCheckedPassword: Boolean, isPasswordValid: Boolean,
+    onExistingPasswordInput: (password: String) -> Unit,
+) {
+    Column(modifier = Modifier.fillMaxSize()) {
         when {
-            isPasswordAlreadySet -> EnterSetupPassword()
+            isCheckingPassword -> CheckingPassword()
+            isPasswordAlreadySet -> EnterSetupPassword(
+                hasCheckedPassword, isPasswordValid,
+                password, onExistingPasswordInput
+            )
             else -> NewSetupPassword(password)
         }
     }
@@ -192,12 +256,30 @@ private fun PasswordSetup(password: String, isPasswordAlreadySet: Boolean) {
 private fun NewSetupPassword(password: String) {
     ResText(R.string.setup_relay_server__password_desc_new)
     Spacer(Modifier.height(16.dp))
-    Text(
-        fontFamily = FontFamily.Monospace,
-        fontSize = 18.sp,
-        text = password
-    )
-    Spacer(Modifier.height(1.dp))
+    HorizontallyCenteredBox {
+        currentContext {
+            Text(
+                fontFamily = FontFamily.Monospace,
+                fontSize = 18.sp,
+                text = password,
+                textAlign = TextAlign.Center,
+                modifier = Modifier.pointerInput(Unit) {
+                    detectTapGestures(
+                        onLongPress = {
+                            clipboard.setPrimaryClip(
+                                ClipData.newPlainText(
+                                    "setup password", password
+                                )
+                            )
+                            showToast(R.string.setup_relay_server__setup_pw_copied_to_clipboard)
+                        }
+                    )
+
+                }
+            )
+        }
+    }
+    Spacer(Modifier.height(16.dp))
     ResText(
         stringRes = R.string.setup_relay_server__tap_on_pw_to_copy,
         style = typography.caption,
@@ -207,14 +289,54 @@ private fun NewSetupPassword(password: String) {
 }
 
 @Composable
-private fun EnterSetupPassword() {
+private fun EnterSetupPassword(
+    hasCheckedPassword: Boolean,
+    isPasswordValid: Boolean,
+    setupPassword: String,
+    onChange: (password: String) -> Unit
+) {
+    val showError = hasCheckedPassword && !isPasswordValid
+
     ResText(R.string.setup_relay_server__password_desc_pw_exists)
     Spacer(Modifier.height(16.dp))
     TextField(
         modifier = Modifier.fillMaxWidth(),
-        value = "",
+        value = setupPassword,
+        keyboardOptions = KeyboardOptions(
+            keyboardType = KeyboardType.Password
+        ),
         label = { ResText(R.string.common__password) },
         placeholder = { ResText(R.string.setup_relay_server__password_placeholder) },
-        onValueChange = { },
+        onValueChange = onChange,
+        isError = showError,
     )
+    if (showError) {
+        TextFieldErrorText(text = R.string.setup_relay_server__invalid_password.stringRes())
+    }
+}
+
+@Composable
+private fun CheckingPassword() {
+    HorizontallyCenteredColumn {
+        Spacer(Modifier.height(16.dp))
+        CircularProgressIndicator()
+        Spacer(Modifier.height(8.dp))
+        ResText(
+            textAlign = TextAlign.Center,
+            stringRes = R.string.setup_relay_server__checking_password,
+        )
+    }
+}
+
+@Composable
+private fun SubmittingPreKeys() {
+    HorizontallyCenteredColumn {
+        Spacer(Modifier.height(16.dp))
+        CircularProgressIndicator()
+        Spacer(Modifier.height(8.dp))
+        ResText(
+            textAlign = TextAlign.Center,
+            stringRes = R.string.setup_relay_server__submitting_pre_keys,
+        )
+    }
 }

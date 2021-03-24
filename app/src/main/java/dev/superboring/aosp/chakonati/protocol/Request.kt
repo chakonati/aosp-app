@@ -38,14 +38,21 @@ abstract class Request<R : Response>(
         }
     }
 
-    override fun pack(packer: MessagePacker) {
-
-    }
+    abstract override fun pack(packer: MessagePacker)
 
     override fun unpack(unpacker: MessageUnpacker) {
 
     }
 
     abstract fun newResponse(): R
+
+}
+
+abstract class EmptyRequest<R : Response>(action: String) : Request<R>(action) {
+    override fun pack(packer: MessagePacker) {
+
+    }
+
+    abstract override fun newResponse(): R
 
 }

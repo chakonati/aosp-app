@@ -47,9 +47,12 @@ abstract class Response(
 
     }
 
-    override fun unpack(unpacker: MessageUnpacker) {
-
-    }
+    abstract override fun unpack(unpacker: MessageUnpacker)
 
 }
 
+open class EmptyResponse : Response() {
+    override fun unpack(unpacker: MessageUnpacker) {
+
+    }
+}

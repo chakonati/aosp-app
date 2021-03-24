@@ -1,6 +1,8 @@
 package dev.superboring.aosp.chakonati.services
 
 import dev.superboring.aosp.chakonati.protocol.requests.setup.IsPasswordSetupRequest
+import dev.superboring.aosp.chakonati.protocol.requests.setup.IsPasswordValidRequest
+import dev.superboring.aosp.chakonati.protocol.requests.setup.IsPasswordValidResponse
 import dev.superboring.aosp.chakonati.protocol.requests.setup.SetPasswordRequest
 import dev.superboring.aosp.chakonati.service.ownRelayCommunicator
 
@@ -18,6 +20,10 @@ object Setup {
 
     suspend fun isPasswordSet(): Boolean {
         return ownRelayCommunicator.send(IsPasswordSetupRequest()).isSetup
+    }
+
+    suspend fun isPasswordValid(password: String): Boolean {
+        return ownRelayCommunicator.send(IsPasswordValidRequest(password)).isValid
     }
 
 }

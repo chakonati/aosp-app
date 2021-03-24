@@ -1,5 +1,8 @@
 package dev.superboring.aosp.chakonati.persistence.dao
 
+import androidx.room.withTransaction
+import dev.superboring.aosp.chakonati.persistence.db
+
 interface DaoBase
 
 interface Dao<T> : DaoBase
@@ -14,10 +17,12 @@ interface SingleEntryDao<T> : Dao<T> {
     fun getValue(): T
 }
 
-infix fun <T> SingleEntryDao<T>.save(element: T) {
-    when (count()) {
-        0 -> insert(element)
-        else -> update(element)
+suspend infix fun <T> SingleEntryDao<T>.save(element: T) {
+    db.withTransaction {
+        when (count()) {
+            0 -> insert(element)
+            else -> update(element)
+        }
     }
 }
 

@@ -32,13 +32,15 @@ object PersistentProtocolStore : SignalProtocolStore {
         get() = db.mySetup().get().registrationId != -1
 
     val hasIdentityKey
-        get() = db.mySetup().count() > 0
+        get() = db.mySetup().get().identityPrivateKey.isNotEmpty()
 
     fun saveIdentityKeyPair(idKeyPair: IdentityKeyPair) {
-        db.mySetup().get().apply {
-            identityPrivateKey = idKeyPair.privateKey.serialize()
-            identityPublicKey = idKeyPair.publicKey.serialize()
-        }.save()
+        runBlocking {
+            db.mySetup().get().apply {
+                identityPrivateKey = idKeyPair.privateKey.serialize()
+                identityPublicKey = idKeyPair.publicKey.serialize()
+            }.save()
+        }
     }
 
     override fun getIdentityKeyPair() = db.mySetup().get().run {
@@ -48,8 +50,9 @@ object PersistentProtocolStore : SignalProtocolStore {
         )
     }
 
-    infix fun saveLocalRegistrationId(id: Int) =
+    infix fun saveLocalRegistrationId(id: Int) = runBlocking {
         db.mySetup().get().apply { registrationId = id }.save()
+    }
 
     override fun getLocalRegistrationId() = db.mySetup().get().registrationId
 

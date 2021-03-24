@@ -15,6 +15,24 @@ fun CenteredColumn(
         modifier = modifier
             .fillMaxSize()
             .wrapContentSize(Alignment.Center),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center,
         content = content
     )
 }
+
+
+@Composable
+fun HorizontallyCenteredColumn(
+    modifier: Modifier = Modifier,
+    content: @Composable ColumnScope.() -> Unit
+) {
+    Column(
+        modifier = modifier
+            .fillMaxWidth()
+            .wrapContentWidth(Alignment.CenterHorizontally),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        content = content
+    )
+}
+

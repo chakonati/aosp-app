@@ -18,6 +18,7 @@ fun ButtonBar(
     onEndButtonClick: () -> Unit,
     startButtonDisabled: Boolean = false,
     endButtonDisabled: Boolean = false,
+    hideStartButton: Boolean = false,
 ) {
     Surface(color = additionalColors().intermediaryBackground) {
         Box(
@@ -29,12 +30,16 @@ fun ButtonBar(
                     .padding(4.dp),
                 horizontalArrangement = Arrangement.SpaceBetween,
             ) {
-                TextButton(
-                    onClick = onStartButtonClick,
-                    modifier = Modifier.height(40.dp),
-                    enabled = !startButtonDisabled,
-                ) {
-                    startButtonText()
+                if (hideStartButton) {
+                    Box {}
+                } else {
+                    TextButton(
+                        onClick = onStartButtonClick,
+                        modifier = Modifier.height(40.dp),
+                        enabled = !startButtonDisabled,
+                    ) {
+                        startButtonText()
+                    }
                 }
                 TextButton(
                     onClick = onEndButtonClick,

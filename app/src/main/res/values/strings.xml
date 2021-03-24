@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">Chakonati</string>
     <string name="title_activity_setup">Setup</string>
+    <string name="title_activity_welcome">WelcomeActivity</string>
 </resources>

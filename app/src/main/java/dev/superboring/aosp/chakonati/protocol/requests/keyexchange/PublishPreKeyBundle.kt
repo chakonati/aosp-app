@@ -6,12 +6,13 @@ import dev.superboring.aosp.chakonati.protocol.packByteArray
 import org.msgpack.core.MessagePacker
 import org.whispersystems.libsignal.state.PreKeyBundle
 
-class PreKeyBundlePublishRequest(var preKeyBundle: PreKeyBundle) :
+class PreKeyBundlePublishRequest(
+    var preKeyBundle: PreKeyBundle,
+    var password: String,
+) :
     Request<PreKeyBundlePublishResponse>("KeyExchange.publishPreKeyBundle", 8) {
 
-    override fun newResponse(): PreKeyBundlePublishResponse {
-        return PreKeyBundlePublishResponse()
-    }
+    override fun newResponse() = PreKeyBundlePublishResponse()
 
     override fun pack(packer: MessagePacker): Unit = packer.run {
         preKeyBundle.run {
@@ -23,6 +24,7 @@ class PreKeyBundlePublishRequest(var preKeyBundle: PreKeyBundle) :
             packByteArray(signedPreKey.publicKeyBytes)
             packByteArray(signedPreKeySignature)
             packByteArray(identityKey.serialize())
+            packString(password)
         }
     }
 

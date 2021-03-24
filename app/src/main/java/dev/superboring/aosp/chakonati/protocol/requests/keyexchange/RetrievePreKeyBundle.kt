@@ -7,10 +7,8 @@ import org.whispersystems.libsignal.ecc.ECPublicKey
 import org.whispersystems.libsignal.state.PreKeyBundle
 
 class RetrievePreKeyBundleRequest :
-    Request<RetrievePreKeyBundleResponse>("KeyExchange.preKeyBundle") {
-    override fun newResponse(): RetrievePreKeyBundleResponse {
-        return RetrievePreKeyBundleResponse()
-    }
+    EmptyRequest<RetrievePreKeyBundleResponse>("KeyExchange.preKeyBundle") {
+    override fun newResponse() = RetrievePreKeyBundleResponse()
 }
 
 class RetrievePreKeyBundleResponse : Response(9) {

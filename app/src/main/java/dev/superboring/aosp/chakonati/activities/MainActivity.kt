@@ -18,6 +18,8 @@ import dev.superboring.aosp.chakonati.activities.ui.theme.DefaultTheme
 import dev.superboring.aosp.chakonati.extensions.android.view.useTranslucentBars
 import dev.superboring.aosp.chakonati.persistence.dao.get
 import dev.superboring.aosp.chakonati.service.prepareOwnRelayCommunicator
+import dev.superboring.aosp.chakonati.services.Setup
+import dev.superboring.aosp.chakonati.x.activity.replaceActivity
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -45,14 +47,11 @@ class MainActivity : ComponentActivity(), CoroutineScope {
         launch(Dispatchers.IO) {
             if (db.mySetup().get().isSetUp) {
                 applyContent()
-                prepareOwnRelayCommunicator()
+                if (db.mySetup().get().relayServer.isNotEmpty()) {
+                    prepareOwnRelayCommunicator()
+                }
             } else {
-                startActivity(
-                    Intent(this@MainActivity, SetupActivity::class.java).apply {
-                        flags = Intent.FLAG_ACTIVITY_NEW_TASK + Intent.FLAG_ACTIVITY_TASK_ON_HOME
-                    }
-                )
-                finish()
+                replaceActivity(WelcomeActivity::class)
             }
         }
     }

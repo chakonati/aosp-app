@@ -16,9 +16,9 @@ class PreKeyBundleRetrieveFailed(error: String) :
 
 object KeyExchange {
 
-    suspend fun publishPreKeyBundle(bundle: PreKeyBundle) {
-        ownRelayCommunicator.send(PreKeyBundlePublishRequest(bundle)).error?.let { error ->
-            throw PreKeyBundlePublishFailed(error)
+    suspend fun publishPreKeyBundle(bundle: PreKeyBundle, password: String) {
+        ownRelayCommunicator.send(PreKeyBundlePublishRequest(bundle, password)).error?.let {
+            throw PreKeyBundlePublishFailed(it)
         }
     }
 

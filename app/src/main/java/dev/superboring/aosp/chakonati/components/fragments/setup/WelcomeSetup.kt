@@ -21,7 +21,10 @@ import dev.superboring.aosp.chakonati.components.shared.base.StyledSurface
 import dev.superboring.aosp.chakonati.compose.stringRes
 
 @Composable
-fun WelcomeSetup(onNext: () -> Unit) {
+fun WelcomeSetup(
+    onNext: () -> Unit,
+    finishSetup: () -> Unit,
+) {
     var shouldShowConfirmDialog by remember { mutableStateOf(false) }
 
     StyledSurface {
@@ -42,7 +45,7 @@ fun WelcomeSetup(onNext: () -> Unit) {
         if (shouldShowConfirmDialog) {
             SkipStepConfirmDialog(
                 onDismiss = { shouldShowConfirmDialog = false },
-                onConfirm = onNext
+                onConfirm = finishSetup
             )
         }
     }

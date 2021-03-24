@@ -21,9 +21,10 @@
         Limited functionality
     </string>
     <string name="setup_welcome__skip_step_dialog__text">
-        You need a relay server to receive messages.
+        You need a relay server to be contacted directly.
         \nIf you skip this step, you will only be able to
-        send messages, but not receive them.
+        send messages anonymously and sessions will always need
+        to be initiated by you.
         \n\nAre you sure you want to skip setting up your relay server?
         \n\nYou can configure your relay server later in the settings.
     </string>
@@ -78,6 +79,23 @@
     <string name="setup_relay_server__no_password_todo">
         If you don\'t know the password, you have to reset your
         relay server to get provided a new password.
+    </string>
+    <string name="setup_relay_server__setup_pw_copied_to_clipboard">
+        Setup password copied to clipboard
+    </string>
+    <string name="setup_relay_server__checking_password">
+        Checking password…
+    </string>
+    <string name="setup_relay_server__invalid_password">
+        The password you provided was not accepted by the server.
+        \nMake sure the password is correct or check server logs for
+        potential issues.
+    </string>
+    <string name="setup_relay_server__submitting_pre_keys">
+        Publishing pre-key bundle…
+    </string>
+    <string name="setup_relay_server__setup_finished">
+        Setup finished, start chatting right away!
     </string>
 
 </resources>

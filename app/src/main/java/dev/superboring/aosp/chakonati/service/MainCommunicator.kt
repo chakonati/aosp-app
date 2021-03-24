@@ -9,12 +9,13 @@ lateinit var ownRelayCommunicator: Communicator
 
 var isOwnRelayServerUsable = false
 
-fun prepareOwnRelayCommunicator() {
+suspend fun prepareOwnRelayCommunicator() {
     val newCommunicator = Communicator(db.mySetup().get().relayServer)
     if (::ownRelayCommunicator.isInitialized) {
         ownRelayCommunicator.disconnect()
     }
     ownRelayCommunicator = newCommunicator
+    ownRelayCommunicator.doHandshake()
 }
 
 val foreignRelayCommunicators = LinkedHashMap<ServerAddress, Communicator>()

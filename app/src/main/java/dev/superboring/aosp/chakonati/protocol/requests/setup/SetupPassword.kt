@@ -1,16 +1,12 @@
 package dev.superboring.aosp.chakonati.protocol.requests.setup
 
-import dev.superboring.aosp.chakonati.protocol.Error
-import dev.superboring.aosp.chakonati.protocol.Request
-import dev.superboring.aosp.chakonati.protocol.Response
-import dev.superboring.aosp.chakonati.protocol.unpackError
+import dev.superboring.aosp.chakonati.protocol.*
+import org.msgpack.core.MessagePacker
 import org.msgpack.core.MessageUnpacker
 
 class IsPasswordSetupRequest :
-    Request<IsPasswordSetupResponse>("Setup.isPasswordSetup") {
-    override fun newResponse(): IsPasswordSetupResponse {
-        return IsPasswordSetupResponse()
-    }
+    EmptyRequest<IsPasswordSetupResponse>("Setup.isPasswordSetup") {
+    override fun newResponse() = IsPasswordSetupResponse()
 }
 
 class IsPasswordSetupResponse(var isSetup: Boolean = false) : Response(1) {
@@ -20,10 +16,8 @@ class IsPasswordSetupResponse(var isSetup: Boolean = false) : Response(1) {
 }
 
 class SetPasswordRequest :
-    Request<SetPasswordResponse>("Setup.setPassword") {
-    override fun newResponse(): SetPasswordResponse {
-        return SetPasswordResponse()
-    }
+    EmptyRequest<SetPasswordResponse>("Setup.setPassword") {
+    override fun newResponse() = SetPasswordResponse()
 }
 
 class SetPasswordResponse(
@@ -34,4 +28,20 @@ class SetPasswordResponse(
         password = unpackString()
         error = unpackError()
     }
+}
+
+class IsPasswordValidRequest(private val password: String) :
+    Request<IsPasswordValidResponse>("Setup.isPasswordValid", 1) {
+    override fun pack(packer: MessagePacker): Unit = packer.run {
+        packString(password)
+    }
+
+    override fun newResponse() = IsPasswordValidResponse()
+}
+
+class IsPasswordValidResponse(var isValid: Boolean = false) : Response(1) {
+    override fun unpack(unpacker: MessageUnpacker) = unpacker.run {
+        isValid = unpackBoolean()
+    }
+
 }

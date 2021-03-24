@@ -1,5 +1,7 @@
 package dev.superboring.aosp.chakonati.signal
 
+import dev.superboring.aosp.chakonati.persistence.dao.get
+import dev.superboring.aosp.chakonati.persistence.db
 import dev.superboring.aosp.chakonati.services.KeyExchange
 import org.whispersystems.libsignal.SignalProtocolAddress
 import org.whispersystems.libsignal.ecc.Curve
@@ -10,7 +12,7 @@ import org.whispersystems.libsignal.state.SignedPreKeyRecord
 import org.whispersystems.libsignal.util.KeyHelper
 import java.security.SecureRandom
 
-suspend fun handlePreKeys() {
+suspend fun generateAndPublishPreKeys() {
     if (!PersistentProtocolStore.hasIdentityKey) {
         PersistentProtocolStore.saveIdentityKeyPair(generateIdentityKeyPair())
     }
@@ -34,7 +36,7 @@ suspend fun handlePreKeys() {
             signedPreKeySignature,
             PersistentProtocolStore.identityKeyPair.publicKey
         )
-        KeyExchange.publishPreKeyBundle(preKeyBundle)
+        KeyExchange.publishPreKeyBundle(preKeyBundle, db.mySetup().get().relayServerPassword)
 
         PersistentProtocolStore.storePreKey(preKeyBundle.preKeyId, PreKeyRecord(preKeyBundle.preKeyId, preKeyPair))
         PersistentProtocolStore.storeSignedPreKey(
@@ -45,8 +47,4 @@ suspend fun handlePreKeys() {
             )
         )
     }
-}
-
-suspend fun prepare() {
-    handlePreKeys()
 }

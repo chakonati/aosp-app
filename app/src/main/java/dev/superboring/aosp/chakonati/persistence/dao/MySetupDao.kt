@@ -17,6 +17,7 @@ interface MySetupDao : SingleEntryDao<MySetup> {
             identityPublicKey = byteArrayOf(),
             registrationId = -1,
             relayServer = "",
+            relayServerPassword = "",
             isSetUp = false,
         )
 
@@ -33,10 +34,10 @@ interface MySetupDao : SingleEntryDao<MySetup> {
     override infix fun update(element: MySetup)
 }
 
-fun MySetupDao.saveRelayServer(relayServer: String) {
+suspend fun MySetupDao.saveRelayServer(relayServer: String) {
     db.mySetup().get().apply {
         this.relayServer = relayServer
     }.save()
     prepareOwnRelayCommunicator()
 }
-fun MySetup.save() = db.mySetup() save this
+suspend fun MySetup.save() = db.mySetup() save this
