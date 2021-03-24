@@ -21,6 +21,7 @@ import dev.superboring.aosp.chakonati.components.shared.*
 import dev.superboring.aosp.chakonati.components.shared.base.BareSurface
 import dev.superboring.aosp.chakonati.compose.currentContext
 import dev.superboring.aosp.chakonati.compose.stringRes
+import dev.superboring.aosp.chakonati.extensions.kotlinx.coroutines.launchIO
 import dev.superboring.aosp.chakonati.persistence.dao.get
 import dev.superboring.aosp.chakonati.persistence.dao.save
 import dev.superboring.aosp.chakonati.persistence.dao.saveRelayServer
@@ -73,7 +74,7 @@ fun RelayServerSetup(
         when {
             relayServerInputPage -> {
                 isVerifying = true
-                coroutineScope.launch(Dispatchers.IO) {
+                coroutineScope.launchIO {
                     ownRelayCommunicator = Communicator(relayServer)
                     val result = verifyRelayServer { password, isSet ->
                         setupPassword = password
@@ -89,7 +90,7 @@ fun RelayServerSetup(
             }
             setupPasswordPage && isPasswordAlreadySet -> {
                 isSubmittingPassword = true
-                coroutineScope.launch(Dispatchers.IO) {
+                coroutineScope.launchIO {
                     isEnteredPasswordValid = Setup.isPasswordValid(setupPassword)
                     hasCheckedSubmittedPassword = true
                     isSubmittingPassword = false

@@ -16,6 +16,7 @@ import dev.superboring.aosp.chakonati.persistence.AppDatabase
 import dev.superboring.aosp.chakonati.persistence.db
 import dev.superboring.aosp.chakonati.activities.ui.theme.DefaultTheme
 import dev.superboring.aosp.chakonati.extensions.android.view.useTranslucentBars
+import dev.superboring.aosp.chakonati.extensions.kotlinx.coroutines.launchIO
 import dev.superboring.aosp.chakonati.persistence.dao.get
 import dev.superboring.aosp.chakonati.service.prepareOwnRelayCommunicator
 import dev.superboring.aosp.chakonati.services.Setup
@@ -44,7 +45,7 @@ class MainActivity : ComponentActivity(), CoroutineScope {
             "main"
         ).build()
 
-        launch(Dispatchers.IO) {
+        launchIO {
             if (db.mySetup().get().isSetUp) {
                 applyContent()
                 if (db.mySetup().get().relayServer.isNotEmpty()) {
