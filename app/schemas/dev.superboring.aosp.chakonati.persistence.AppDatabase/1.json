@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "a8a1d05d569ab17fee3e164de4cd1da4",
+    "identityHash": "4043a5cbe48acb91d833f1bb36f76399",
     "entities": [
       {
         "tableName": "my_setup",
@@ -232,12 +232,53 @@
           }
         ],
         "foreignKeys": []
+      },
+      {
+        "tableName": "chats",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `remote_address_id` INTEGER NOT NULL, `display_name` TEXT NOT NULL)",
+        "fields": [
+          {
+            "fieldPath": "Id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "remoteAddressId",
+            "columnName": "remote_address_id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "displayName",
+            "columnName": "display_name",
+            "affinity": "TEXT",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "id"
+          ],
+          "autoGenerate": true
+        },
+        "indices": [
+          {
+            "name": "index_chats_remote_address_id",
+            "unique": false,
+            "columnNames": [
+              "remote_address_id"
+            ],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_chats_remote_address_id` ON `${TABLE_NAME}` (`remote_address_id`)"
+          }
+        ],
+        "foreignKeys": []
       }
     ],
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'a8a1d05d569ab17fee3e164de4cd1da4')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '4043a5cbe48acb91d833f1bb36f76399')"
     ]
   }
 }

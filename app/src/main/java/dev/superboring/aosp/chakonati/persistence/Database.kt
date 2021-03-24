@@ -13,6 +13,7 @@ import dev.superboring.aosp.chakonati.persistence.entities.*
         RemoteIdentityKey::class,
         RemoteAddress::class,
         SignalSession::class,
+        Chat::class,
     ], version = 1
 )
 abstract class AppDatabase : RoomDatabase() {
@@ -22,6 +23,7 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun remoteIdentityKeys(): RemoteIdentityKeyDao
     abstract fun remoteAddresses(): RemoteAddressDao
     abstract fun signalSessions(): SignalSessionDao
+    abstract fun chats(): ChatDao
 }
 
 lateinit var db: AppDatabase
