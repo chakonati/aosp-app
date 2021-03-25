@@ -29,7 +29,7 @@ import dev.superboring.aosp.chakonati.persistence.db
 import dev.superboring.aosp.chakonati.service.Communicator
 import dev.superboring.aosp.chakonati.service.ownRelayCommunicator
 import dev.superboring.aosp.chakonati.services.Setup
-import dev.superboring.aosp.chakonati.signal.generateAndPublishPreKeys
+import dev.superboring.aosp.chakonati.signal.PreKeyBundle
 import dev.superboring.aosp.chakonati.x.clipboard.clipboard
 import dev.superboring.aosp.chakonati.x.handler.postMain
 import dev.superboring.aosp.chakonati.x.toast.showToast
@@ -101,7 +101,7 @@ fun RelayServerSetup(
 
                         // Now submit the pre-keys
                         isSubmittingPreKeys = true
-                        generateAndPublishPreKeys()
+                        PreKeyBundle.generateAndPublishPreKeys()
 
                         postMain(onNextClick)
                     }

@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "4043a5cbe48acb91d833f1bb36f76399",
+    "identityHash": "852f09a9819d1dd01171568e973180af",
     "entities": [
       {
         "tableName": "my_setup",
@@ -62,7 +62,7 @@
       },
       {
         "tableName": "local_pre_keys",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `public_key` BLOB NOT NULL, `private_key` BLOB NOT NULL)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER NOT NULL, `public_key` BLOB NOT NULL, `private_key` BLOB NOT NULL, PRIMARY KEY(`id`))",
         "fields": [
           {
             "fieldPath": "preKeyId",
@@ -87,7 +87,7 @@
           "columnNames": [
             "id"
           ],
-          "autoGenerate": true
+          "autoGenerate": false
         },
         "indices": [],
         "foreignKeys": []
@@ -278,7 +278,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '4043a5cbe48acb91d833f1bb36f76399')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '852f09a9819d1dd01171568e973180af')"
     ]
   }
 }

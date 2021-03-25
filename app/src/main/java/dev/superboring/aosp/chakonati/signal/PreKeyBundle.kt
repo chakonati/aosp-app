@@ -1,5 +1,6 @@
 package dev.superboring.aosp.chakonati.signal
 
+import dev.superboring.aosp.chakonati.persistence.dao.generateNewKeyId
 import dev.superboring.aosp.chakonati.persistence.dao.get
 import dev.superboring.aosp.chakonati.persistence.db
 import dev.superboring.aosp.chakonati.services.KeyExchange
@@ -9,13 +10,10 @@ import org.whispersystems.libsignal.state.PreKeyBundle
 import org.whispersystems.libsignal.state.PreKeyRecord
 import org.whispersystems.libsignal.state.SignedPreKeyRecord
 import org.whispersystems.libsignal.util.KeyHelper
-import java.security.SecureRandom
 
-suspend fun generateAndPublishPreKeys() {
-    if (!PersistentProtocolStore.hasIdentityKey) {
+object PreKeyBundle {
+    suspend fun generateAndPublishPreKeys() {
         PersistentProtocolStore.saveIdentityKeyPair(generateIdentityKeyPair())
-    }
-    if (!PersistentProtocolStore.hasLocalRegistrationId) {
         PersistentProtocolStore.saveLocalRegistrationId(
             KeyHelper.generateRegistrationId(true)
         )
@@ -29,13 +27,13 @@ suspend fun generateAndPublishPreKeys() {
 
         val preKeyBundle = PreKeyBundle(
             PersistentProtocolStore.localRegistrationId,
-            SecureRandom().nextInt(Short.MAX_VALUE.toInt()),
-            SecureRandom().nextInt(Short.MAX_VALUE.toInt()), preKeyPair.publicKey,
-            SecureRandom().nextInt(Short.MAX_VALUE.toInt()), signedPreKeyPair.publicKey,
+            db.localPreKeys().generateNewKeyId(),
+            db.localPreKeys().generateNewKeyId(), preKeyPair.publicKey,
+            db.localPreKeys().generateNewKeyId(), signedPreKeyPair.publicKey,
             signedPreKeySignature,
             PersistentProtocolStore.identityKeyPair.publicKey
         )
-        KeyExchange.publishPreKeyBundle(preKeyBundle, db.mySetup().get().relayServerPassword)
+        KeyExchange.publishPreKeyBundle(preKeyBundle)
 
         PersistentProtocolStore.storePreKey(
             preKeyBundle.preKeyId,

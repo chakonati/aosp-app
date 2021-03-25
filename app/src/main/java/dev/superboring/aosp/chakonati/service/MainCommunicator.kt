@@ -10,11 +10,10 @@ lateinit var ownRelayCommunicator: Communicator
 var isOwnRelayServerUsable = false
 
 suspend fun prepareOwnRelayCommunicator() {
-    val newCommunicator = Communicator(db.mySetup().get().relayServer)
     if (::ownRelayCommunicator.isInitialized) {
         ownRelayCommunicator.disconnect()
     }
-    ownRelayCommunicator = newCommunicator
+    ownRelayCommunicator = Communicator(db.mySetup().get().relayServer)
     ownRelayCommunicator.doHandshake()
 }
 

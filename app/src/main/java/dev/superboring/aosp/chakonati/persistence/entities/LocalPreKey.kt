@@ -12,7 +12,7 @@ typealias PrePrivateKey = ByteArray
 
 @Entity(tableName = "local_pre_keys")
 data class LocalPreKey(
-    @ColumnInfo(name = "id") @PrimaryKey(autoGenerate = true) var preKeyId: Int = 0,
+    @ColumnInfo(name = "id") @PrimaryKey var preKeyId: Int = 0,
     @ColumnInfo(name = "public_key") var prePublicKey: PrePublicKey,
     @ColumnInfo(name = "private_key") var prePrivateKey: PrePrivateKey,
 ) {

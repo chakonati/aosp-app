@@ -16,11 +16,13 @@ import dev.superboring.aosp.chakonati.persistence.AppDatabase
 import dev.superboring.aosp.chakonati.persistence.dao.get
 import dev.superboring.aosp.chakonati.persistence.db
 import dev.superboring.aosp.chakonati.service.prepareOwnRelayCommunicator
+import dev.superboring.aosp.chakonati.signal.OneTimePreKeyRefresh
 import dev.superboring.aosp.chakonati.x.activity.replaceActivity
 import dev.superboring.aosp.chakonati.x.handler.postMain
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
+import kotlin.concurrent.timer
 import kotlin.coroutines.CoroutineContext
 
 class ChatListActivity : ComponentActivity(), CoroutineScope {
@@ -44,6 +46,7 @@ class ChatListActivity : ComponentActivity(), CoroutineScope {
                 }
                 if (db.mySetup().get().relayServer.isNotEmpty()) {
                     prepareOwnRelayCommunicator()
+                    OneTimePreKeyRefresh.refreshOneTimePreKeys()
                 }
             } else {
                 replaceActivity(WelcomeActivity::class)

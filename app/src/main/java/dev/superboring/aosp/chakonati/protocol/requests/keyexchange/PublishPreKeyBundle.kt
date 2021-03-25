@@ -10,7 +10,7 @@ class PreKeyBundlePublishRequest(
     var preKeyBundle: PreKeyBundle,
     var password: String,
 ) :
-    Request<PreKeyBundlePublishResponse>("KeyExchange.publishPreKeyBundle", 8) {
+    Request<PreKeyBundlePublishResponse>("KeyExchange.publishPreKeyBundle", 9) {
 
     override fun newResponse() = PreKeyBundlePublishResponse()
 
