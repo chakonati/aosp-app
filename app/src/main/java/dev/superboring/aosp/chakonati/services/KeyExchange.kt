@@ -1,12 +1,10 @@
 package dev.superboring.aosp.chakonati.services
 
-import dev.superboring.aosp.chakonati.persistence.dao.get
 import dev.superboring.aosp.chakonati.persistence.dao.relayServerPassword
-import dev.superboring.aosp.chakonati.persistence.db
 import dev.superboring.aosp.chakonati.protocol.exceptions.RequestFailure
 import dev.superboring.aosp.chakonati.protocol.requests.keyexchange.OneTimePreKey
-import dev.superboring.aosp.chakonati.protocol.requests.keyexchange.PreKeyBundlePublishRequest
 import dev.superboring.aosp.chakonati.protocol.requests.keyexchange.OneTimePreKeysPublishRequest
+import dev.superboring.aosp.chakonati.protocol.requests.keyexchange.PreKeyBundlePublishRequest
 import dev.superboring.aosp.chakonati.protocol.requests.keyexchange.RetrievePreKeyBundleRequest
 import dev.superboring.aosp.chakonati.service.Communicator
 import dev.superboring.aosp.chakonati.service.RemoteService
@@ -28,9 +26,11 @@ class OneTimePreKeyRetrieveFailed(error: String) :
 object KeyExchange {
 
     suspend fun publishPreKeyBundle(bundle: PreKeyBundle) {
-        ownRelayCommunicator.send(PreKeyBundlePublishRequest(
-            bundle, relayServerPassword,
-        )).error?.let { throw PreKeyBundlePublishFailed(it) }
+        ownRelayCommunicator.send(
+            PreKeyBundlePublishRequest(
+                bundle, relayServerPassword,
+            )
+        ).error?.let { throw PreKeyBundlePublishFailed(it) }
     }
 
     suspend fun publishOneTimePreKeys(preKeys: List<OneTimePreKey>) {

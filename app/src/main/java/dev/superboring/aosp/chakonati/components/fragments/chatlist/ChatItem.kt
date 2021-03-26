@@ -15,7 +15,7 @@ import dev.superboring.aosp.chakonati.domain.ChatSummary
 
 @Composable
 fun ChatItem(chat: ChatSummary) {
-    FullWidthRow(Modifier.clickable {  }) {
+    FullWidthRow(Modifier.clickable { }) {
         FullWidthColumn {
             Column(Modifier.padding(8.dp)) {
                 Text(

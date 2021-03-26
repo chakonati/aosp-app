@@ -28,7 +28,7 @@ object OneTimePreKeyRefresh {
                         preKeyPair.privateKey.serialize()
                     )
                 }
-                
+
                 KeyExchange.publishOneTimePreKeys(preKeys)
             }
         }

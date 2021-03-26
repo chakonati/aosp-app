@@ -10,8 +10,6 @@ import org.whispersystems.libsignal.SignalProtocolAddress
 import org.whispersystems.libsignal.ecc.Curve
 import org.whispersystems.libsignal.ecc.ECKeyPair
 import org.whispersystems.libsignal.state.*
-import org.whispersystems.libsignal.util.KeyHelper
-
 
 fun generateIdentityKeyPair(): IdentityKeyPair {
     val identityKeyPairKeys: ECKeyPair = Curve.generateKeyPair()
@@ -20,10 +18,6 @@ fun generateIdentityKeyPair(): IdentityKeyPair {
         IdentityKey(identityKeyPairKeys.publicKey),
         identityKeyPairKeys.privateKey
     )
-}
-
-private fun generateRegistrationId(): Int {
-    return KeyHelper.generateRegistrationId(false)
 }
 
 object PersistentProtocolStore : SignalProtocolStore {

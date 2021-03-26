@@ -3,8 +3,9 @@ package dev.superboring.aosp.chakonati.activities
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.layout.Column
-import androidx.compose.material.*
+import androidx.compose.material.Scaffold
+import androidx.compose.material.Text
+import androidx.compose.material.TopAppBar
 import androidx.room.Room
 import dev.superboring.aosp.chakonati.R
 import dev.superboring.aosp.chakonati.activities.ui.theme.DefaultTheme
@@ -22,7 +23,6 @@ import dev.superboring.aosp.chakonati.x.handler.postMain
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
-import kotlin.concurrent.timer
 import kotlin.coroutines.CoroutineContext
 
 class ChatListActivity : ComponentActivity(), CoroutineScope {

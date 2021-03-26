@@ -1,6 +1,5 @@
 package dev.superboring.aosp.chakonati.protocol.requests.keyexchange
 
-import dev.superboring.aosp.chakonati.persistence.entities.LocalPreKey
 import dev.superboring.aosp.chakonati.persistence.entities.PrePublicKey
 import dev.superboring.aosp.chakonati.protocol.*
 import org.msgpack.core.MessagePacker
