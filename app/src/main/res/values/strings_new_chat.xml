@@ -1,0 +1,4 @@
+<resources>
+    <string name="new_chat__title">New chat</string>
+    <string name="new_chat__start_chat">Start chat</string>
+</resources>

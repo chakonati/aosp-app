@@ -3,5 +3,6 @@
     <string name="common__previous">Previous</string>
     <string name="common__next">Next</string>
     <string name="common__back">Back</string>
-    <string name="common__password">Passwort</string>
+    <string name="common__password">Password</string>
+    <string name="common__remote_relay_server">Remote relay server</string>
 </resources>

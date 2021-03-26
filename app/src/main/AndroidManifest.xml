@@ -14,16 +14,22 @@
             android:theme="@style/Theme.Chakonati"
             android:windowSoftInputMode="adjustResize">
         <activity
+                android:name=".activities.NewChatActivity"
+                android:exported="true"
+                android:label="@string/new_chat__title"
+                android:theme="@style/Theme.Chakonati.NoActionBar"
+                android:windowSoftInputMode="adjustResize" />
+        <activity
                 android:name=".activities.WelcomeActivity"
                 android:exported="true"
-                android:label="@string/title_activity_welcome"
-                android:theme="@style/Theme.Chakonati.NoActionBar"></activity>
+                android:label="@string/setup_welcome__title"
+                android:theme="@style/Theme.Chakonati.NoActionBar" />
         <activity
                 android:name=".activities.SetupActivity"
                 android:exported="true"
-                android:label="@string/title_activity_setup"
+                android:label="@string/setup__title"
                 android:theme="@style/Theme.Chakonati.NoActionBar"
-                android:windowSoftInputMode="adjustResize"></activity>
+                android:windowSoftInputMode="adjustResize" />
         <activity
                 android:name=".activities.ChatListActivity"
                 android:exported="true"
