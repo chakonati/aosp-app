@@ -1,9 +1,7 @@
 package dev.superboring.aosp.chakonati.service
 
-import dev.superboring.aosp.chakonati.protocol.Request
-import dev.superboring.aosp.chakonati.protocol.RequestId
-import dev.superboring.aosp.chakonati.protocol.Response
-import dev.superboring.aosp.chakonati.protocol.ResponseHeader
+import dev.superboring.aosp.chakonati.protocol.*
+import dev.superboring.aosp.chakonati.protocol.exceptions.UnsupportedMessageType
 import dev.superboring.aosp.chakonati.protocol.exceptions.UntrackedResponsePacketException
 import dev.superboring.aosp.chakonati.protocol.requests.basic.HelloRequest
 import kotlinx.coroutines.CompletableDeferred
@@ -45,11 +43,16 @@ class Communicator(private val server: String) : WebSocketServiceListener {
     }
 
     override fun onMessage(bytes: ByteArray) {
-        val header = ResponseHeader().apply { deserialize(bytes) }
-        val openRequest = openRequests[header.id] ?: throw UntrackedResponsePacketException(header)
-        openRequest.request.newResponse().run {
-            deserialize(bytes)
-            openRequest.deferredResponse.complete(this)
+        val header = MessageHeader().apply { deserialize(bytes) }
+        when (header.messageType) {
+            MessageType.RESPONSE -> {
+                val openRequest = openRequests[header.id] ?: throw UntrackedResponsePacketException(header)
+                openRequest.request.newResponse().run {
+                    deserialize(bytes)
+                    openRequest.deferredResponse.complete(this)
+                }
+            }
+            else -> throw UnsupportedMessageType(header.messageType)
         }
     }
 
