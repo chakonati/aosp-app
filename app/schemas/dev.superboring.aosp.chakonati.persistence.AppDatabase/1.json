@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "852f09a9819d1dd01171568e973180af",
+    "identityHash": "2e34230af50759cc408487458a07d727",
     "entities": [
       {
         "tableName": "my_setup",
@@ -62,11 +62,17 @@
       },
       {
         "tableName": "local_pre_keys",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER NOT NULL, `public_key` BLOB NOT NULL, `private_key` BLOB NOT NULL, PRIMARY KEY(`id`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `key_id` INTEGER NOT NULL, `public_key` BLOB NOT NULL, `private_key` BLOB NOT NULL)",
         "fields": [
           {
-            "fieldPath": "preKeyId",
+            "fieldPath": "id",
             "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "preKeyId",
+            "columnName": "key_id",
             "affinity": "INTEGER",
             "notNull": true
           },
@@ -87,7 +93,7 @@
           "columnNames": [
             "id"
           ],
-          "autoGenerate": false
+          "autoGenerate": true
         },
         "indices": [],
         "foreignKeys": []
@@ -278,7 +284,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '852f09a9819d1dd01171568e973180af')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '2e34230af50759cc408487458a07d727')"
     ]
   }
 }

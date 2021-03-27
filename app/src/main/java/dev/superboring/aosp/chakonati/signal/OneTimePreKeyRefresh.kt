@@ -23,9 +23,9 @@ object OneTimePreKeyRefresh {
                     val preKeyId = db.localPreKeys().generateNewKeyId()
                     preKeys.add(OneTimePreKey(preKeyId, preKeyPair.publicKey.serialize()))
                     db.localPreKeys() insert LocalPreKey(
-                        preKeyId,
-                        preKeyPair.publicKey.serialize(),
-                        preKeyPair.privateKey.serialize()
+                        preKeyId = preKeyId,
+                        prePublicKey = preKeyPair.publicKey.serialize(),
+                        prePrivateKey = preKeyPair.privateKey.serialize()
                     )
                 }
 

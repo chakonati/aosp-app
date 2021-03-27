@@ -72,6 +72,8 @@ object PersistentProtocolStore : SignalProtocolStore {
     override fun getIdentity(address: SignalProtocolAddress) =
         db.remoteAddresses().get(address.deviceId, address.name).identityKey!!.signalIdentityKey
 
+    fun loadLastPreKey() = db.localPreKeys().lastKey()
+
     override fun loadPreKey(preKeyId: Int) =
         db.localPreKeys().byPreKeyId(preKeyId).signalPreKeyRecord
 

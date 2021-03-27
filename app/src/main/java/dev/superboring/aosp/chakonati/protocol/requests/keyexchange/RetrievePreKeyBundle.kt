@@ -19,8 +19,8 @@ class RetrievePreKeyBundleResponse : Response(9) {
         bundle = PreKeyBundle(
             unpackInt(),
             unpackInt(),
-            unpackInt(),
-            ECPublicKey.fromPublicKeyBytes(unpackByteArray()),
+            unpackOptional { unpackInt() } ?: 0,
+            unpackOptional { ECPublicKey.fromPublicKeyBytes(unpackByteArray()) },
             unpackInt(),
             ECPublicKey.fromPublicKeyBytes(unpackByteArray()),
             unpackByteArray(),

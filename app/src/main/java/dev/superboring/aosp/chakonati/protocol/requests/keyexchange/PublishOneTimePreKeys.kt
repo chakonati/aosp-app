@@ -6,8 +6,8 @@ import org.msgpack.core.MessagePacker
 import org.msgpack.core.MessageUnpacker
 
 data class OneTimePreKey(
-    var preKeyId: Int,
-    var preKey: PrePublicKey,
+    var preKeyId: Int = 0,
+    var preKey: PrePublicKey = byteArrayOf(),
 ) : Packable<OneTimePreKey> {
     override fun unpack(unpacker: MessageUnpacker) = unpacker.run {
         preKeyId = unpackInt()

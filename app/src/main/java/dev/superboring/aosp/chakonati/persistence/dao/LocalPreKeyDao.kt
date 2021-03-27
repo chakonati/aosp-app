@@ -18,8 +18,11 @@ interface LocalPreKeyDao {
     @Query("select count(id) as count from local_pre_keys")
     fun count(): Int
 
-    @Query("select * from local_pre_keys where id = :id")
-    fun byPreKeyId(id: Int): LocalPreKey
+    @Query("select * from local_pre_keys where key_id = :keyId")
+    fun byPreKeyId(keyId: Int): LocalPreKey
+
+    @Query("select * from local_pre_keys ORDER BY id DESC LIMIT 1")
+    fun lastKey(): LocalPreKey
 
     @Insert
     infix fun insert(key: LocalPreKey)
@@ -30,11 +33,11 @@ interface LocalPreKeyDao {
     @Delete
     infix fun deleteNoEvents(key: LocalPreKey)
 
-    @Query("delete from local_pre_keys where id = :id")
-    infix fun deleteByPreKeyId(id: Int)
+    @Query("delete from local_pre_keys where key_id = :keyId")
+    infix fun deleteByPreKeyId(keyId: Int)
 
-    @Query("select count(id) from local_pre_keys where id = :id")
-    infix fun hasKey(id: Int): Boolean
+    @Query("select count(id) from local_pre_keys where key_id = :keyId")
+    infix fun hasKey(keyId: Int): Boolean
 
 }
 

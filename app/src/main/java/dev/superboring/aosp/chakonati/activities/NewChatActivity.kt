@@ -17,10 +17,12 @@ import dev.superboring.aosp.chakonati.activities.ui.theme.DefaultTheme
 import dev.superboring.aosp.chakonati.components.shared.BottomFAB
 import dev.superboring.aosp.chakonati.components.shared.FullWidthColumn
 import dev.superboring.aosp.chakonati.components.shared.ResText
+import dev.superboring.aosp.chakonati.components.shared.TextFieldErrorText
 import dev.superboring.aosp.chakonati.components.shared.base.BareSurface
-import dev.superboring.aosp.chakonati.components.shared.base.StyledSurface
 import dev.superboring.aosp.chakonati.compose.stringRes
 import dev.superboring.aosp.chakonati.extensions.android.view.useTranslucentBars
+import dev.superboring.aosp.chakonati.extensions.kotlinx.coroutines.launchIO
+import dev.superboring.aosp.chakonati.signal.ChatSession
 
 class NewChatActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -35,6 +37,15 @@ class NewChatActivity : ComponentActivity() {
         setContent {
             DefaultTheme {
                 BareSurface(addPadding = false) {
+                    val coroutineScope = rememberCoroutineScope()
+
+                    var remoteServer by remember { mutableStateOf("") }
+                    val isValid = remoteServer.isNotEmpty()
+                    var isConnecting by remember { mutableStateOf(false) }
+                    var error by remember { mutableStateOf("") }
+                    var hasErrorOccurred by remember { mutableStateOf(false) }
+                    var failedRemoteServer by remember { mutableStateOf("") }
+
                     Scaffold(
                         topBar = {
                             TopAppBar(
@@ -45,13 +56,39 @@ class NewChatActivity : ComponentActivity() {
                             BottomFAB(
                                 icon = Icons.Default.ArrowForward,
                                 iconContentDescription = R.string.new_chat__start_chat.stringRes(),
-                                onClick = {}
+                                enabled = isValid && !isConnecting,
+                                loading = isConnecting,
+                                onClick = {
+                                    isConnecting = true
+                                    hasErrorOccurred = false
+                                    coroutineScope.launchIO {
+                                        val chatSession = ChatSession(remoteServer)
+                                        try {
+                                            chatSession.startNew()
+                                        } catch (e: Exception) {
+                                            failedRemoteServer = remoteServer
+                                            error = e.localizedMessage ?: e.message ?: ""
+                                            hasErrorOccurred = true
+                                            e.printStackTrace()
+                                        } finally {
+                                            chatSession.disconnect()
+                                            isConnecting = false
+                                        }
+                                    }
+                                }
                             )
                         }
                     ) {
                         BareSurface {
                             FullWidthColumn {
-                                NewChat()
+                                NewChat(
+                                    remoteServer = remoteServer,
+                                    enabled = !isConnecting,
+                                    onRemoteServerChange = { remoteServer = it },
+                                    hasErrorOccurred = hasErrorOccurred,
+                                    error = error,
+                                    failedRemoteServer = failedRemoteServer,
+                                )
                             }
                         }
                     }
@@ -62,14 +99,29 @@ class NewChatActivity : ComponentActivity() {
 }
 
 @Composable
-private fun NewChat() {
-    var remoteServer by remember { mutableStateOf("") }
-
+private fun NewChat(
+    remoteServer: String,
+    enabled: Boolean,
+    onRemoteServerChange: (String) -> Unit,
+    hasErrorOccurred: Boolean,
+    error: String,
+    failedRemoteServer: String,
+) {
     TextField(
         modifier = Modifier.fillMaxWidth(),
         value = remoteServer,
-        onValueChange = { remoteServer = it },
+        onValueChange = onRemoteServerChange,
+        enabled = enabled,
         label = { ResText(R.string.common__remote_relay_server) },
         placeholder = { Text("chat.person.tld") },
+        isError = hasErrorOccurred,
     )
+    if (hasErrorOccurred) {
+        TextFieldErrorText(
+            text = String.format(
+                R.string.new_chat__connection_error.stringRes(),
+                failedRemoteServer, error
+            )
+        )
+    }
 }

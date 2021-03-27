@@ -51,3 +51,17 @@ fun MessageUnpacker.unpackError(): Error {
     }
     return null
 }
+
+fun <T : Any?> MessageUnpacker.unpackOptional(unpack: MessageUnpacker.() -> T): T? {
+    if (!tryUnpackNil()) {
+        return unpack()
+    }
+    return null
+}
+
+
+fun MessageUnpacker.unpackOptionally(unpack: MessageUnpacker.() -> Unit): Unit {
+    if (!tryUnpackNil()) {
+        unpack()
+    }
+}

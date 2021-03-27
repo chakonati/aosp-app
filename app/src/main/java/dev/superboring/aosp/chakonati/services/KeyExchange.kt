@@ -2,10 +2,7 @@ package dev.superboring.aosp.chakonati.services
 
 import dev.superboring.aosp.chakonati.persistence.dao.relayServerPassword
 import dev.superboring.aosp.chakonati.protocol.exceptions.RequestFailure
-import dev.superboring.aosp.chakonati.protocol.requests.keyexchange.OneTimePreKey
-import dev.superboring.aosp.chakonati.protocol.requests.keyexchange.OneTimePreKeysPublishRequest
-import dev.superboring.aosp.chakonati.protocol.requests.keyexchange.PreKeyBundlePublishRequest
-import dev.superboring.aosp.chakonati.protocol.requests.keyexchange.RetrievePreKeyBundleRequest
+import dev.superboring.aosp.chakonati.protocol.requests.keyexchange.*
 import dev.superboring.aosp.chakonati.service.Communicator
 import dev.superboring.aosp.chakonati.service.RemoteService
 import dev.superboring.aosp.chakonati.service.ownRelayCommunicator
@@ -22,6 +19,9 @@ class OneTimePreKeysPublishFailed(error: String) :
 
 class OneTimePreKeyRetrieveFailed(error: String) :
     RequestFailure("Failed to retrieve one time pre-key from server: $error")
+
+class DeviceIdRetrieveFailed(error: String) :
+    RequestFailure("Failed to retrieve device ID from server: $error")
 
 object KeyExchange {
 
@@ -46,6 +46,24 @@ class RemoteKeyExchange(private val communicator: Communicator) : RemoteService(
         communicator.send(RetrievePreKeyBundleRequest()).let {
             it.error?.let { error -> throw PreKeyBundleRetrieveFailed(error) }
             return it.bundle
+        }
+    }
+
+    suspend fun preKeyBundleExists(): Boolean {
+        return communicator.send(PreKeyBundleExistsRequest()).exists
+    }
+
+    suspend fun deviceId(): Int {
+        communicator.send(DeviceIdRequest()).let {
+            it.error?.let { error -> throw DeviceIdRetrieveFailed(error) }
+            return it.deviceId
+        }
+    }
+
+    suspend fun oneTimePreKey(): OneTimePreKey? {
+        communicator.send(OneTimePreKeyRequest()).let {
+            it.error?.let { error -> throw OneTimePreKeyRetrieveFailed(error) }
+            return it.key
         }
     }
 
