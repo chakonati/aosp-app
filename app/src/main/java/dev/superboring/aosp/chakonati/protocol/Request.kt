@@ -10,7 +10,7 @@ private var nextId: RequestId = 0L
 abstract class Request<R : Response>(
     var action: String,
     var argLen: Int = 0,
-    var id: RequestId = nextId++,
+    private var id: RequestId = nextId++,
 ) : Packable<Request<R>>, PackSerializable {
     override fun serialize(): ByteArray {
         return packer().apply {
@@ -43,6 +43,8 @@ abstract class Request<R : Response>(
     override fun unpack(unpacker: MessageUnpacker) {
 
     }
+
+    val requestId get() = id
 
     abstract fun newResponse(): R
 
