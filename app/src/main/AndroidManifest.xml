@@ -17,7 +17,8 @@
                 android:name=".activities.ChatActivity"
                 android:exported="true"
                 android:label="@string/title_activity_chat"
-                android:theme="@style/Theme.Chakonati.NoActionBar"></activity>
+                android:theme="@style/Theme.Chakonati.NoActionBar"
+                android:windowSoftInputMode="adjustResize" />
         <activity
                 android:name=".activities.NewChatActivity"
                 android:exported="true"

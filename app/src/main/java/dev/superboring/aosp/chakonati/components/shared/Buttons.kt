@@ -106,3 +106,57 @@ fun FloatingActionButton(
         }
     }
 }
+
+
+
+@Composable
+fun IconButton(
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    enabled: Boolean = true,
+    interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
+    shape: Shape = MaterialTheme.shapes.small.copy(CornerSize(percent = 50)),
+    backgroundColor: Color = MaterialTheme.colors.primary,
+    contentColor: Color = contentColorFor(backgroundColor),
+    elevation: ButtonElevation = ButtonDefaults.elevation(),
+    icon: ImageVector,
+    iconContentDescription: String,
+) {
+    Surface(
+        modifier = modifier.let {
+            if (enabled) {
+                it.clickable(
+                    onClick = onClick,
+                    role = Role.Button,
+                    interactionSource = interactionSource,
+                    indication = null
+                )
+            } else it
+        },
+        shape = shape,
+        color = backgroundColor,
+        contentColor = contentColor,
+        elevation = elevation.elevation(enabled, interactionSource).value
+    ) {
+        CompositionLocalProvider(LocalContentAlpha provides contentColor.alpha) {
+            ProvideTextStyle(MaterialTheme.typography.button) {
+                Box(
+                    modifier = Modifier
+                        .defaultMinSize(minWidth = FabSize, minHeight = FabSize)
+                        .indication(interactionSource, rememberRipple()),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Icon(
+                        icon,
+                        iconContentDescription,
+                        tint = if (enabled) {
+                            colors().onPrimary
+                        } else {
+                            colors().onPrimary.transparentize(.6f)
+                        }
+                    )
+                }
+            }
+        }
+    }
+}
