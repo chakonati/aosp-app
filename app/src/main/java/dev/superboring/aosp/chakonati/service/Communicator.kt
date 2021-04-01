@@ -37,7 +37,8 @@ class Communicator(private val server: String) : WebSocketServiceListener {
     private infix fun <R : Response> sendAsync(request: Request<R>): Deferred<R> {
         val deferred = CompletableDeferred<R>()
         @Suppress("UNCHECKED_CAST")
-        openRequests[request.requestId] = OpenRequest(deferred as CompletableDeferred<Response>, request)
+        openRequests[request.requestId] =
+            OpenRequest(deferred as CompletableDeferred<Response>, request)
         webSocketService.send(request)
         return deferred
     }
@@ -46,7 +47,8 @@ class Communicator(private val server: String) : WebSocketServiceListener {
         val header = MessageHeader().apply { deserialize(bytes) }
         when (header.messageType) {
             MessageType.RESPONSE -> {
-                val openRequest = openRequests[header.id] ?: throw UntrackedResponsePacketException(header)
+                val openRequest =
+                    openRequests[header.id] ?: throw UntrackedResponsePacketException(header)
                 openRequest.request.newResponse().run {
                     deserialize(bytes)
                     openRequest.deferredResponse.complete(this)
