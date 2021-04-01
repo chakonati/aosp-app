@@ -9,13 +9,18 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import dev.superboring.aosp.chakonati.activities.ChatActivity
 import dev.superboring.aosp.chakonati.components.shared.FullWidthColumn
 import dev.superboring.aosp.chakonati.components.shared.FullWidthRow
+import dev.superboring.aosp.chakonati.compose.currentContext
 import dev.superboring.aosp.chakonati.domain.ChatSummary
+import dev.superboring.aosp.chakonati.x.activity.launchActivity
 
 @Composable
-fun ChatItem(chat: ChatSummary) {
-    FullWidthRow(Modifier.clickable { }) {
+fun ChatItem(chat: ChatSummary) = currentContext {
+    FullWidthRow(Modifier.clickable {
+        launchActivity(ChatActivity::class, chat)
+    }) {
         FullWidthColumn {
             Column(Modifier.padding(8.dp)) {
                 Text(

@@ -1,5 +1,9 @@
 package dev.superboring.aosp.chakonati.signal
 
+import androidx.room.withTransaction
+import dev.superboring.aosp.chakonati.persistence.db
+import dev.superboring.aosp.chakonati.persistence.entities.Chat
+import dev.superboring.aosp.chakonati.persistence.entities.RemoteAddress
 import dev.superboring.aosp.chakonati.service.Communicator
 import dev.superboring.aosp.chakonati.services.RemoteKeyExchange
 import kotlinx.coroutines.CoroutineScope
@@ -63,6 +67,17 @@ class ChatSession(
                 preKeyBundle.preKey,
             )
         )
+
+        db.withTransaction {
+            db.remoteAddresses() insert (RemoteAddress from signalAddress)
+            db.chats() insert Chat(
+                remoteAddressId = db.remoteAddresses().get(
+                    deviceId,
+                    remoteServer,
+                ).address.Id,
+                displayName = remoteServer
+            )
+        }
     }
 
     fun disconnect() = communicator.disconnect()

@@ -20,9 +20,14 @@ import dev.superboring.aosp.chakonati.components.shared.ResText
 import dev.superboring.aosp.chakonati.components.shared.TextFieldErrorText
 import dev.superboring.aosp.chakonati.components.shared.base.BareSurface
 import dev.superboring.aosp.chakonati.compose.stringRes
+import dev.superboring.aosp.chakonati.domain.ChatSummary
 import dev.superboring.aosp.chakonati.extensions.android.view.useTranslucentBars
 import dev.superboring.aosp.chakonati.extensions.kotlinx.coroutines.launchIO
+import dev.superboring.aosp.chakonati.persistence.db
+import dev.superboring.aosp.chakonati.persistence.entities.Chat
 import dev.superboring.aosp.chakonati.signal.ChatSession
+import dev.superboring.aosp.chakonati.x.activity.launchActivity
+import dev.superboring.aosp.chakonati.x.activity.replaceActivity
 
 class NewChatActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -65,6 +70,12 @@ class NewChatActivity : ComponentActivity() {
                                         val chatSession = ChatSession(remoteServer)
                                         try {
                                             chatSession.startNew()
+                                            val chatSummary = ChatSummary(
+                                                remoteServer,
+                                                remoteServer,
+                                                ""
+                                            )
+                                            replaceActivity(ChatActivity::class, chatSummary)
                                         } catch (e: Exception) {
                                             failedRemoteServer = remoteServer
                                             error = e.localizedMessage ?: e.message ?: ""

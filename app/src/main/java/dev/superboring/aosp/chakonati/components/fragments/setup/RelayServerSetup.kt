@@ -85,7 +85,7 @@ fun RelayServerSetup(
                     isVerifying = false
                 }
             }
-            setupPasswordPage && isPasswordAlreadySet -> {
+            setupPasswordPage && isPasswordAlreadySet || verificationPage -> {
                 isSubmittingPassword = true
                 coroutineScope.launchIO {
                     isEnteredPasswordValid = Setup.isPasswordValid(setupPassword)
