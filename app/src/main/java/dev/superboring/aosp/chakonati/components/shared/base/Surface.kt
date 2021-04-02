@@ -20,20 +20,21 @@ fun StyledSurface(content: @Composable () -> Unit) {
 
 @Composable
 fun BareSurface(
+    modifier: Modifier = Modifier,
     fill: Boolean = false,
     addPadding: Boolean = true,
     content: @Composable () -> Unit,
 ) {
-    var modifier: Modifier = Modifier
+    var mod = modifier
     if (fill) {
-        modifier = modifier.fillMaxSize()
+        mod = mod.fillMaxSize()
     }
     if (addPadding) {
-        modifier = modifier.padding(16.dp)
+        mod = mod.padding(16.dp)
     }
 
     Surface(
-        modifier = modifier,
+        modifier = mod,
         color = colors().background,
         contentColor = colors().onBackground,
         content = content,
