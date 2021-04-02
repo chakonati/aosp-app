@@ -10,7 +10,7 @@ import org.whispersystems.libsignal.state.SignedPreKeyRecord
 import org.whispersystems.libsignal.util.KeyHelper
 
 object PreKeyBundle {
-    suspend fun generateAndPublishPreKeys() {
+    suspend fun generatePreKeys(publish: Boolean = false) {
         PersistentProtocolStore.saveIdentityKeyPair(generateIdentityKeyPair())
         PersistentProtocolStore.saveLocalRegistrationId(
             KeyHelper.generateRegistrationId(true)
@@ -31,7 +31,9 @@ object PreKeyBundle {
             signedPreKeySignature,
             PersistentProtocolStore.identityKeyPair.publicKey
         )
-        KeyExchange.publishPreKeyBundle(preKeyBundle)
+        if (publish) {
+            KeyExchange.publishPreKeyBundle(preKeyBundle)
+        }
 
         PersistentProtocolStore.storePreKey(
             preKeyBundle.preKeyId,

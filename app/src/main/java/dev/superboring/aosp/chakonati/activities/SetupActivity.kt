@@ -21,7 +21,6 @@ import dev.superboring.aosp.chakonati.x.activity.replaceActivity
 import dev.superboring.aosp.chakonati.x.toast.showToast
 
 private object Routes {
-    const val WELCOME = "welcome"
     const val RELAY_SERVER = "relayServer"
 }
 
@@ -49,7 +48,7 @@ class SetupActivity : ComponentActivity() {
         ) {
             composable(Routes.RELAY_SERVER) {
                 RelayServerSetup(
-                    onPrevClick = { nav.navigate(Routes.WELCOME) },
+                    onPrevClick = { },
                     onNextClick = { coroutineScope.launchIO { finishSetup() } },
                 )
             }

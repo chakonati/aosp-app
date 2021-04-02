@@ -101,7 +101,7 @@ fun RelayServerSetup(
 
                         // Now submit the pre-keys
                         isSubmittingPreKeys = true
-                        PreKeyBundle.generateAndPublishPreKeys()
+                        PreKeyBundle.generatePreKeys(publish = true)
 
                         postMain(onNextClick)
                     }

@@ -19,6 +19,8 @@ import dev.superboring.aosp.chakonati.components.shared.HorizontallyCenteredBox
 import dev.superboring.aosp.chakonati.components.shared.ResText
 import dev.superboring.aosp.chakonati.components.shared.base.StyledSurface
 import dev.superboring.aosp.chakonati.compose.stringRes
+import dev.superboring.aosp.chakonati.extensions.kotlinx.coroutines.launchIO
+import dev.superboring.aosp.chakonati.signal.PreKeyBundle
 
 @Composable
 fun WelcomeSetup(
@@ -26,6 +28,7 @@ fun WelcomeSetup(
     finishSetup: () -> Unit,
 ) {
     var shouldShowConfirmDialog by remember { mutableStateOf(false) }
+    val coroutineScope = rememberCoroutineScope()
 
     StyledSurface {
         CenteredColumn(
@@ -45,7 +48,12 @@ fun WelcomeSetup(
         if (shouldShowConfirmDialog) {
             SkipStepConfirmDialog(
                 onDismiss = { shouldShowConfirmDialog = false },
-                onConfirm = finishSetup
+                onConfirm = {
+                    coroutineScope.launchIO {
+                        PreKeyBundle.generatePreKeys()
+                        finishSetup()
+                    }
+                }
             )
         }
     }
@@ -110,20 +118,21 @@ private fun SkipStepLinkButton(onClick: () -> Unit) {
 
 @Composable
 private fun SkipStepConfirmDialog(
+    enabled: Boolean = true,
     onDismiss: () -> Unit,
-    onConfirm: () -> Unit
+    onConfirm: () -> Unit,
 ) {
     AlertDialog(
         onDismissRequest = onDismiss,
         title = { ResText(R.string.setup_welcome__skip_step_dialog__title) },
         text = { ResText(R.string.setup_welcome__skip_step_dialog__text) },
         dismissButton = {
-            TextButton(onClick = onDismiss) {
+            TextButton(onClick = onDismiss, enabled = enabled) {
                 ResText(R.string.setup_welcome__skip_step_dialog__no)
             }
         },
         confirmButton = {
-            TextButton(onClick = onConfirm) {
+            TextButton(onClick = onConfirm, enabled = enabled) {
                 ResText(R.string.setup_welcome__skip_step_dialog__yes)
             }
         },
