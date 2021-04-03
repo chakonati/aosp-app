@@ -31,14 +31,11 @@ fun ComposeMessage() {
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(vertical = 8.dp)
-                    .heightIn(textFieldHeight, textFieldHeight * 3)
-                    .height(textFieldHeight),
+                    .heightIn(textFieldHeight, textFieldHeight * 3),
             ) {
                 val (textField, sendButton) = createRefs()
                 RoundedTextField(
                     modifier = Modifier
-                        .fillMaxHeight()
-                        .padding(0.dp)
                         .constrainAs(textField) {
                             start.linkTo(parent.start)
                             end.linkTo(sendButton.start)
