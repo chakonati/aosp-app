@@ -38,10 +38,14 @@ fun VerticallyCenteredRow(
 @Composable
 fun FullWidthRow(
     modifier: Modifier = Modifier,
+    horizontalArrangement: Arrangement.Horizontal = Arrangement.Start,
+    verticalAlignment: Alignment.Vertical = Alignment.Top,
     content: @Composable RowScope.() -> Unit
 ) {
     Row(
         modifier = modifier.fillMaxWidth(),
-        content = content
+        horizontalArrangement = horizontalArrangement,
+        verticalAlignment = verticalAlignment,
+        content = content,
     )
 }

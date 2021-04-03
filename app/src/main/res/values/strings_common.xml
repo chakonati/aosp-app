@@ -5,4 +5,9 @@
     <string name="common__back">Back</string>
     <string name="common__password">Password</string>
     <string name="common__remote_relay_server">Remote relay server</string>
+    <string name="common__connecting">Connecting…</string>
+    <string name="common__connection_error_relay_server">
+        Could not connect to relay server: %1$s
+    </string>
+    <string name="common__connected">Connected!</string>
 </resources>

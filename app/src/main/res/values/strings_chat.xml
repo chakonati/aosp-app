@@ -1,3 +1,4 @@
 <resources>
     <string name="chat__compose__compose_message">Type message…</string>
+    <string name="chat__send_your_first_message">Be the first to say hi!</string>
 </resources>

@@ -11,8 +11,10 @@ import androidx.compose.runtime.Composable
 import androidx.room.Room
 import dev.superboring.aosp.chakonati.R
 import dev.superboring.aosp.chakonati.activities.ui.theme.DefaultTheme
+import dev.superboring.aosp.chakonati.components.common.ConnectionBar
 import dev.superboring.aosp.chakonati.components.fragments.chatlist.ChatListView
 import dev.superboring.aosp.chakonati.components.shared.BottomFAB
+import dev.superboring.aosp.chakonati.components.shared.FullWidthColumn
 import dev.superboring.aosp.chakonati.components.shared.ResText
 import dev.superboring.aosp.chakonati.components.shared.base.BareSurface
 import dev.superboring.aosp.chakonati.compose.currentContext
@@ -22,7 +24,7 @@ import dev.superboring.aosp.chakonati.extensions.kotlinx.coroutines.launchIO
 import dev.superboring.aosp.chakonati.persistence.AppDatabase
 import dev.superboring.aosp.chakonati.persistence.dao.get
 import dev.superboring.aosp.chakonati.persistence.db
-import dev.superboring.aosp.chakonati.service.prepareOwnRelayCommunicator
+import dev.superboring.aosp.chakonati.service.OwnRelayServer
 import dev.superboring.aosp.chakonati.signal.OneTimePreKeyRefresh
 import dev.superboring.aosp.chakonati.x.activity.launchActivity
 import dev.superboring.aosp.chakonati.x.activity.replaceActivity
@@ -52,7 +54,7 @@ class ChatListActivity : ComponentActivity(), CoroutineScope {
                     applyContent()
                 }
                 if (db.mySetup().get().relayServer.isNotEmpty()) {
-                    prepareOwnRelayCommunicator()
+                    OwnRelayServer.prepareCommunicator()
                     OneTimePreKeyRefresh.refreshOneTimePreKeys()
                 }
             } else {
@@ -67,9 +69,12 @@ class ChatListActivity : ComponentActivity(), CoroutineScope {
                 BareSurface(addPadding = false) {
                     Scaffold(
                         topBar = {
-                            TopAppBar(
-                                title = { ResText(R.string.app_name) }
-                            )
+                            FullWidthColumn {
+                                TopAppBar(
+                                    title = { ResText(R.string.app_name) }
+                                )
+                                ConnectionBar()
+                            }
                         },
                         bottomBar = {
                             BottomBar()

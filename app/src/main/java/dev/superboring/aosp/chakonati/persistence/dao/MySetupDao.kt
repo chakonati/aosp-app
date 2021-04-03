@@ -6,7 +6,7 @@ import androidx.room.Query
 import androidx.room.Update
 import dev.superboring.aosp.chakonati.persistence.db
 import dev.superboring.aosp.chakonati.persistence.entities.MySetup
-import dev.superboring.aosp.chakonati.service.prepareOwnRelayCommunicator
+import dev.superboring.aosp.chakonati.service.OwnRelayServer
 
 @Dao
 interface MySetupDao : SingleEntryDao<MySetup> {
@@ -38,7 +38,7 @@ suspend fun MySetupDao.saveRelayServer(relayServer: String) {
     db.mySetup().get().apply {
         this.relayServer = relayServer
     }.save()
-    prepareOwnRelayCommunicator()
+    OwnRelayServer.prepareCommunicator()
 }
 
 suspend fun MySetup.save() = db.mySetup() save this

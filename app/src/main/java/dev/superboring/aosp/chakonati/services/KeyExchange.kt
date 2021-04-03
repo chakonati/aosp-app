@@ -4,8 +4,8 @@ import dev.superboring.aosp.chakonati.persistence.dao.relayServerPassword
 import dev.superboring.aosp.chakonati.protocol.exceptions.RequestFailure
 import dev.superboring.aosp.chakonati.protocol.requests.keyexchange.*
 import dev.superboring.aosp.chakonati.service.Communicator
+import dev.superboring.aosp.chakonati.service.OwnRelayServer
 import dev.superboring.aosp.chakonati.service.RemoteService
-import dev.superboring.aosp.chakonati.service.ownRelayCommunicator
 import org.whispersystems.libsignal.state.PreKeyBundle
 
 class PreKeyBundlePublishFailed(error: String) :
@@ -26,7 +26,7 @@ class DeviceIdRetrieveFailed(error: String) :
 object KeyExchange {
 
     suspend fun publishPreKeyBundle(bundle: PreKeyBundle) {
-        ownRelayCommunicator.send(
+        OwnRelayServer.comm.send(
             PreKeyBundlePublishRequest(
                 bundle, relayServerPassword,
             )
@@ -34,7 +34,7 @@ object KeyExchange {
     }
 
     suspend fun publishOneTimePreKeys(preKeys: List<OneTimePreKey>) {
-        ownRelayCommunicator.send(OneTimePreKeysPublishRequest(preKeys, relayServerPassword))
+        OwnRelayServer.comm.send(OneTimePreKeysPublishRequest(preKeys, relayServerPassword))
             .error?.let { throw OneTimePreKeysPublishFailed(it) }
     }
 

@@ -27,7 +27,7 @@ import dev.superboring.aosp.chakonati.persistence.dao.save
 import dev.superboring.aosp.chakonati.persistence.dao.saveRelayServer
 import dev.superboring.aosp.chakonati.persistence.db
 import dev.superboring.aosp.chakonati.service.Communicator
-import dev.superboring.aosp.chakonati.service.ownRelayCommunicator
+import dev.superboring.aosp.chakonati.service.OwnRelayServer
 import dev.superboring.aosp.chakonati.services.Setup
 import dev.superboring.aosp.chakonati.signal.PreKeyBundle
 import dev.superboring.aosp.chakonati.x.clipboard.clipboard
@@ -72,7 +72,7 @@ fun RelayServerSetup(
             relayServerInputPage -> {
                 isVerifying = true
                 coroutineScope.launchIO {
-                    ownRelayCommunicator = Communicator(relayServer)
+                    OwnRelayServer.comm = Communicator(relayServer)
                     val result = verifyRelayServer { password, isSet ->
                         setupPassword = password
                         isPasswordAlreadySet = isSet
@@ -223,7 +223,7 @@ private suspend fun verifyRelayServer(
     onPassword: (String, Boolean) -> Unit
 ): Pair<Boolean, String?> {
     return try {
-        ownRelayCommunicator.doHandshake()
+        OwnRelayServer.comm.doHandshake()
         val isPasswordSet = Setup.isPasswordSet()
         onPassword(if (!isPasswordSet) Setup.setPassword() else "", isPasswordSet)
         Pair(true, null)

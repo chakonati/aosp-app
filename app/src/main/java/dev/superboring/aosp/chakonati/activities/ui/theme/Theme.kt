@@ -1,17 +1,16 @@
 package dev.superboring.aosp.chakonati.activities.ui.theme
 
-import android.content.res.Configuration
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.darkColors
 import androidx.compose.material.lightColors
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalConfiguration
 
 data class AdditionalColors(
     val actionBarWindowBackground: Color,
     val intermediaryBackground: Color,
+    val success: Color,
 )
 
 val DarkColorPalette = darkColors(
@@ -63,11 +62,13 @@ fun additionalColors() =
         AdditionalColors(
             actionBarWindowBackground = colors().background,
             intermediaryBackground = Gray950,
+            success = Green400,
         )
     } else {
         AdditionalColors(
             actionBarWindowBackground = DarkColorPalette.primary,
             intermediaryBackground = Gray20,
+            success = Green600,
         )
     }
 

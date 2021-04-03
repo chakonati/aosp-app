@@ -3,7 +3,7 @@ package dev.superboring.aosp.chakonati.services
 import dev.superboring.aosp.chakonati.protocol.requests.setup.IsPasswordSetupRequest
 import dev.superboring.aosp.chakonati.protocol.requests.setup.IsPasswordValidRequest
 import dev.superboring.aosp.chakonati.protocol.requests.setup.SetPasswordRequest
-import dev.superboring.aosp.chakonati.service.ownRelayCommunicator
+import dev.superboring.aosp.chakonati.service.OwnRelayServer
 
 class SettingPasswordFailed(error: String) :
     RuntimeException("setting password failed: $error")
@@ -11,18 +11,18 @@ class SettingPasswordFailed(error: String) :
 object Setup {
 
     suspend fun setPassword(): String {
-        ownRelayCommunicator.send(SetPasswordRequest()).apply {
+        OwnRelayServer.comm.send(SetPasswordRequest()).apply {
             error?.let { throw SettingPasswordFailed(it) }
             return password
         }
     }
 
     suspend fun isPasswordSet(): Boolean {
-        return ownRelayCommunicator.send(IsPasswordSetupRequest()).isSetup
+        return OwnRelayServer.comm.send(IsPasswordSetupRequest()).isSetup
     }
 
     suspend fun isPasswordValid(password: String): Boolean {
-        return ownRelayCommunicator.send(IsPasswordValidRequest(password)).isValid
+        return OwnRelayServer.comm.send(IsPasswordValidRequest(password)).isValid
     }
 
 }

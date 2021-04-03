@@ -8,8 +8,10 @@ import androidx.compose.material.Text
 import androidx.compose.material.TopAppBar
 import androidx.compose.runtime.Composable
 import dev.superboring.aosp.chakonati.activities.ui.theme.DefaultTheme
+import dev.superboring.aosp.chakonati.components.common.ConnectionBar
 import dev.superboring.aosp.chakonati.components.fragments.chat.ComposeMessage
 import dev.superboring.aosp.chakonati.components.fragments.chat.MessageHistory
+import dev.superboring.aosp.chakonati.components.shared.FullWidthColumn
 import dev.superboring.aosp.chakonati.components.shared.base.BareSurface
 import dev.superboring.aosp.chakonati.domain.ChatSummary
 import dev.superboring.aosp.chakonati.x.activity.parameters
@@ -30,9 +32,12 @@ private fun Content(chatSummary: ChatSummary) {
     BareSurface(addPadding = false) {
         Scaffold(
             topBar = {
-                TopAppBar(
-                    title = { Text(chatSummary.displayName) }
-                )
+                FullWidthColumn {
+                    TopAppBar(
+                        title = { Text(chatSummary.displayName) }
+                    )
+                    ConnectionBar()
+                }
             },
             bottomBar = {
                 ComposeMessage()
