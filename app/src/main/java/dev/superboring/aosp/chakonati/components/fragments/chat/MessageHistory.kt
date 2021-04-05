@@ -1,6 +1,5 @@
 package dev.superboring.aosp.chakonati.components.fragments.chat
 
-import android.graphics.Paint
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.MaterialTheme.typography
@@ -12,11 +11,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import dev.superboring.aosp.chakonati.R
 import dev.superboring.aosp.chakonati.activities.ui.theme.additionalColors
-import dev.superboring.aosp.chakonati.activities.ui.theme.colors
 import dev.superboring.aosp.chakonati.components.shared.CenteredColumn
 import dev.superboring.aosp.chakonati.components.shared.FullWidthColumn
 import dev.superboring.aosp.chakonati.components.shared.ResText
-import dev.superboring.aosp.chakonati.components.shared.base.StyledSurface
 
 val messages = listOf<Message>()
 
