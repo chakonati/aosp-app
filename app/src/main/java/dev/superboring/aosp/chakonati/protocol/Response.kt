@@ -1,4 +1,6 @@
 package dev.superboring.aosp.chakonati.protocol
 
-abstract class Response(override val id: RequestId = 0L) :
-    Message(id, MessageType.RESPONSE)
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties
+
+@JsonIgnoreProperties(ignoreUnknown = true)
+abstract class Response

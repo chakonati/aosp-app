@@ -12,7 +12,7 @@ import kotlin.reflect.KClass
 
 class Communicator(private val server: String) : WebSocketServiceListener {
 
-    private val openRequests = hashMapOf<RequestId, OpenRequest<*>>()
+    private val openRequests = hashMapOf<RequestId, OpenRequest>()
     var hasSentHello = false
         private set
 
@@ -26,7 +26,7 @@ class Communicator(private val server: String) : WebSocketServiceListener {
     }
 
     suspend fun doHandshake() {
-        val response = sendAsync(HelloRequest()).await()
+        val response = sendWithoutChecks(HelloRequest())
         println("Received reply: ${response.reply}")
         hasSentHello = true
     }
@@ -35,30 +35,30 @@ class Communicator(private val server: String) : WebSocketServiceListener {
         if (!hasSentHello) {
             doHandshake()
         }
-        return sendAsync(request).await()
+        return sendWithoutChecks(request)
     }
 
-    fun <R : Response> sendAsync(request: Request<R>): Deferred<R> {
-        val deferred = CompletableDeferred<R>()
+    suspend inline infix fun <reified R : Response> sendWithoutChecks(request: Request<R>): R {
+        return sendAsync(request).await().deserialize()
+    }
+
+    fun <R : Response> sendAsync(request: Request<R>): Deferred<ByteArray> {
+        val deferred = CompletableDeferred<ByteArray>()
         synchronized(openRequests) {
-            @Suppress("UNCHECKED_CAST")
-            openRequests[request.id] =
-                OpenRequest(deferred as CompletableDeferred<Response>, request)
+            openRequests[request.id] = OpenRequest(deferred, request)
         }
         webSocketService.send(request)
         return deferred
     }
 
     override fun onMessage(bytes: ByteArray) {
-        val message = bytes.deserialize<Message>()
+        val message = bytes.deserialize<MessageHeader>()
         when (message.messageType) {
-            MessageType.RESPONSE -> {
+            MessageTypes.RESPONSE -> {
                 synchronized(openRequests) {
                     val openRequest =
                         openRequests[message.id] ?: throw UntrackedResponsePacketException(message)
-                    openRequest.run {
-                        deferredResponse.complete(message.data.deserialize())
-                    }
+                    openRequest.deferredResponse.complete(bytes)
                     openRequests -= message.id
                 }
             }
