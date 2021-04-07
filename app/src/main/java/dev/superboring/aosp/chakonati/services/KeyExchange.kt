@@ -45,7 +45,7 @@ class RemoteKeyExchange(private val communicator: Communicator) : RemoteService(
     suspend fun preKeyBundle(): PreKeyBundle {
         communicator.send(RetrievePreKeyBundleRequest()).let {
             it.error?.let { error -> throw PreKeyBundleRetrieveFailed(error) }
-            return it.bundle
+            return it.preKeyBundle()
         }
     }
 

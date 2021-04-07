@@ -1,6 +1,7 @@
 package dev.superboring.aosp.chakonati.service
 
-import dev.superboring.aosp.chakonati.protocol.PackSerializable
+import dev.superboring.aosp.chakonati.extras.msgpack.serialized
+import kotlinx.serialization.Serializable
 import okhttp3.*
 import okio.ByteString
 import java.util.concurrent.TimeUnit
@@ -19,8 +20,8 @@ class WebSocketService(private val uri: String) : WebSocketListener() {
         client.newWebSocket(request, this)
     }
 
-    fun send(data: PackSerializable) {
-        if (!webSocket.send(ByteString.of(*data.serialize()))) {
+    fun send(data: @Serializable Any) {
+        if (!webSocket.send(ByteString.of(*data.serialized))) {
             throw RuntimeException("Failed to send WebSocket message")
         }
     }

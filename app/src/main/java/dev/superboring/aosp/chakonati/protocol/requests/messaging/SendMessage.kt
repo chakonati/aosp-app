@@ -1,23 +1,11 @@
 package dev.superboring.aosp.chakonati.protocol.requests.messaging
 
-import dev.superboring.aosp.chakonati.protocol.*
-import org.msgpack.core.MessagePacker
-import org.msgpack.core.MessageUnpacker
+import dev.superboring.aosp.chakonati.protocol.Error
+import dev.superboring.aosp.chakonati.protocol.Request
+import dev.superboring.aosp.chakonati.protocol.Response
 
-class SendMessageRequest(
-    private val encryptedMessage: ByteArray,
-) : Request<SendMessageResponse>("Messaging.sendMessage", 1) {
-    override fun pack(packer: MessagePacker): Unit = packer.run {
-        packByteArray(encryptedMessage)
-    }
+data class SendMessageRequest(
+    val encryptedMessage: ByteArray,
+) : Request<SendMessageResponse>("Messaging.sendMessage")
 
-    override fun newResponse() = SendMessageResponse()
-}
-
-class SendMessageResponse(
-    var error: Error = null
-) : Response(1) {
-    override fun unpack(unpacker: MessageUnpacker) = unpacker.run {
-        error = unpackError()
-    }
-}
+data class SendMessageResponse(val error: Error) : Response()

@@ -1,41 +1,18 @@
 package dev.superboring.aosp.chakonati.protocol.requests.keyexchange
 
 import dev.superboring.aosp.chakonati.persistence.entities.PrePublicKey
-import dev.superboring.aosp.chakonati.protocol.*
-import org.msgpack.core.MessagePacker
-import org.msgpack.core.MessageUnpacker
+import dev.superboring.aosp.chakonati.protocol.Error
+import dev.superboring.aosp.chakonati.protocol.Request
+import dev.superboring.aosp.chakonati.protocol.Response
 
 data class OneTimePreKey(
-    var preKeyId: Int = 0,
-    var preKey: PrePublicKey = byteArrayOf(),
-) : Packable<OneTimePreKey> {
-    override fun unpack(unpacker: MessageUnpacker) = unpacker.run {
-        preKeyId = unpackInt()
-        preKey = unpackByteArray()
-    }
+    val preKeyId: Int,
+    val preKey: PrePublicKey,
+)
 
-    override fun pack(packer: MessagePacker): Unit = packer.run {
-        packInt(preKeyId)
-        packByteArray(preKey)
-    }
-}
+data class OneTimePreKeysPublishRequest(
+    val preKeys: List<OneTimePreKey>,
+    val password: String
+) : Request<OneTimePreKeysPublishResponse>("KeyExchange.publishOneTimePreKeys")
 
-class OneTimePreKeysPublishRequest(
-    private val preKeys: List<OneTimePreKey>,
-    private val password: String
-) :
-    Request<OneTimePreKeysPublishResponse>("KeyExchange.publishOneTimePreKeys", 2) {
-    override fun pack(packer: MessagePacker): Unit = packer.run {
-        pack(preKeys)
-        packString(password)
-    }
-
-    override fun newResponse() = OneTimePreKeysPublishResponse()
-
-}
-
-class OneTimePreKeysPublishResponse(var error: Error = null) : Response(1) {
-    override fun unpack(unpacker: MessageUnpacker) = unpacker.run {
-        error = unpackError()
-    }
-}
+data class OneTimePreKeysPublishResponse(val error: Error) : Response()

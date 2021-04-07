@@ -1,47 +1,17 @@
 package dev.superboring.aosp.chakonati.protocol.requests.setup
 
-import dev.superboring.aosp.chakonati.protocol.*
-import org.msgpack.core.MessagePacker
-import org.msgpack.core.MessageUnpacker
+import dev.superboring.aosp.chakonati.protocol.EmptyRequest
+import dev.superboring.aosp.chakonati.protocol.Error
+import dev.superboring.aosp.chakonati.protocol.Request
+import dev.superboring.aosp.chakonati.protocol.Response
 
-class IsPasswordSetupRequest :
-    EmptyRequest<IsPasswordSetupResponse>("Setup.isPasswordSetup") {
-    override fun newResponse() = IsPasswordSetupResponse()
-}
+class IsPasswordSetupRequest : EmptyRequest<IsPasswordSetupResponse>("Setup.isPasswordSetup")
+data class IsPasswordSetupResponse(val isSetup: Boolean) : Response()
 
-class IsPasswordSetupResponse(var isSetup: Boolean = false) : Response(1) {
-    override fun unpack(unpacker: MessageUnpacker) = unpacker.run {
-        isSetup = unpackBoolean()
-    }
-}
+class SetPasswordRequest : EmptyRequest<SetPasswordResponse>("Setup.setPassword")
+data class SetPasswordResponse(val password: String, val error: Error) : Response()
 
-class SetPasswordRequest :
-    EmptyRequest<SetPasswordResponse>("Setup.setPassword") {
-    override fun newResponse() = SetPasswordResponse()
-}
+data class IsPasswordValidRequest(val password: String) :
+    Request<IsPasswordValidResponse>("Setup.isPasswordValid")
 
-class SetPasswordResponse(
-    var password: String = "",
-    var error: Error = null
-) : Response(2) {
-    override fun unpack(unpacker: MessageUnpacker) = unpacker.run {
-        password = unpackString()
-        error = unpackError()
-    }
-}
-
-class IsPasswordValidRequest(private val password: String) :
-    Request<IsPasswordValidResponse>("Setup.isPasswordValid", 1) {
-    override fun pack(packer: MessagePacker): Unit = packer.run {
-        packString(password)
-    }
-
-    override fun newResponse() = IsPasswordValidResponse()
-}
-
-class IsPasswordValidResponse(var isValid: Boolean = false) : Response(1) {
-    override fun unpack(unpacker: MessageUnpacker) = unpacker.run {
-        isValid = unpackBoolean()
-    }
-
-}
+data class IsPasswordValidResponse(val isValid: Boolean) : Response()

@@ -1,10 +1,11 @@
 package dev.superboring.aosp.chakonati.protocol.exceptions
 
+import dev.superboring.aosp.chakonati.protocol.Message
 import dev.superboring.aosp.chakonati.protocol.MessageHeader
 import dev.superboring.aosp.chakonati.protocol.MessageType
 
-class UntrackedResponsePacketException(responseHeader: MessageHeader) : RuntimeException(
-    "Invalid response header with request ID ${responseHeader.id}"
+class UntrackedResponsePacketException(message: Message) : RuntimeException(
+    "Invalid response header with request ID ${message.id}"
 )
 
 class UnsupportedMessageType(type: MessageType) : RuntimeException(

@@ -1,31 +1,36 @@
 package dev.superboring.aosp.chakonati.protocol.requests.keyexchange
 
-import dev.superboring.aosp.chakonati.protocol.*
-import org.msgpack.core.MessageUnpacker
+import dev.superboring.aosp.chakonati.protocol.EmptyRequest
+import dev.superboring.aosp.chakonati.protocol.Error
+import dev.superboring.aosp.chakonati.protocol.Response
 import org.whispersystems.libsignal.IdentityKey
 import org.whispersystems.libsignal.ecc.ECPublicKey
 import org.whispersystems.libsignal.state.PreKeyBundle
 
 class RetrievePreKeyBundleRequest :
-    EmptyRequest<RetrievePreKeyBundleResponse>("KeyExchange.preKeyBundle") {
-    override fun newResponse() = RetrievePreKeyBundleResponse()
-}
+    EmptyRequest<RetrievePreKeyBundleResponse>("KeyExchange.preKeyBundle")
 
-class RetrievePreKeyBundleResponse : Response(9) {
-    lateinit var bundle: PreKeyBundle
-    var error: Error = null
+data class RetrievePreKeyBundleResponse(
+    private val registrationId: Int,
+    val deviceId: Int,
+    private val preKeyId: Int?,
+    private val preKey: ByteArray?,
+    private val signedPreKeyId: Int,
+    private val publicSignedPreKey: ByteArray,
+    private val signedPreKeySignature: ByteArray,
+    private val identityKey: ByteArray,
+    val error: Error
+) : Response() {
 
-    override fun unpack(unpacker: MessageUnpacker) = unpacker.run {
-        bundle = PreKeyBundle(
-            unpackInt(),
-            unpackInt(),
-            unpackOptional { unpackInt() } ?: 0,
-            unpackOptional { ECPublicKey.fromPublicKeyBytes(unpackByteArray()) },
-            unpackInt(),
-            ECPublicKey.fromPublicKeyBytes(unpackByteArray()),
-            unpackByteArray(),
-            IdentityKey(unpackByteArray())
+    fun preKeyBundle() =
+        PreKeyBundle(
+            registrationId,
+            deviceId,
+            preKeyId ?: 0,
+            preKey?.let { ECPublicKey.fromPublicKeyBytes(it) },
+            signedPreKeyId,
+            ECPublicKey.fromPublicKeyBytes(publicSignedPreKey),
+            signedPreKeySignature,
+            IdentityKey(identityKey)
         )
-        error = unpackError()
-    }
 }

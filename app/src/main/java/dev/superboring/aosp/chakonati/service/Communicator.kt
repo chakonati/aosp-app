@@ -1,16 +1,20 @@
 package dev.superboring.aosp.chakonati.service
 
+import dev.superboring.aosp.chakonati.extras.msgpack.deserialize
 import dev.superboring.aosp.chakonati.protocol.*
 import dev.superboring.aosp.chakonati.protocol.exceptions.UnsupportedMessageType
 import dev.superboring.aosp.chakonati.protocol.exceptions.UntrackedResponsePacketException
 import dev.superboring.aosp.chakonati.protocol.requests.basic.HelloRequest
+import dev.superboring.aosp.chakonati.protocol.requests.basic.HelloResponse
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.Deferred
+import kotlin.reflect.KClass
 
 class Communicator(private val server: String) : WebSocketServiceListener {
 
     private val openRequests = hashMapOf<RequestId, OpenRequest<*>>()
-    private var hasSentHello = false
+    var hasSentHello = false
+        private set
 
     private val serverUri
         get() = "ws://$server"
@@ -27,18 +31,18 @@ class Communicator(private val server: String) : WebSocketServiceListener {
         hasSentHello = true
     }
 
-    suspend infix fun <R : Response> send(request: Request<R>): R {
+    suspend inline infix fun <reified R : Response> send(request: Request<R>): R {
         if (!hasSentHello) {
             doHandshake()
         }
         return sendAsync(request).await()
     }
 
-    private infix fun <R : Response> sendAsync(request: Request<R>): Deferred<R> {
+    fun <R : Response> sendAsync(request: Request<R>): Deferred<R> {
         val deferred = CompletableDeferred<R>()
-        synchronized (openRequests) {
+        synchronized(openRequests) {
             @Suppress("UNCHECKED_CAST")
-            openRequests[request.requestId] =
+            openRequests[request.id] =
                 OpenRequest(deferred as CompletableDeferred<Response>, request)
         }
         webSocketService.send(request)
@@ -46,20 +50,19 @@ class Communicator(private val server: String) : WebSocketServiceListener {
     }
 
     override fun onMessage(bytes: ByteArray) {
-        val header = MessageHeader().apply { deserialize(bytes) }
-        when (header.messageType) {
+        val message = bytes.deserialize<Message>()
+        when (message.messageType) {
             MessageType.RESPONSE -> {
-                synchronized (openRequests) {
+                synchronized(openRequests) {
                     val openRequest =
-                        openRequests[header.id] ?: throw UntrackedResponsePacketException(header)
-                    openRequest.request.newResponse().run {
-                        deserialize(bytes)
-                        openRequest.deferredResponse.complete(this)
+                        openRequests[message.id] ?: throw UntrackedResponsePacketException(message)
+                    openRequest.run {
+                        deferredResponse.complete(message.data.deserialize())
                     }
-                    openRequests -= header.id
+                    openRequests -= message.id
                 }
             }
-            else -> throw UnsupportedMessageType(header.messageType)
+            else -> throw UnsupportedMessageType(message.messageType)
         }
     }
 
