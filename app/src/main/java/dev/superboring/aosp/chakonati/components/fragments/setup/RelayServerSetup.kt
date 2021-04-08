@@ -182,6 +182,7 @@ private fun EditForm(
             TextField(
                 modifier = Modifier.fillMaxWidth(),
                 value = relayServer,
+                singleLine = true,
                 onValueChange = { onRelayServerChange(it) },
                 label = { ResText(R.string.common__relay_server_address) },
                 placeholder = { Text("chat.example.tld") },
@@ -300,6 +301,7 @@ private fun EnterSetupPassword(
     TextField(
         modifier = Modifier.fillMaxWidth(),
         value = setupPassword,
+        singleLine = true,
         keyboardOptions = KeyboardOptions(
             keyboardType = KeyboardType.Password
         ),

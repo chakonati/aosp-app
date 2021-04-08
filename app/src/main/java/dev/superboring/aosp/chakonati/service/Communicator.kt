@@ -1,14 +1,13 @@
 package dev.superboring.aosp.chakonati.service
 
 import dev.superboring.aosp.chakonati.extras.msgpack.deserialize
+import dev.superboring.aosp.chakonati.extras.msgpack.serialized
 import dev.superboring.aosp.chakonati.protocol.*
 import dev.superboring.aosp.chakonati.protocol.exceptions.UnsupportedMessageType
 import dev.superboring.aosp.chakonati.protocol.exceptions.UntrackedResponsePacketException
 import dev.superboring.aosp.chakonati.protocol.requests.basic.HelloRequest
-import dev.superboring.aosp.chakonati.protocol.requests.basic.HelloResponse
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.Deferred
-import kotlin.reflect.KClass
 
 class Communicator(private val server: String) : WebSocketServiceListener {
 
@@ -47,7 +46,18 @@ class Communicator(private val server: String) : WebSocketServiceListener {
         synchronized(openRequests) {
             openRequests[request.id] = OpenRequest(deferred, request)
         }
-        webSocketService.send(request)
+        val requestHeader = request
+            .serialized.deserialize<EmptyRequestOnly>()
+            .serialized.deserialize<Map<String, Any?>>()
+        val dataMap = request.serialized.deserialize<MutableMap<String, Any>>()
+        requestHeader.keys.forEach { dataMap -= it }
+        val requestMap = requestHeader.toMutableMap()
+        requestMap["data"] = if (dataMap.isNotEmpty()) {
+            dataMap
+        } else {
+            null
+        }
+        webSocketService.send(requestMap)
         return deferred
     }
 

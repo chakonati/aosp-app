@@ -18,11 +18,11 @@ object Setup {
     }
 
     suspend fun isPasswordSet(): Boolean {
-        return OwnRelayServer.comm.send(IsPasswordSetupRequest()).isSetup
+        return OwnRelayServer.comm.send(IsPasswordSetupRequest()).isSetUp
     }
 
     suspend fun isPasswordValid(password: String): Boolean {
-        return OwnRelayServer.comm.send(IsPasswordValidRequest(password)).isValid
+        return OwnRelayServer.comm.send(IsPasswordValidRequest(password)).valid
     }
 
 }
