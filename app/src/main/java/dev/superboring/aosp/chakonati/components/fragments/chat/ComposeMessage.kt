@@ -20,8 +20,9 @@ import dev.superboring.aosp.chakonati.components.shared.base.BareSurface
 val textFieldHeight = 48.dp
 
 @Composable
-@Preview
-fun ComposeMessage() {
+fun ComposeMessage(
+    onSend: (message: String) -> Unit
+) {
     var text by remember { mutableStateOf("") }
 
     BareSurface(addPadding = false, modifier = Modifier.fillMaxWidth()) {
@@ -51,7 +52,7 @@ fun ComposeMessage() {
                         defaultElevation = 0.dp,
                         pressedElevation = 0.dp,
                     ),
-                    onClick = { },
+                    onClick = { onSend(text) },
                     icon = Icons.Default.Send,
                     iconContentDescription = "",
                     modifier = Modifier

@@ -87,4 +87,14 @@ class Communicator(private val server: String) : WebSocketServiceListener {
         webSocketService.disconnect()
     }
 
+    suspend inline infix fun transaction(fn: Communicator.() -> Unit) {
+        doHandshake()
+        fn()
+        disconnect()
+    }
+
+    suspend inline infix operator fun invoke(fn: Communicator.() -> Unit) {
+        transaction(fn)
+    }
+
 }

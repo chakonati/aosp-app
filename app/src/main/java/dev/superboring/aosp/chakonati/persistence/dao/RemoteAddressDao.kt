@@ -29,6 +29,14 @@ interface RemoteAddressDao {
     )
     fun get(deviceId: Int, address: String): RemoteAddressAndIdentityKey
 
+    @Query(
+        """
+            select * from remote_addresses
+            where id = :id
+        """
+    )
+    fun getAddress(id: Int): RemoteAddress
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     infix fun insert(address: RemoteAddress)
 

@@ -1,10 +1,10 @@
 package dev.superboring.aosp.chakonati.persistence.entities
 
-import androidx.room.ColumnInfo
+import androidx.room.*
 import androidx.room.Entity
-import androidx.room.Index
-import androidx.room.PrimaryKey
 import dev.superboring.aosp.chakonati.domain.ChatSummary
+import dev.superboring.aosp.chakonati.persistence.db
+import dev.superboring.aosp.chakonati.signal.PersistentProtocolStore
 
 @Entity(
     tableName = "chats",
@@ -21,6 +21,10 @@ data class Chat(
     @ColumnInfo(name = "display_name") val displayName: String,
 ) {
 
-    val summary get() = ChatSummary("", displayName, "")
+    suspend fun summary() = db.withTransaction {
+        ChatSummary(
+            db.remoteAddresses().getAddress(remoteAddressId).address, displayName, ""
+        )
+    }
 
 }

@@ -9,9 +9,12 @@ import dev.superboring.aosp.chakonati.services.RemoteKeyExchange
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
+import org.whispersystems.libsignal.SessionBuilder
+import org.whispersystems.libsignal.SessionCipher
 import org.whispersystems.libsignal.SignalProtocolAddress
 import org.whispersystems.libsignal.state.SessionRecord
 import org.whispersystems.libsignal.state.SessionState
+import org.whispersystems.libsignal.state.SignalProtocolStore
 import kotlin.coroutines.CoroutineContext
 
 class ChatSession(
@@ -58,15 +61,9 @@ class ChatSession(
             throw RuntimeException("New session is not fresh")
         }
 
-        signalSession.setState(
-            SessionState.initializeAliceSession(
-                PersistentProtocolStore.identityKeyPair,
-                PersistentProtocolStore.loadLastPreKey().signalPreKeyRecord.keyPair,
-                preKeyBundle.identityKey,
-                preKeyBundle.signedPreKey,
-                preKeyBundle.preKey,
-            )
-        )
+        SessionBuilder(PersistentProtocolStore, signalAddress).apply {
+            process(preKeyBundle)
+        }
 
         db.withTransaction {
             db.remoteAddresses() insert (RemoteAddress from signalAddress)
@@ -77,6 +74,18 @@ class ChatSession(
                 ).address.Id,
                 displayName = remoteServer
             )
+        }
+    }
+
+    suspend fun <R> useExisting(fn: suspend ChatSession.() -> R): R {
+        val deviceId = PersistentProtocolStore.getSubDeviceSessions(remoteServer)[0]
+        signalAddress = SignalProtocolAddress(remoteServer, deviceId)
+        return fn()
+    }
+
+    fun encrypt(message: ByteArray): ByteArray {
+        SessionCipher(PersistentProtocolStore, signalAddress).run {
+            return encrypt(message).serialize()
         }
     }
 
