@@ -1,5 +1,8 @@
 package dev.superboring.aosp.chakonati.persistence.dao
 
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.Query
@@ -38,7 +41,10 @@ suspend fun MySetupDao.saveRelayServer(relayServer: String) {
     db.mySetup().get().apply {
         this.relayServer = relayServer
     }.save()
+    isRelayServerSetUp = true
     OwnRelayServer.prepareCommunicator()
 }
 
 suspend fun MySetup.save() = db.mySetup() save this
+
+var MySetupDao.isRelayServerSetUp by mutableStateOf(false)

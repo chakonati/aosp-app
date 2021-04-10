@@ -23,6 +23,7 @@ import dev.superboring.aosp.chakonati.extensions.android.view.useTranslucentBars
 import dev.superboring.aosp.chakonati.extensions.kotlinx.coroutines.launchIO
 import dev.superboring.aosp.chakonati.persistence.AppDatabase
 import dev.superboring.aosp.chakonati.persistence.dao.get
+import dev.superboring.aosp.chakonati.persistence.dao.isRelayServerSetUp
 import dev.superboring.aosp.chakonati.persistence.db
 import dev.superboring.aosp.chakonati.service.OwnRelayServer
 import dev.superboring.aosp.chakonati.signal.OneTimePreKeyRefresh
@@ -54,8 +55,9 @@ class ChatListActivity : ComponentActivity(), CoroutineScope {
                     applyContent()
                 }
                 if (db.mySetup().get().relayServer.isNotEmpty()) {
+                    db.mySetup().isRelayServerSetUp = true
                     OwnRelayServer.prepareCommunicator()
-                    OneTimePreKeyRefresh.refreshOneTimePreKeys()
+                    // TODO: OneTimePreKeyRefresh.refreshOneTimePreKeys()
                 }
             } else {
                 replaceActivity(WelcomeActivity::class)

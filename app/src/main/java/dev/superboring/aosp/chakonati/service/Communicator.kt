@@ -6,12 +6,22 @@ import dev.superboring.aosp.chakonati.protocol.*
 import dev.superboring.aosp.chakonati.protocol.exceptions.UnsupportedMessageType
 import dev.superboring.aosp.chakonati.protocol.exceptions.UntrackedResponsePacketException
 import dev.superboring.aosp.chakonati.protocol.requests.basic.HelloRequest
+import dev.superboring.aosp.chakonati.services.SubscriptionName
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.Deferred
+
+interface SubscriptionListener {
+    suspend fun onNotification(bytes: ByteArray)
+}
+
+class CommunicatorRequestFailed(extra: String, e: Exception) :
+        RuntimeException(extra, e)
 
 class Communicator(private val server: String) : WebSocketServiceListener {
 
     private val openRequests = hashMapOf<RequestId, OpenRequest>()
+    private val subscriptionListeners = hashMapOf<SubscriptionName, SubscriptionListener>()
+
     var hasSentHello = false
         private set
 
@@ -26,7 +36,6 @@ class Communicator(private val server: String) : WebSocketServiceListener {
 
     suspend fun doHandshake() {
         val response = sendWithoutChecks(HelloRequest())
-        println("Received reply: ${response.reply}")
         hasSentHello = true
     }
 
@@ -38,7 +47,12 @@ class Communicator(private val server: String) : WebSocketServiceListener {
     }
 
     suspend inline infix fun <reified R : Response> sendWithoutChecks(request: Request<R>): R {
-        return sendAsync(request).await().deserialize()
+        try {
+            return sendAsync(request).await().deserialize()
+        } catch (e: Exception) {
+            // oops
+            throw CommunicatorRequestFailed("error in sendWithoutChecks", e)
+        }
     }
 
     fun <R : Response> sendAsync(request: Request<R>): Deferred<ByteArray> {
@@ -61,7 +75,7 @@ class Communicator(private val server: String) : WebSocketServiceListener {
         return deferred
     }
 
-    override fun onMessage(bytes: ByteArray) {
+    override suspend fun onMessage(bytes: ByteArray) {
         val message = bytes.deserialize<MessageHeader>()
         when (message.messageType) {
             MessageTypes.RESPONSE -> {
@@ -72,6 +86,11 @@ class Communicator(private val server: String) : WebSocketServiceListener {
                     openRequests -= message.id
                 }
             }
+            MessageTypes.NOTIFICATION -> {
+                val notification = bytes.deserialize<Notification>()
+                subscriptionListeners[notification.subscriptionName]?.
+                    onNotification(notification.data)
+            }
             else -> throw UnsupportedMessageType(message.messageType)
         }
     }
@@ -81,6 +100,13 @@ class Communicator(private val server: String) : WebSocketServiceListener {
         synchronized(openRequests) {
             openRequests.forEach { it.value.deferredResponse.completeExceptionally(t) }
         }
+    }
+
+    fun setSubscriptionListener(
+        subscriptionName: SubscriptionName,
+        listener: SubscriptionListener,
+    ) {
+        subscriptionListeners[subscriptionName] = listener
     }
 
     fun disconnect() {

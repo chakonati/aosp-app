@@ -15,7 +15,7 @@ import dev.superboring.aosp.chakonati.components.shared.CenteredColumn
 import dev.superboring.aosp.chakonati.components.shared.FullWidthColumn
 import dev.superboring.aosp.chakonati.components.shared.ResText
 
-val messages = listOf<Message>()
+val messages = arrayListOf<Message>()
 
 @Composable
 fun MessageHistory() {

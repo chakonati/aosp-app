@@ -6,22 +6,26 @@ import dev.superboring.aosp.chakonati.activities.ui.theme.additionalColors
 import dev.superboring.aosp.chakonati.activities.ui.theme.colors
 import dev.superboring.aosp.chakonati.components.shared.SmallSnackyBar
 import dev.superboring.aosp.chakonati.compose.stringRes
+import dev.superboring.aosp.chakonati.persistence.dao.isRelayServerSetUp
+import dev.superboring.aosp.chakonati.persistence.db
 import dev.superboring.aosp.chakonati.service.OwnRelayServer
 
 @Composable
 fun ConnectionBar() {
-    OwnRelayServer.run {
-        when {
-            isConnecting -> {
-                ConnectingBar()
-            }
-            connectionError != null -> {
-                connectionError?.localizedMessage?.let { ConnectionErrorBar(it) }
-            }
-            justConnectedSuccessfully -> {
-                ConnectedSuccessfully()
-            }
-            else -> {
+    if (db.mySetup().isRelayServerSetUp) {
+        OwnRelayServer.run {
+            when {
+                isConnecting -> {
+                    ConnectingBar()
+                }
+                connectionError != null -> {
+                    connectionError?.localizedMessage?.let { ConnectionErrorBar(it) }
+                }
+                justConnectedSuccessfully -> {
+                    ConnectedSuccessfully()
+                }
+                else -> {
+                }
             }
         }
     }

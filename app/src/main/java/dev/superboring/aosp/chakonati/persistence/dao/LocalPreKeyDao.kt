@@ -53,7 +53,7 @@ fun LocalPreKeyDao.generateNewKeyId(): Int {
 
 suspend infix fun LocalPreKeyDao.delete(key: LocalPreKey) {
     deleteNoEvents(key)
-    OneTimePreKeyRefresh.refreshOneTimePreKeys()
+    // TODO: OneTimePreKeyRefresh.refreshOneTimePreKeys()
 }
 
 val relayServerPassword get() = db.mySetup().get().relayServerPassword

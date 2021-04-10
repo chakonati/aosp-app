@@ -1,12 +1,22 @@
 package dev.superboring.aosp.chakonati.service
 
+import dev.superboring.aosp.chakonati.extensions.kotlinx.coroutines.launchIO
 import dev.superboring.aosp.chakonati.extras.msgpack.serialized
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.serialization.Serializable
 import okhttp3.*
 import okio.ByteString
 import java.util.concurrent.TimeUnit
+import kotlin.coroutines.CoroutineContext
 
-class WebSocketService(private val uri: String) : WebSocketListener() {
+class WebSocketService(private val uri: String) : WebSocketListener(), CoroutineScope {
+
+    private val job by lazy { Job() }
+
+    override val coroutineContext: CoroutineContext
+        get() = Dispatchers.IO + job
 
     private val listeners = arrayListOf<WebSocketServiceListener>()
 
@@ -39,7 +49,7 @@ class WebSocketService(private val uri: String) : WebSocketListener() {
     }
 
     override fun onMessage(webSocket: WebSocket, bytes: ByteString) {
-        listeners.forEach { it.onMessage(bytes.toByteArray()) }
+        listeners.forEach { launchIO { it.onMessage(bytes.toByteArray()) } }
     }
 
     fun addListener(listener: WebSocketServiceListener) {

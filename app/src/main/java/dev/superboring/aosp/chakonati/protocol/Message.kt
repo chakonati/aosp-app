@@ -11,6 +11,7 @@ object MessageTypes {
     const val RESPONSE = 1
     const val ONEWAY = 2
     const val STREAM = 3
+    const val NOTIFICATION = 4
 
     const val UNKNOWN = -1
 }

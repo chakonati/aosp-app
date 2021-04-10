@@ -9,8 +9,7 @@ import androidx.compose.material.TopAppBar
 import androidx.compose.runtime.*
 import dev.superboring.aosp.chakonati.activities.ui.theme.DefaultTheme
 import dev.superboring.aosp.chakonati.components.common.ConnectionBar
-import dev.superboring.aosp.chakonati.components.fragments.chat.ComposeMessage
-import dev.superboring.aosp.chakonati.components.fragments.chat.MessageHistory
+import dev.superboring.aosp.chakonati.components.fragments.chat.*
 import dev.superboring.aosp.chakonati.components.shared.FullWidthColumn
 import dev.superboring.aosp.chakonati.components.shared.base.BareSurface
 import dev.superboring.aosp.chakonati.domain.ChatSummary
@@ -36,7 +35,22 @@ class ChatActivity : ComponentActivity() {
 @Composable
 private fun Content(chatSummary: ChatSummary) {
     val coroutineScope = rememberCoroutineScope()
-    val chatSession by remember { mutableStateOf(ChatSession(chatSummary.recipient)) }
+    val chatSession by remember { mutableStateOf(
+        ChatSession(chatSummary.recipient).apply {
+            coroutineScope.launchIO {
+                listen {
+                    onMessage {
+                        messages += Message(
+                            MessageFrom.THEM,
+                            String(decrypt(it), StandardCharsets.UTF_8),
+                            null,
+                            null,
+                        )
+                    }
+                }
+            }
+        }
+    ) }
 
     BareSurface(addPadding = false) {
         Scaffold(
