@@ -15,7 +15,7 @@ interface SubscriptionListener {
 }
 
 class CommunicatorRequestFailed(extra: String, e: Exception) :
-        RuntimeException(extra, e)
+    RuntimeException(extra, e)
 
 class Communicator(private val server: String) : WebSocketServiceListener {
 
@@ -88,8 +88,7 @@ class Communicator(private val server: String) : WebSocketServiceListener {
             }
             MessageTypes.NOTIFICATION -> {
                 val notification = bytes.deserialize<Notification>()
-                subscriptionListeners[notification.subscriptionName]?.
-                    onNotification(notification.data)
+                subscriptionListeners[notification.subscriptionName]?.onNotification(notification.data)
             }
             else -> throw UnsupportedMessageType(message.messageType)
         }

@@ -2,7 +2,6 @@ package dev.superboring.aosp.chakonati.signal
 
 import androidx.room.withTransaction
 import dev.superboring.aosp.chakonati.domain.MessageNotification
-import dev.superboring.aosp.chakonati.extensions.kotlin.then
 import dev.superboring.aosp.chakonati.extras.msgpack.deserialize
 import dev.superboring.aosp.chakonati.persistence.db
 import dev.superboring.aosp.chakonati.persistence.entities.Chat
@@ -18,7 +17,6 @@ import org.whispersystems.libsignal.SessionBuilder
 import org.whispersystems.libsignal.SessionCipher
 import org.whispersystems.libsignal.SignalProtocolAddress
 import org.whispersystems.libsignal.protocol.PreKeySignalMessage
-import org.whispersystems.libsignal.protocol.SignalMessage
 import org.whispersystems.libsignal.state.SessionRecord
 import kotlin.coroutines.CoroutineContext
 

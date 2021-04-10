@@ -6,7 +6,6 @@ import androidx.room.Insert
 import androidx.room.Query
 import dev.superboring.aosp.chakonati.persistence.db
 import dev.superboring.aosp.chakonati.persistence.entities.LocalPreKey
-import dev.superboring.aosp.chakonati.signal.OneTimePreKeyRefresh
 import java.security.SecureRandom
 
 @Dao

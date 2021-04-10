@@ -23,4 +23,4 @@ object Subscription {
 }
 
 class SubscribeFailed(subName: SubscriptionName, error: String) :
-        RequestFailure("Failed to subscribe to $subName: $error")
+    RequestFailure("Failed to subscribe to $subName: $error")

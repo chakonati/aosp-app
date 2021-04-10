@@ -35,22 +35,24 @@ class ChatActivity : ComponentActivity() {
 @Composable
 private fun Content(chatSummary: ChatSummary) {
     val coroutineScope = rememberCoroutineScope()
-    val chatSession by remember { mutableStateOf(
-        ChatSession(chatSummary.recipient).apply {
-            coroutineScope.launchIO {
-                listen {
-                    onMessage {
-                        messages += Message(
-                            MessageFrom.THEM,
-                            String(decrypt(it), StandardCharsets.UTF_8),
-                            null,
-                            null,
-                        )
+    val chatSession by remember {
+        mutableStateOf(
+            ChatSession(chatSummary.recipient).apply {
+                coroutineScope.launchIO {
+                    listen {
+                        onMessage {
+                            messages += Message(
+                                MessageFrom.THEM,
+                                String(decrypt(it), StandardCharsets.UTF_8),
+                                null,
+                                null,
+                            )
+                        }
                     }
                 }
             }
-        }
-    ) }
+        )
+    }
 
     BareSurface(addPadding = false) {
         Scaffold(
