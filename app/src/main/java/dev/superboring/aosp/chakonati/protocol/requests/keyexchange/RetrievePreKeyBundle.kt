@@ -27,9 +27,9 @@ data class RetrievePreKeyBundleResponse(
             registrationId,
             deviceId,
             preKeyId ?: 0,
-            preKey?.let { ECPublicKey.fromPublicKeyBytes(it) },
+            preKey?.let { ECPublicKey(preKey) },
             signedPreKeyId,
-            ECPublicKey.fromPublicKeyBytes(publicSignedPreKey),
+            ECPublicKey(publicSignedPreKey),
             signedPreKeySignature,
             IdentityKey(identityKey)
         )

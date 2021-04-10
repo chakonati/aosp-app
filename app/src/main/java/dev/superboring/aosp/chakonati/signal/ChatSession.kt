@@ -13,8 +13,6 @@ import org.whispersystems.libsignal.SessionBuilder
 import org.whispersystems.libsignal.SessionCipher
 import org.whispersystems.libsignal.SignalProtocolAddress
 import org.whispersystems.libsignal.state.SessionRecord
-import org.whispersystems.libsignal.state.SessionState
-import org.whispersystems.libsignal.state.SignalProtocolStore
 import kotlin.coroutines.CoroutineContext
 
 class ChatSession(
@@ -61,6 +59,7 @@ class ChatSession(
             throw RuntimeException("New session is not fresh")
         }
 
+        PersistentProtocolStore.saveIdentity(signalAddress, preKeyBundle.identityKey)
         SessionBuilder(PersistentProtocolStore, signalAddress).apply {
             process(preKeyBundle)
         }
