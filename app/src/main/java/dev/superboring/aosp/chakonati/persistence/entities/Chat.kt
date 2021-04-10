@@ -4,7 +4,6 @@ import androidx.room.*
 import androidx.room.Entity
 import dev.superboring.aosp.chakonati.domain.ChatSummary
 import dev.superboring.aosp.chakonati.persistence.db
-import dev.superboring.aosp.chakonati.signal.PersistentProtocolStore
 
 @Entity(
     tableName = "chats",

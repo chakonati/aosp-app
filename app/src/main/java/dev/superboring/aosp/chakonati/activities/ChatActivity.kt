@@ -1,7 +1,6 @@
 package dev.superboring.aosp.chakonati.activities
 
 import android.os.Bundle
-import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.material.Scaffold
@@ -37,7 +36,7 @@ class ChatActivity : ComponentActivity() {
 @Composable
 private fun Content(chatSummary: ChatSummary) {
     val coroutineScope = rememberCoroutineScope()
-    val chatSession by remember { mutableStateOf(ChatSession(chatSummary.recipient))}
+    val chatSession by remember { mutableStateOf(ChatSession(chatSummary.recipient)) }
 
     BareSurface(addPadding = false) {
         Scaffold(

@@ -27,4 +27,3 @@ abstract class AppDatabase : RoomDatabase() {
 }
 
 lateinit var db: AppDatabase
-

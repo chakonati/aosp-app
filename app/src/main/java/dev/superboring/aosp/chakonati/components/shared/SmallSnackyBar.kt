@@ -21,7 +21,7 @@ fun SmallSnackyBar(
     backgroundColor: Color = colors().primary,
     loading: Boolean = false,
 ) {
-    Surface (color = backgroundColor) {
+    Surface(color = backgroundColor) {
         FullWidthRow(
             horizontalArrangement = Arrangement.Center,
             verticalAlignment = Alignment.CenterVertically,

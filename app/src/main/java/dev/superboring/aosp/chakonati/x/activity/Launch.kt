@@ -41,6 +41,7 @@ inline fun <reified B : @Serializable Any> Activity.replaceActivity(c: KClass<*>
     )
     finish()
 }
+
 inline fun <reified D : @Serializable Any> Activity.parameters(): D? {
     return intent.extras?.getByteArray(serializedParametersKey)?.deserialize()
 }

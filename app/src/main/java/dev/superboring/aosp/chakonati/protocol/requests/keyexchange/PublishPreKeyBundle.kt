@@ -3,7 +3,6 @@ package dev.superboring.aosp.chakonati.protocol.requests.keyexchange
 import com.fasterxml.jackson.annotation.JsonIgnore
 import dev.superboring.aosp.chakonati.protocol.ErrorResponse
 import dev.superboring.aosp.chakonati.protocol.Request
-import kotlinx.serialization.Serializable
 import org.whispersystems.libsignal.state.PreKeyBundle
 
 data class PreKeyBundlePublishRequest(

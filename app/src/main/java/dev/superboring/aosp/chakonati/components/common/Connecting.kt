@@ -21,7 +21,8 @@ fun ConnectionBar() {
             justConnectedSuccessfully -> {
                 ConnectedSuccessfully()
             }
-            else -> {}
+            else -> {
+            }
         }
     }
 }

@@ -18,4 +18,3 @@ data class MySetup(
     @ColumnInfo(name = "relay_server_password") var relayServerPassword: String,
     @ColumnInfo(name = "is_set_up") var isSetUp: Boolean,
 ) : SingleEntryEntity<MySetupDao>
-

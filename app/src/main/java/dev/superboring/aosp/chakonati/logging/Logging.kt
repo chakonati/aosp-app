@@ -1,3 +1,3 @@
 package dev.superboring.aosp.chakonati.logging
 
-val ATP = "Chakonati."
+const val ATP = "Chakonati."
