@@ -12,6 +12,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.VisualTransformation
 
@@ -39,7 +40,8 @@ fun RoundedTextField(
         errorIndicatorColor = Color.Transparent,
         focusedIndicatorColor = Color.Transparent,
         unfocusedIndicatorColor = Color.Transparent,
-    )
+    ),
+    shape: Shape = RoundedCornerShape(50),
 ) {
     TextField(
         enabled = enabled,
@@ -59,7 +61,7 @@ fun RoundedTextField(
         keyboardActions = keyboardActions,
         maxLines = maxLines,
         interactionSource = interactionSource,
-        shape = RoundedCornerShape(50),
+        shape = shape,
         colors = colors
     )
 }

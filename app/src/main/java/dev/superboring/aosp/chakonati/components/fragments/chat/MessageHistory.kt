@@ -1,7 +1,12 @@
 package dev.superboring.aosp.chakonati.components.fragments.chat
 
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.MaterialTheme.typography
 import androidx.compose.material.Surface
 import androidx.compose.runtime.Composable
@@ -13,28 +18,31 @@ import androidx.compose.ui.unit.dp
 import dev.superboring.aosp.chakonati.R
 import dev.superboring.aosp.chakonati.activities.ui.theme.additionalColors
 import dev.superboring.aosp.chakonati.components.shared.CenteredColumn
-import dev.superboring.aosp.chakonati.components.shared.FullWidthColumn
 import dev.superboring.aosp.chakonati.components.shared.ResText
 
-val messages = mutableStateListOf<Message>()
-
 @Composable
-fun MessageHistory() {
+fun MessageHistory(messages: List<Message>) {
     Surface(
         color = additionalColors().intermediaryBackground,
         modifier = Modifier.fillMaxSize()
     ) {
-        FullWidthColumn(
-            modifier = Modifier.padding(8.dp)
-        ) {
-            if (messages.isNotEmpty()) {
-                messages.forEachIndexed { index, message ->
+        val listState = rememberLazyListState()
+        if (messages.isNotEmpty()) {
+            LazyColumn(
+                modifier = Modifier
+                    .padding(8.dp)
+                    .fillMaxWidth(),
+                state = listState,
+            ) {
+                itemsIndexed(items = messages) { index, message ->
                     MessageRow(message.apply {
                         last = if (index > 0) messages[index - 1] else null
                         next = if (index < messages.size - 1) messages[index + 1] else null
                     })
                 }
-            } else {
+            }
+        } else {
+            CenteredColumn {
                 SendYourFirstMessage()
             }
         }

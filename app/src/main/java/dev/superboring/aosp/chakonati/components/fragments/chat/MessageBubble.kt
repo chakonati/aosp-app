@@ -117,11 +117,15 @@ private fun MessageBubble(
                             }
                         }
                     }
-                    .padding(horizontal = minHeightCornerRadius),
+                    .padding(
+                        horizontal = minHeightCornerRadius,
+                        vertical = 4.dp,
+                    ),
                 color = contentColorFor(message.from.backgroundColor()),
                 text = message.text,
                 textAlign =
-                if (message.from == MessageFrom.MYSELF) TextAlign.Start else TextAlign.End
+                if (message.from == MessageFrom.MYSELF) TextAlign.Start else TextAlign.End,
+                softWrap = true,
             )
         }
     }

@@ -1,12 +1,14 @@
 package dev.superboring.aosp.chakonati.components.fragments.chat
 
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Send
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import dev.superboring.aosp.chakonati.R
@@ -20,10 +22,10 @@ val textFieldHeight = 48.dp
 
 @Composable
 fun ComposeMessage(
-    onSend: (message: String) -> Unit
+    onSend: (message: String) -> Unit,
+    onTextChange: (text: String) -> Unit,
+    text: String,
 ) {
-    var text by remember { mutableStateOf("") }
-
     BareSurface(addPadding = false, modifier = Modifier.fillMaxWidth()) {
         FullWidthColumn {
             ConstraintLayout(
@@ -44,7 +46,8 @@ fun ComposeMessage(
                         .wrapContentWidth(Alignment.Start),
                     value = text,
                     placeholder = { ResText(R.string.chat__compose__compose_message) },
-                    onValueChange = { text = it },
+                    onValueChange = { onTextChange(it) },
+                    shape = RoundedCornerShape(textFieldHeight / 2)
                 )
                 IconButton(
                     elevation = ButtonDefaults.elevation(
@@ -52,17 +55,7 @@ fun ComposeMessage(
                         pressedElevation = 0.dp,
                     ),
                     enabled = text.isNotBlank(),
-                    onClick = {
-                        val message = text
-                        messages += Message(
-                            MessageFrom.MYSELF,
-                            message,
-                            null,
-                            null,
-                        )
-                        text = ""
-                        onSend(message)
-                      },
+                    onClick = { onSend(text) },
                     icon = Icons.Default.Send,
                     iconContentDescription = "",
                     modifier = Modifier
@@ -78,4 +71,10 @@ fun ComposeMessage(
             }
         }
     }
+}
+
+@Preview
+@Composable
+fun ComposeMessagePreview() {
+    ComposeMessage(onSend = {}, onTextChange = {}, text = "")
 }

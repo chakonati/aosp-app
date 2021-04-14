@@ -3,13 +3,16 @@ package dev.superboring.aosp.chakonati.activities
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.material.TopAppBar
 import androidx.compose.runtime.*
+import androidx.compose.ui.Modifier
 import dev.superboring.aosp.chakonati.activities.ui.theme.DefaultTheme
 import dev.superboring.aosp.chakonati.components.common.ConnectionBar
 import dev.superboring.aosp.chakonati.components.fragments.chat.*
+import dev.superboring.aosp.chakonati.components.shared.FillingBox
 import dev.superboring.aosp.chakonati.components.shared.FullWidthColumn
 import dev.superboring.aosp.chakonati.components.shared.base.BareSurface
 import dev.superboring.aosp.chakonati.domain.ChatSummary
@@ -35,6 +38,9 @@ class ChatActivity : ComponentActivity() {
 @Composable
 private fun Content(chatSummary: ChatSummary) {
     val coroutineScope = rememberCoroutineScope()
+    var text by remember { mutableStateOf("") }
+    val messages = remember { mutableStateListOf<Message>() }
+
     val chatSession by remember {
         mutableStateOf(
             ChatSession(chatSummary.recipient).apply {
@@ -67,6 +73,14 @@ private fun Content(chatSummary: ChatSummary) {
             bottomBar = {
                 ComposeMessage(
                     onSend = { message ->
+                        messages += Message(
+                            MessageFrom.MYSELF,
+                            message,
+                            null,
+                            null,
+                        )
+                        text = ""
+
                         coroutineScope.launchIO {
                             Communicator(chatSummary.recipient) transaction {
                                 RemoteMessaging(this).run {
@@ -78,11 +92,17 @@ private fun Content(chatSummary: ChatSummary) {
                                 }
                             }
                         }
-                    }
+                    },
+                    onTextChange = { text = it },
+                    text = text,
                 )
             }
         ) {
-            MessageHistory()
+            FillingBox(modifier = Modifier.padding(it)) {
+                MessageHistory(
+                    messages
+                )
+            }
         }
     }
 }
