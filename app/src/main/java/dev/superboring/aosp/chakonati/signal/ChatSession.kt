@@ -69,16 +69,16 @@ class ChatSession(
             throw RuntimeException("Pre-key bundle does not exist on remote server")
         }
         val deviceId = keyExchange.deviceId()
-        val preKeyBundle = keyExchange.preKeyBundle()
+        //val preKeyBundle = keyExchange.preKeyBundle()
         signalAddress = SignalProtocolAddress(remoteServer, deviceId)
-        if (!signalSession.isFresh) {
+        /*if (!signalSession.isFresh) {
             throw RuntimeException("New session is not fresh")
         }
 
         PersistentProtocolStore.saveIdentity(signalAddress, preKeyBundle.identityKey)
         SessionBuilder(PersistentProtocolStore, signalAddress).apply {
-            process(preKeyBundle)
-        }
+            //process(preKeyBundle)
+        }*/
 
         db.withTransaction {
             db.remoteAddresses() insert (RemoteAddress from signalAddress)
@@ -93,18 +93,23 @@ class ChatSession(
     }
 
     suspend fun <R> useExisting(fn: suspend ChatSession.() -> R): R {
+        return fn()
         val deviceId = PersistentProtocolStore.getSubDeviceSessions(remoteServer)[0]
         signalAddress = SignalProtocolAddress(remoteServer, deviceId)
         return fn()
     }
 
     fun encrypt(message: ByteArray): ByteArray {
+        return message
+        // TODO: make this work
         SessionCipher(PersistentProtocolStore, signalAddress).run {
             return encrypt(message).serialize()
         }
     }
 
     fun decrypt(message: ByteArray): ByteArray {
+        return message
+        // TODO: make this work
         SessionCipher(PersistentProtocolStore, signalAddress).run {
             return decrypt(PreKeySignalMessage(message))
         }

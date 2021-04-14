@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.MaterialTheme.typography
 import androidx.compose.material.Surface
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -15,7 +16,7 @@ import dev.superboring.aosp.chakonati.components.shared.CenteredColumn
 import dev.superboring.aosp.chakonati.components.shared.FullWidthColumn
 import dev.superboring.aosp.chakonati.components.shared.ResText
 
-val messages = arrayListOf<Message>()
+val messages = mutableStateListOf<Message>()
 
 @Composable
 fun MessageHistory() {

@@ -67,7 +67,8 @@ object PersistentProtocolStore : SignalProtocolStore {
         address: SignalProtocolAddress,
         identityKey: IdentityKey,
         direction: IdentityKeyStore.Direction?
-    ) = db.remoteAddresses().exists(address.deviceId, address.name)
+    ) = db.remoteAddresses().exists(address.deviceId, address.name) &&
+            getIdentity(address).fingerprint.equals(identityKey.fingerprint)
 
     override fun getIdentity(address: SignalProtocolAddress) =
         db.remoteAddresses().get(address.deviceId, address.name).identityKey!!.signalIdentityKey
@@ -139,5 +140,6 @@ object PersistentProtocolStore : SignalProtocolStore {
 
     override fun removeSignedPreKey(signedPreKeyId: Int) =
         db.localSignedPreKeys() deleteByPreKeyId signedPreKeyId
-
 }
+
+

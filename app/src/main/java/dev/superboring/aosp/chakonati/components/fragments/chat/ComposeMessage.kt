@@ -51,7 +51,18 @@ fun ComposeMessage(
                         defaultElevation = 0.dp,
                         pressedElevation = 0.dp,
                     ),
-                    onClick = { onSend(text) },
+                    enabled = text.isNotBlank(),
+                    onClick = {
+                        val message = text
+                        messages += Message(
+                            MessageFrom.MYSELF,
+                            message,
+                            null,
+                            null,
+                        )
+                        text = ""
+                        onSend(message)
+                      },
                     icon = Icons.Default.Send,
                     iconContentDescription = "",
                     modifier = Modifier
