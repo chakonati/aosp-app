@@ -11,7 +11,10 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import dev.superboring.aosp.chakonati.activities.ui.theme.DefaultTheme
 import dev.superboring.aosp.chakonati.components.common.ConnectionBar
-import dev.superboring.aosp.chakonati.components.fragments.chat.*
+import dev.superboring.aosp.chakonati.components.fragments.chat.ComposeMessage
+import dev.superboring.aosp.chakonati.components.fragments.chat.Message
+import dev.superboring.aosp.chakonati.components.fragments.chat.MessageFrom
+import dev.superboring.aosp.chakonati.components.fragments.chat.MessageHistory
 import dev.superboring.aosp.chakonati.components.shared.FillingBox
 import dev.superboring.aosp.chakonati.components.shared.FullWidthColumn
 import dev.superboring.aosp.chakonati.components.shared.base.BareSurface
