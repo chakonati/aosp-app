@@ -11,7 +11,6 @@ import dev.superboring.aosp.chakonati.protocol.requests.messaging.SendMessageReq
 import dev.superboring.aosp.chakonati.service.Communicator
 import dev.superboring.aosp.chakonati.service.OwnRelayServer
 import dev.superboring.aosp.chakonati.service.RemoteService
-import dev.superboring.aosp.chakonati.signal.PersistentProtocolStore
 
 class MessageSendFailure(error: String) :
     RequestFailure("failed to send message: $error")
@@ -49,12 +48,14 @@ class RemoteMessaging(private val communicator: Communicator) : RemoteService(co
         if (encryptedMessage.isEmpty()) {
             throw OutboundMessageRejection("Your message is empty. Please put data in it.")
         }
-        communicator.send(SendMessageRequest(
-            encryptedMessage,
-            db.mySetup().get().relayServer,
-            // TODO: device id
-            0,
-        )).error?.let {
+        communicator.send(
+            SendMessageRequest(
+                encryptedMessage,
+                db.mySetup().get().relayServer,
+                // TODO: device id
+                0,
+            )
+        ).error?.let {
             throw MessageSendFailure(it)
         }
     }

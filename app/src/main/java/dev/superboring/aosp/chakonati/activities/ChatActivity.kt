@@ -22,7 +22,6 @@ import dev.superboring.aosp.chakonati.domain.ChatSummary
 import dev.superboring.aosp.chakonati.extensions.kotlinx.coroutines.launchIO
 import dev.superboring.aosp.chakonati.service.Communicator
 import dev.superboring.aosp.chakonati.services.RemoteMessaging
-import dev.superboring.aosp.chakonati.signal.ChatSession
 import dev.superboring.aosp.chakonati.signal.ChatSessionManager
 import dev.superboring.aosp.chakonati.x.activity.parameters
 import java.nio.charset.StandardCharsets
