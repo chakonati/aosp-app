@@ -23,7 +23,7 @@ typealias MessageListener = suspend ChatSession.(ByteArray) -> Unit
 
 class ChatSession(
     val remoteServer: String
-) : CoroutineScope, SubscriptionListener {
+) : CoroutineScope {
 
     private val job by lazy { Job() }
 
@@ -55,12 +55,6 @@ class ChatSession(
             signalSessionFromStore = value
             signalSessionInternal = signalSessionFromStore
         }
-
-    init {
-        OwnRelayServer.comm.apply {
-            setSubscriptionListener(Subscriptions.MESSAGES, this@ChatSession)
-        }
-    }
 
     suspend fun startNew() {
         communicator.doHandshake()
@@ -122,10 +116,9 @@ class ChatSession(
         Subscription.subscribe(Subscriptions.MESSAGES)
     }
 
-    override suspend fun onNotification(bytes: ByteArray) {
+    suspend fun onNotification(notification: MessageNotification) {
         subScope.messageListener?.let { messageListener ->
-            val messageNotification = bytes.deserialize<MessageNotification>()
-            val message = Messaging.getMessage(messageNotification.messageId)
+            val message = Messaging.getMessage(notification.messageId)
             messageListener(this, message.encryptedMessage)
         }
     }

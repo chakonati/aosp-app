@@ -24,6 +24,7 @@ import dev.superboring.aosp.chakonati.domain.ChatSummary
 import dev.superboring.aosp.chakonati.extensions.android.view.useTranslucentBars
 import dev.superboring.aosp.chakonati.extensions.kotlinx.coroutines.launchIO
 import dev.superboring.aosp.chakonati.signal.ChatSession
+import dev.superboring.aosp.chakonati.signal.ChatSessionManager
 import dev.superboring.aosp.chakonati.x.activity.replaceActivity
 
 class NewChatActivity : ComponentActivity() {
@@ -64,7 +65,8 @@ class NewChatActivity : ComponentActivity() {
                                     isConnecting = true
                                     hasErrorOccurred = false
                                     coroutineScope.launchIO {
-                                        val chatSession = ChatSession(remoteServer)
+                                        val chatSession =
+                                            ChatSessionManager.chatSession(remoteServer)
                                         try {
                                             chatSession.startNew()
                                             val chatSummary = ChatSummary(

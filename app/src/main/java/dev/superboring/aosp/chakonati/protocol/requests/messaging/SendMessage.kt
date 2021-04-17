@@ -6,6 +6,8 @@ import dev.superboring.aosp.chakonati.protocol.Response
 
 data class SendMessageRequest(
     val encryptedMessage: ByteArray,
+    val from: String,
+    val deviceId: Int,
 ) : Request<SendMessageResponse>("Messaging.sendMessage")
 
 data class SendMessageResponse(val error: Error) : Response()
