@@ -1,5 +1,6 @@
 package dev.superboring.aosp.chakonati.service
 
+import dev.superboring.aosp.chakonati.BuildConfig
 import dev.superboring.aosp.chakonati.extras.msgpack.deserialize
 import dev.superboring.aosp.chakonati.extras.msgpack.serialized
 import dev.superboring.aosp.chakonati.protocol.*
@@ -7,6 +8,7 @@ import dev.superboring.aosp.chakonati.protocol.exceptions.UnsupportedMessageType
 import dev.superboring.aosp.chakonati.protocol.exceptions.UntrackedResponsePacketException
 import dev.superboring.aosp.chakonati.protocol.requests.basic.HelloRequest
 import dev.superboring.aosp.chakonati.services.SubscriptionName
+import dev.superboring.aosp.chakonati.x.debug
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.Deferred
 
@@ -26,7 +28,7 @@ class Communicator(private val server: String) : WebSocketServiceListener {
         private set
 
     private val serverUri
-        get() = "ws://$server"
+        get() = "ws${if (BuildConfig.DEBUG) "" else "s"}://$server"
 
     private val webSocketService by lazy {
         WebSocketService(serverUri).apply {
@@ -51,7 +53,10 @@ class Communicator(private val server: String) : WebSocketServiceListener {
             return sendAsync(request).await().deserialize()
         } catch (e: Exception) {
             // oops
-            throw CommunicatorRequestFailed("error in sendWithoutChecks", e)
+            debug {
+                println(CommunicatorRequestFailed("error in sendWithoutChecks", e))
+            }
+            throw e
         }
     }
 
