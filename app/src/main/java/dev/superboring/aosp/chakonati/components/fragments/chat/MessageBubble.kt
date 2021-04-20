@@ -16,6 +16,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import dev.superboring.aosp.chakonati.activities.ui.theme.colors
+import dev.superboring.aosp.chakonati.persistence.entities.Chat
 
 private val minHeight = 32.dp
 private val minHeightCornerRadius = minHeight / 2
@@ -26,6 +27,12 @@ enum class MessageFrom(
 ) {
     MYSELF({ colors().secondary }),
     THEM({ colors().primaryVariant }),
+    ;
+
+    companion object {
+        fun fromInt(ordinal: Int) = values()[ordinal]
+        fun toInt(from: MessageFrom) = from.ordinal
+    }
 }
 
 data class Message(
@@ -33,7 +40,15 @@ data class Message(
     val text: String,
     var last: Message? = null,
     var next: Message? = null,
-)
+) {
+    fun asDBMessage(chat: Chat) = dev.superboring.aosp.chakonati.persistence.entities.DBMessage(
+        chatId = chat.id,
+        messageFrom = from.ordinal,
+        // TODO: add sender when implementing groups
+        messageText = text,
+        // TODO: MessageData when saving binary data (e. g. serialized info
+    )
+}
 
 @Composable
 fun MessageRow(

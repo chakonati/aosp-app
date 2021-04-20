@@ -2,11 +2,15 @@ package dev.superboring.aosp.chakonati.signal
 
 import androidx.room.withTransaction
 import dev.superboring.aosp.chakonati.domain.MessageNotification
+import dev.superboring.aosp.chakonati.extensions.kotlin.elseThen
+import dev.superboring.aosp.chakonati.extensions.kotlin.notThen
+import dev.superboring.aosp.chakonati.extensions.kotlin.then
 import dev.superboring.aosp.chakonati.persistence.db
 import dev.superboring.aosp.chakonati.persistence.entities.Chat
 import dev.superboring.aosp.chakonati.persistence.entities.RemoteAddress
 import dev.superboring.aosp.chakonati.service.Communicator
 import dev.superboring.aosp.chakonati.services.*
+import dev.superboring.aosp.chakonati.x.debug
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -21,6 +25,8 @@ typealias MessageListener = suspend ChatSession.(ByteArray) -> Unit
 class ChatSession(
     val remoteServer: String
 ) : CoroutineScope {
+
+    lateinit var chat: Chat
 
     private val job by lazy { Job() }
 
@@ -53,7 +59,11 @@ class ChatSession(
             signalSessionInternal = signalSessionFromStore
         }
 
-    suspend fun startNew() {
+    fun useChat(chat: Chat) {
+        this.chat = chat
+    }
+
+    suspend fun startNew(): Chat {
         communicator.doHandshake()
         if (!keyExchange.preKeyBundleExists()) {
             throw RuntimeException("Pre-key bundle does not exist on remote server")
@@ -70,15 +80,17 @@ class ChatSession(
             //process(preKeyBundle)
         }*/
 
-        db.withTransaction {
+        return db.withTransaction {
             db.remoteAddresses() insert (RemoteAddress from signalAddress)
-            db.chats() insert Chat(
+            chat = Chat(
                 remoteAddressId = db.remoteAddresses().get(
                     deviceId,
                     remoteServer,
                 ).address.Id,
                 displayName = remoteServer
             )
+            db.chats() insert chat
+            chat
         }
     }
 
@@ -105,19 +117,27 @@ class ChatSession(
         }
     }
 
-    suspend fun listen(
+    suspend fun onNotification(notification: MessageNotification) {
+        try {
+            ::chat.isInitialized.notThen {
+                startNew()
+            }
+            subScope.messageListener?.let { messageListener ->
+                val message = Messaging.getMessage(notification.messageId)
+                messageListener(this, message.encryptedMessage)
+            }
+        } catch (e: Exception) {
+            debug {
+                println("oops, notification delivery FAILED")
+                println(e)
+            }
+        }
+    }
+
+    fun listen(
         scope: SubscriptionScope.() -> Unit
     ) {
         subScope.scope()
-
-        Subscription.subscribe(Subscriptions.MESSAGES)
-    }
-
-    suspend fun onNotification(notification: MessageNotification) {
-        subScope.messageListener?.let { messageListener ->
-            val message = Messaging.getMessage(notification.messageId)
-            messageListener(this, message.encryptedMessage)
-        }
     }
 
     fun disconnect() = communicator.disconnect()

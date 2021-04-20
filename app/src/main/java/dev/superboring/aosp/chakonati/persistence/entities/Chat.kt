@@ -15,14 +15,18 @@ import dev.superboring.aosp.chakonati.persistence.db
     )]
 )
 data class Chat(
-    @ColumnInfo(name = "id") @PrimaryKey(autoGenerate = true) val Id: Int = 0,
+    @ColumnInfo(name = "id") @PrimaryKey(autoGenerate = true) val id: Int = 0,
     @ColumnInfo(name = "remote_address_id") val remoteAddressId: Int,
     @ColumnInfo(name = "display_name") val displayName: String,
 ) {
 
     suspend fun summary() = db.withTransaction {
         ChatSummary(
-            db.remoteAddresses().getAddress(remoteAddressId).address, displayName, ""
+            id,
+            db.remoteAddresses().getAddress(remoteAddressId).address,
+            displayName,
+            // TODO: fetch last message
+            "",
         )
     }
 

@@ -5,6 +5,7 @@ import dev.superboring.aosp.chakonati.domain.MessageNotification
 import dev.superboring.aosp.chakonati.extras.msgpack.deserialize
 import dev.superboring.aosp.chakonati.service.OwnRelayServer
 import dev.superboring.aosp.chakonati.service.SubscriptionListener
+import dev.superboring.aosp.chakonati.services.Subscription
 import dev.superboring.aosp.chakonati.services.Subscriptions
 import java.util.*
 
@@ -16,6 +17,10 @@ object ChatSessionManager : SubscriptionListener {
         OwnRelayServer.comm.apply {
             setSubscriptionListener(Subscriptions.MESSAGES, this@ChatSessionManager)
         }
+    }
+
+    suspend fun subscribe() {
+        Subscription.subscribe(Subscriptions.MESSAGES)
     }
 
     override suspend fun onNotification(bytes: ByteArray) {
@@ -33,5 +38,6 @@ object ChatSessionManager : SubscriptionListener {
             chatSession
         }
     }
+    
 
 }

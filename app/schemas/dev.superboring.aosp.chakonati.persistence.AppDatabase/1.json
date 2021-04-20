@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "2e34230af50759cc408487458a07d727",
+    "identityHash": "0c80a4961e866b0eed124d3b0d32b49c",
     "entities": [
       {
         "tableName": "my_setup",
@@ -279,12 +279,71 @@
           }
         ],
         "foreignKeys": []
+      },
+      {
+        "tableName": "messages",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `chat_id` INTEGER NOT NULL, `from` INTEGER NOT NULL, `sender` TEXT, `message_text` TEXT NOT NULL, `message_data` BLOB NOT NULL)",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "chatId",
+            "columnName": "chat_id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "messageFrom",
+            "columnName": "from",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "sender",
+            "columnName": "sender",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "messageText",
+            "columnName": "message_text",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "messageData",
+            "columnName": "message_data",
+            "affinity": "BLOB",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "id"
+          ],
+          "autoGenerate": true
+        },
+        "indices": [
+          {
+            "name": "index_messages_chat_id",
+            "unique": false,
+            "columnNames": [
+              "chat_id"
+            ],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_messages_chat_id` ON `${TABLE_NAME}` (`chat_id`)"
+          }
+        ],
+        "foreignKeys": []
       }
     ],
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '2e34230af50759cc408487458a07d727')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '0c80a4961e866b0eed124d3b0d32b49c')"
     ]
   }
 }

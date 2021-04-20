@@ -13,6 +13,9 @@ interface ChatDao {
     @Query("select * from chats")
     fun all(): DataSource.Factory<Int, Chat>
 
+    @Query("select * from chats where id = :id")
+    infix fun get(id: Int): Chat
+
     @Insert
     infix fun insert(chat: Chat)
 

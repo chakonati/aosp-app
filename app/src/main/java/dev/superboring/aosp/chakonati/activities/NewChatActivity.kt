@@ -67,8 +67,8 @@ class NewChatActivity : ComponentActivity() {
                                         val chatSession =
                                             ChatSessionManager.chatSession(remoteServer)
                                         try {
-                                            chatSession.startNew()
                                             val chatSummary = ChatSummary(
+                                                chatSession.startNew().id,
                                                 remoteServer,
                                                 remoteServer,
                                                 ""
