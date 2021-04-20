@@ -38,6 +38,12 @@ class Communicator(private val server: String) : WebSocketServiceListener {
 
     suspend fun doHandshake() {
         val response = sendWithoutChecks(HelloRequest())
+        if (response.reply != "hi!") {
+            debug {
+                println("got ${response.reply} as reply")
+            }
+            throw HandshakeFailure("unexpected reply")
+        }
         hasSentHello = true
     }
 
@@ -128,3 +134,6 @@ class Communicator(private val server: String) : WebSocketServiceListener {
     }
 
 }
+
+class HandshakeFailure(reason: String) :
+        RuntimeException("could not complete handshake with server: $reason")
