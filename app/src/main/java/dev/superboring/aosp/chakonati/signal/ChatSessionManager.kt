@@ -38,6 +38,6 @@ object ChatSessionManager : SubscriptionListener {
             chatSession
         }
     }
-    
+
 
 }

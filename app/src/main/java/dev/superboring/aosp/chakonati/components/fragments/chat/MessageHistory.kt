@@ -8,10 +8,7 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.MaterialTheme.typography
 import androidx.compose.material.Surface
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.*
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -27,9 +24,6 @@ import dev.superboring.aosp.chakonati.persistence.db
 import dev.superboring.aosp.chakonati.persistence.entities.Chat
 import dev.superboring.aosp.chakonati.persistence.entities.DBMessage
 import dev.superboring.aosp.chakonati.x.handler.postMain
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.launch
 
 @Composable
@@ -45,7 +39,8 @@ fun MessageHistory(chat: Chat) {
 
         (messageUpdateTracker[chat.id] ?: 0).let { updateId ->
             if (messages == null ||
-                lastUpdatedChatId == chat.id && updateId > lastUpdateId) {
+                lastUpdatedChatId == chat.id && updateId > lastUpdateId
+            ) {
                 coroutineScope.launchIO {
                     db.messages().last(chat.id, 100).let {
                         postMain {

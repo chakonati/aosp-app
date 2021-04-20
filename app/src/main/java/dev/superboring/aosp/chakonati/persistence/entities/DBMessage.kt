@@ -1,7 +1,9 @@
 package dev.superboring.aosp.chakonati.persistence.entities
 
-import androidx.room.*
+import androidx.room.ColumnInfo
 import androidx.room.Entity
+import androidx.room.Index
+import androidx.room.PrimaryKey
 import dev.superboring.aosp.chakonati.components.fragments.chat.Message
 import dev.superboring.aosp.chakonati.components.fragments.chat.MessageFrom
 
@@ -23,9 +25,10 @@ data class DBMessage(
     @ColumnInfo(name = "message_data") val messageData: ByteArray = byteArrayOf(),
 ) {
 
-    val asBubbleMessage get() = Message(
-        MessageFrom.fromInt(messageFrom),
-        messageText,
-    )
+    val asBubbleMessage
+        get() = Message(
+            MessageFrom.fromInt(messageFrom),
+            messageText,
+        )
 
 }

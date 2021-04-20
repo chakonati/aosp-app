@@ -136,4 +136,4 @@ class Communicator(private val server: String) : WebSocketServiceListener {
 }
 
 class HandshakeFailure(reason: String) :
-        RuntimeException("could not complete handshake with server: $reason")
+    RuntimeException("could not complete handshake with server: $reason")

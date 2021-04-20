@@ -9,8 +9,6 @@ import androidx.compose.material.Text
 import androidx.compose.material.TopAppBar
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
-import androidx.paging.Pager
-import androidx.paging.PagingConfig
 import dev.superboring.aosp.chakonati.activities.ui.theme.DefaultTheme
 import dev.superboring.aosp.chakonati.components.common.ConnectionBar
 import dev.superboring.aosp.chakonati.components.fragments.chat.ComposeMessage
@@ -70,11 +68,11 @@ private fun Content(chatSummary: ChatSummary) {
                     listen {
                         onMessage {
                             db.messages() add (
-                                Message(
-                                    MessageFrom.THEM,
-                                    String(decrypt(it), StandardCharsets.UTF_8)
-                                ).asDBMessage(chat!!)
-                            )
+                                    Message(
+                                        MessageFrom.THEM,
+                                        String(decrypt(it), StandardCharsets.UTF_8)
+                                    ).asDBMessage(chat!!)
+                                    )
                         }
                     }
                 }

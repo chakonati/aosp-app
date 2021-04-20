@@ -2,14 +2,14 @@ package dev.superboring.aosp.chakonati.signal
 
 import androidx.room.withTransaction
 import dev.superboring.aosp.chakonati.domain.MessageNotification
-import dev.superboring.aosp.chakonati.extensions.kotlin.elseThen
 import dev.superboring.aosp.chakonati.extensions.kotlin.notThen
-import dev.superboring.aosp.chakonati.extensions.kotlin.then
 import dev.superboring.aosp.chakonati.persistence.db
 import dev.superboring.aosp.chakonati.persistence.entities.Chat
 import dev.superboring.aosp.chakonati.persistence.entities.RemoteAddress
 import dev.superboring.aosp.chakonati.service.Communicator
-import dev.superboring.aosp.chakonati.services.*
+import dev.superboring.aosp.chakonati.services.Messaging
+import dev.superboring.aosp.chakonati.services.RemoteKeyExchange
+import dev.superboring.aosp.chakonati.services.RemoteMessaging
 import dev.superboring.aosp.chakonati.x.debug
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
