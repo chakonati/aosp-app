@@ -12,29 +12,14 @@ interface RemoteAddressDao {
     @Query("select * from remote_addresses")
     fun all(): Array<RemoteAddress>
 
-    @Query(
-        """
-            select count(id) from remote_addresses
-            where device_id = :deviceId and address = :address
-            """
-    )
-    fun exists(deviceId: Int, address: String): Boolean
+    @Query("select count(id) from remote_addresses where address = :address")
+    fun exists(address: String): Boolean
 
     @Transaction
-    @Query(
-        """
-            select * from remote_addresses
-            where device_id = :deviceId and address = :address
-            """
-    )
-    fun get(deviceId: Int, address: String): RemoteAddressAndIdentityKey
+    @Query("select * from remote_addresses where address = :address")
+    fun get(address: String): RemoteAddressAndIdentityKey
 
-    @Query(
-        """
-            select * from remote_addresses
-            where id = :id
-        """
-    )
+    @Query("select * from remote_addresses where id = :id")
     fun getAddress(id: Int): RemoteAddress
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)

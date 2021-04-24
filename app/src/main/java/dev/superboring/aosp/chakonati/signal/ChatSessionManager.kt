@@ -3,6 +3,7 @@ package dev.superboring.aosp.chakonati.signal
 import com.google.common.collect.HashBasedTable
 import dev.superboring.aosp.chakonati.domain.MessageNotification
 import dev.superboring.aosp.chakonati.extras.msgpack.deserialize
+import dev.superboring.aosp.chakonati.persistence.db
 import dev.superboring.aosp.chakonati.service.OwnRelayServer
 import dev.superboring.aosp.chakonati.service.SubscriptionListener
 import dev.superboring.aosp.chakonati.services.Subscription
@@ -29,11 +30,15 @@ object ChatSessionManager : SubscriptionListener {
             .onNotification(messageNotification)
     }
 
-    fun chatSession(remoteServer: String): ChatSession {
+    suspend fun chatSession(remoteServer: String): ChatSession = synchronized(this) {
         // TODO: handle device IDs?
         val deviceId = 0
         return chatSessions[remoteServer, deviceId] ?: run {
             val chatSession = ChatSession(remoteServer)
+            if (db.signalSessions().hasSession(remoteServer)) {
+                val addressId = db.remoteAddresses().get(remoteServer).address.Id
+                chatSession.useChat(db.chats().getByRemoteAddressId(addressId))
+            }
             chatSessions.put(remoteServer, deviceId, chatSession)
             chatSession
         }

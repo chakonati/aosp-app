@@ -22,19 +22,10 @@ interface SignalSessionDao {
         """
         select count(s.id) from signal_sessions s
         inner join remote_addresses ra on s.remote_address_id = ra.id
-        where ra.address = :withAddress and ra.device_id = :withDeviceId
+        where ra.address = :withAddress
         """
     )
-    fun hasSession(withDeviceId: Int, withAddress: String): Boolean
-
-    @Query(
-        """
-        select s.* from signal_sessions s
-        inner join remote_addresses ra on s.remote_address_id = ra.id
-        where ra.address = :address and ra.device_id = :deviceId
-        """
-    )
-    fun get(deviceId: Int, address: String): SignalSession
+    fun hasSession(withAddress: String): Boolean
 
     @Query(
         """
@@ -43,11 +34,11 @@ interface SignalSessionDao {
         where ra.address = :address
         """
     )
-    fun get(address: String): List<SignalSession>
+    fun get(address: String): SignalSession
 
     @Query(
         """
-        select ra.device_id from signal_sessions s
+        select device_id from signal_sessions s
         inner join remote_addresses ra on s.remote_address_id = ra.id
         where ra.address = :address
         """
@@ -70,16 +61,16 @@ infix fun SignalSessionDao.deleteByRemoteAddress(address: RemoteAddress) {
 suspend infix fun SignalSessionDao.deleteByAddressName(address: String) {
     db.withTransaction {
         db.signalSessions().run {
-            get(address).forEach { delete(it) }
+            delete(get(address))
         }
     }
 }
 
 infix fun SignalSessionDao.getByAddress(address: RemoteAddress) =
-    get(address.deviceId, address.address)
+    get(address.address)
 
 infix fun SignalSessionDao.hasSession(address: RemoteAddress) =
-    hasSession(address.deviceId, address.address)
+    hasSession(address.address)
 
 class InvalidSessionWithAddressInsertion(details: String) :
     RuntimeException("cannot do invalid insertion with address: $details")

@@ -84,7 +84,6 @@ class ChatSession(
             db.remoteAddresses() insert (RemoteAddress from signalAddress)
             chat = Chat(
                 remoteAddressId = db.remoteAddresses().get(
-                    deviceId,
                     remoteServer,
                 ).address.Id,
                 displayName = remoteServer

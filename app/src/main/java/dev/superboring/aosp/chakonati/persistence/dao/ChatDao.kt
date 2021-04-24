@@ -16,6 +16,9 @@ interface ChatDao {
     @Query("select * from chats where id = :id")
     infix fun get(id: Int): Chat
 
+    @Query("select * from chats where remote_address_id = :remoteAddressId")
+    infix fun getByRemoteAddressId(remoteAddressId: Int): Chat
+
     @Insert
     infix fun insert(chat: Chat)
 

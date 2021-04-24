@@ -25,6 +25,7 @@ import dev.superboring.aosp.chakonati.persistence.db
 import dev.superboring.aosp.chakonati.persistence.entities.Chat
 import dev.superboring.aosp.chakonati.service.Communicator
 import dev.superboring.aosp.chakonati.services.RemoteMessaging
+import dev.superboring.aosp.chakonati.signal.ChatSession
 import dev.superboring.aosp.chakonati.signal.ChatSessionManager
 import dev.superboring.aosp.chakonati.x.activity.parameters
 import dev.superboring.aosp.chakonati.x.handler.postMain
@@ -46,38 +47,34 @@ class ChatActivity : ComponentActivity() {
 private fun Content(chatSummary: ChatSummary) {
     val coroutineScope = rememberCoroutineScope()
     var text by remember { mutableStateOf("") }
-    val messages = remember { mutableStateListOf<Message>() }
     var chat by remember { mutableStateOf(null as Chat?) }
+    var chatSession by remember { mutableStateOf(null as ChatSession?) }
 
     coroutineScope.launchIO {
         val dbChat = db.chats() get chatSummary.chatId
+        val session = ChatSessionManager.chatSession(chatSummary.recipient).apply {
+            useChat(dbChat)
+            coroutineScope.launchIO {
+                listen {
+                    onMessage {
+                        db.messages() add (
+                                Message(
+                                    MessageFrom.THEM,
+                                    String(decrypt(it), StandardCharsets.UTF_8)
+                                ).asDBMessage(chat!!)
+                                )
+                    }
+                }
+            }
+        }
         postMain {
             chat = dbChat
+            chatSession = session
         }
     }
 
     if (chat == null) {
         return
-    }
-
-    val chatSession by remember {
-        mutableStateOf(
-            ChatSessionManager.chatSession(chatSummary.recipient).apply {
-                useChat(chat!!)
-                coroutineScope.launchIO {
-                    listen {
-                        onMessage {
-                            db.messages() add (
-                                    Message(
-                                        MessageFrom.THEM,
-                                        String(decrypt(it), StandardCharsets.UTF_8)
-                                    ).asDBMessage(chat!!)
-                                    )
-                        }
-                    }
-                }
-            }
-        )
     }
 
     BareSurface(addPadding = false) {
@@ -105,7 +102,7 @@ private fun Content(chatSummary: ChatSummary) {
                             Communicator(chatSummary.recipient) transaction {
                                 RemoteMessaging(this).run {
                                     sendMessage(
-                                        chatSession.useExisting {
+                                        chatSession!!.useExisting {
                                             encrypt(message.toByteArray(StandardCharsets.UTF_8))
                                         }
                                     )

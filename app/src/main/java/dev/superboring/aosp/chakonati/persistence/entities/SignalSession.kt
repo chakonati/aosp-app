@@ -11,11 +11,13 @@ import org.whispersystems.libsignal.state.SessionRecord
     indices = [Index(
         value = [
             "remote_address_id",
+            "device_id",
         ]
     )]
 )
 data class SignalSession(
     @ColumnInfo(name = "id") @PrimaryKey(autoGenerate = true) var id: Int = 0,
+    @ColumnInfo(name = "device_id") var deviceId: Int = 0,
     @ColumnInfo(name = "session_data") var sessionData: ByteArray,
 
     @ColumnInfo(name = "remote_address_id") var remoteAddressId: Int = 0,

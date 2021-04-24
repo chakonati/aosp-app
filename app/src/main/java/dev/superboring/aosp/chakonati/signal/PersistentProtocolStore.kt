@@ -51,7 +51,7 @@ object PersistentProtocolStore : SignalProtocolStore {
     override fun getLocalRegistrationId() = db.mySetup().get().registrationId
 
     override fun saveIdentity(address: SignalProtocolAddress, identityKey: IdentityKey): Boolean {
-        val existed = db.remoteAddresses().exists(address.deviceId, address.name)
+        val existed = db.remoteAddresses().exists(address.name)
         runBlocking {
             db.remoteAddresses() insertWithIdentityKey RemoteAddressAndIdentityKey(
                 address = RemoteAddress from address,
@@ -67,11 +67,11 @@ object PersistentProtocolStore : SignalProtocolStore {
         address: SignalProtocolAddress,
         identityKey: IdentityKey,
         direction: IdentityKeyStore.Direction?
-    ) = db.remoteAddresses().exists(address.deviceId, address.name) &&
+    ) = db.remoteAddresses().exists(address.name) &&
             getIdentity(address).fingerprint.equals(identityKey.fingerprint)
 
     override fun getIdentity(address: SignalProtocolAddress) =
-        db.remoteAddresses().get(address.deviceId, address.name).identityKey!!.signalIdentityKey
+        db.remoteAddresses().get(address.name).identityKey!!.signalIdentityKey
 
     fun loadLastPreKey() = db.localPreKeys().lastKey()
 
@@ -94,8 +94,8 @@ object PersistentProtocolStore : SignalProtocolStore {
 
     override fun loadSession(address: SignalProtocolAddress) =
         db.signalSessions().run {
-            if (hasSession(address.deviceId, address.name)) {
-                get(address.deviceId, address.name).signalSession
+            if (hasSession(address.name)) {
+                get(address.name).signalSession
             } else {
                 SessionRecord()
             }
@@ -107,7 +107,7 @@ object PersistentProtocolStore : SignalProtocolStore {
     override fun storeSession(address: SignalProtocolAddress, record: SessionRecord) =
         db.signalSessions().insertWithAddress(
             SignalSession from record,
-            db.remoteAddresses().get(address.deviceId, address.name).address,
+            db.remoteAddresses().get(address.name).address,
         )
 
     override fun containsSession(address: SignalProtocolAddress) =

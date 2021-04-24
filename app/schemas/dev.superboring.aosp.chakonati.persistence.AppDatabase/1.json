@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "0c80a4961e866b0eed124d3b0d32b49c",
+    "identityHash": "2267dbbc931eadd6c9005fa41b5f67fb",
     "entities": [
       {
         "tableName": "my_setup",
@@ -152,17 +152,11 @@
       },
       {
         "tableName": "remote_addresses",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `device_id` INTEGER NOT NULL, `address` TEXT NOT NULL, `identity_key_id` INTEGER NOT NULL)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `address` TEXT NOT NULL, `identity_key_id` INTEGER NOT NULL)",
         "fields": [
           {
             "fieldPath": "Id",
             "columnName": "id",
-            "affinity": "INTEGER",
-            "notNull": true
-          },
-          {
-            "fieldPath": "deviceId",
-            "columnName": "device_id",
             "affinity": "INTEGER",
             "notNull": true
           },
@@ -187,24 +181,29 @@
         },
         "indices": [
           {
-            "name": "index_remote_addresses_device_id_address",
+            "name": "index_remote_addresses_address",
             "unique": false,
             "columnNames": [
-              "device_id",
               "address"
             ],
-            "createSql": "CREATE INDEX IF NOT EXISTS `index_remote_addresses_device_id_address` ON `${TABLE_NAME}` (`device_id`, `address`)"
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_remote_addresses_address` ON `${TABLE_NAME}` (`address`)"
           }
         ],
         "foreignKeys": []
       },
       {
         "tableName": "signal_sessions",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `session_data` BLOB NOT NULL, `remote_address_id` INTEGER NOT NULL)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `device_id` INTEGER NOT NULL, `session_data` BLOB NOT NULL, `remote_address_id` INTEGER NOT NULL)",
         "fields": [
           {
             "fieldPath": "id",
             "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "deviceId",
+            "columnName": "device_id",
             "affinity": "INTEGER",
             "notNull": true
           },
@@ -229,12 +228,13 @@
         },
         "indices": [
           {
-            "name": "index_signal_sessions_remote_address_id",
+            "name": "index_signal_sessions_remote_address_id_device_id",
             "unique": false,
             "columnNames": [
-              "remote_address_id"
+              "remote_address_id",
+              "device_id"
             ],
-            "createSql": "CREATE INDEX IF NOT EXISTS `index_signal_sessions_remote_address_id` ON `${TABLE_NAME}` (`remote_address_id`)"
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_signal_sessions_remote_address_id_device_id` ON `${TABLE_NAME}` (`remote_address_id`, `device_id`)"
           }
         ],
         "foreignKeys": []
@@ -244,7 +244,7 @@
         "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `remote_address_id` INTEGER NOT NULL, `display_name` TEXT NOT NULL)",
         "fields": [
           {
-            "fieldPath": "Id",
+            "fieldPath": "id",
             "columnName": "id",
             "affinity": "INTEGER",
             "notNull": true
@@ -343,7 +343,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '0c80a4961e866b0eed124d3b0d32b49c')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '2267dbbc931eadd6c9005fa41b5f67fb')"
     ]
   }
 }
