@@ -9,6 +9,7 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.MaterialTheme.typography
 import androidx.compose.material.Surface
 import androidx.compose.runtime.*
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -18,8 +19,6 @@ import dev.superboring.aosp.chakonati.activities.ui.theme.additionalColors
 import dev.superboring.aosp.chakonati.components.shared.CenteredColumn
 import dev.superboring.aosp.chakonati.components.shared.ResText
 import dev.superboring.aosp.chakonati.extensions.kotlinx.coroutines.launchIO
-import dev.superboring.aosp.chakonati.persistence.dao.lastUpdatedChatId
-import dev.superboring.aosp.chakonati.persistence.dao.messageUpdateTracker
 import dev.superboring.aosp.chakonati.persistence.db
 import dev.superboring.aosp.chakonati.persistence.entities.Chat
 import dev.superboring.aosp.chakonati.persistence.entities.DBMessage
@@ -32,26 +31,7 @@ fun MessageHistory(chat: Chat) {
         color = additionalColors().intermediaryBackground,
         modifier = Modifier.fillMaxSize()
     ) {
-        val coroutineScope = rememberCoroutineScope()
-
-        var messages by remember { mutableStateOf(null as List<DBMessage>?) }
-        var lastUpdateId by remember { mutableStateOf(0L) }
-
-        (messageUpdateTracker[chat.id] ?: 0).let { updateId ->
-            if (messages == null ||
-                lastUpdatedChatId == chat.id && updateId > lastUpdateId
-            ) {
-                coroutineScope.launchIO {
-                    db.messages().last(chat.id, 100).let {
-                        postMain {
-                            messages = it
-                            lastUpdateId = updateId
-                        }
-                    }
-                }
-            }
-        }
-
+        val messages by db.messages().last(chat.id, 100).observeAsState()
 
         messages?.let {
             MessageHistoryMessages(it)

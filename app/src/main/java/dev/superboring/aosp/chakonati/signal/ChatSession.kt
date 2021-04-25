@@ -10,10 +10,11 @@ import dev.superboring.aosp.chakonati.service.Communicator
 import dev.superboring.aosp.chakonati.services.Messaging
 import dev.superboring.aosp.chakonati.services.RemoteKeyExchange
 import dev.superboring.aosp.chakonati.services.RemoteMessaging
-import dev.superboring.aosp.chakonati.x.debug
+import dev.superboring.aosp.chakonati.x.logging.logDebug
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
+import org.whispersystems.libsignal.SessionBuilder
 import org.whispersystems.libsignal.SessionCipher
 import org.whispersystems.libsignal.SignalProtocolAddress
 import org.whispersystems.libsignal.protocol.PreKeySignalMessage
@@ -60,63 +61,78 @@ class ChatSession(
         }
 
     fun useChat(chat: Chat) {
+        logDebug("Using existing chat ${chat.displayName} (ID ${chat.id})")
         this.chat = chat
+        // TODO: handle device IDs
+        signalAddress = SignalProtocolAddress(chat.remoteAddress.address, 0)
     }
 
     suspend fun startNew(): Chat {
+        logDebug("Starting new chat session")
         communicator.doHandshake()
+        logDebug("Checking if pre-key bundle exists...")
         if (!keyExchange.preKeyBundleExists()) {
             throw RuntimeException("Pre-key bundle does not exist on remote server")
         }
-        val deviceId = keyExchange.deviceId()
-        //val preKeyBundle = keyExchange.preKeyBundle()
+        logDebug("Pre-key bundle exists, fetching pre-key bundle")
+        //val deviceId = keyExchange.deviceId()
+        val deviceId = 0
+        val preKeyBundle = keyExchange.preKeyBundle()
+        logDebug("Received pre-key bundle $preKeyBundle")
         signalAddress = SignalProtocolAddress(remoteServer, deviceId)
-        /*if (!signalSession.isFresh) {
+        if (!signalSession.isFresh) {
             throw RuntimeException("New session is not fresh")
         }
+        logDebug("Signal session is fresh")
 
+        logDebug("Saving identity of $signalAddress")
         PersistentProtocolStore.saveIdentity(signalAddress, preKeyBundle.identityKey)
-        SessionBuilder(PersistentProtocolStore, signalAddress).apply {
-            //process(preKeyBundle)
-        }*/
 
+        logDebug("Building Signal session")
+        SessionBuilder(PersistentProtocolStore, signalAddress).apply {
+            logDebug("Processing pre-key bundle...")
+            process(preKeyBundle)
+        }
+
+        logDebug("Saving chat and session data...")
         return db.withTransaction {
             db.remoteAddresses() insert (RemoteAddress from signalAddress)
+            val remoteAddressId = db.remoteAddresses().get(
+                remoteServer,
+            ).Id
             chat = Chat(
-                remoteAddressId = db.remoteAddresses().get(
-                    remoteServer,
-                ).address.Id,
+                remoteAddressId = remoteAddressId,
                 displayName = remoteServer
             )
-            db.chats() insert chat
+            val chatId = db.chats() insert chat
+            chat.id = chatId
+            logDebug("Successfully initiated new session")
             chat
         }
     }
 
     suspend fun <R> useExisting(fn: suspend ChatSession.() -> R): R {
-        return fn()
         val deviceId = PersistentProtocolStore.getSubDeviceSessions(remoteServer)[0]
         signalAddress = SignalProtocolAddress(remoteServer, deviceId)
         return fn()
     }
 
     fun encrypt(message: ByteArray): ByteArray {
-        return message
-        // TODO: make this work
+        logDebug("Encrypting message")
         SessionCipher(PersistentProtocolStore, signalAddress).run {
             return encrypt(message).serialize()
         }
     }
 
     fun decrypt(message: ByteArray): ByteArray {
-        return message
-        // TODO: make this work
+        logDebug("Decrypting message")
         SessionCipher(PersistentProtocolStore, signalAddress).run {
             return decrypt(PreKeySignalMessage(message))
         }
     }
 
     suspend fun onNotification(notification: MessageNotification) {
+        logDebug("Received notification $notification")
         try {
             ::chat.isInitialized.notThen {
                 startNew()
@@ -126,16 +142,15 @@ class ChatSession(
                 messageListener(this, message.encryptedMessage)
             }
         } catch (e: Exception) {
-            debug {
-                println("oops, notification delivery FAILED")
-                println(e)
-            }
+            logDebug("oops, notification delivery FAILED")
+            logDebug("%s", e.toString())
         }
     }
 
     fun listen(
         scope: SubscriptionScope.() -> Unit
     ) {
+        logDebug("Started listening for messages from ${chat.remoteAddress}")
         subScope.scope()
     }
 

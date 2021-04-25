@@ -16,7 +16,7 @@ data class PreKeyBundlePublishRequest(
     val signedPreKeyId = preKeyBundle.signedPreKeyId
     val publicSignedPreKey = preKeyBundle.signedPreKey.serialize()
     val signedPreKeySignature = preKeyBundle.signedPreKeySignature
-    val identityKey = preKeyBundle.identityKey.publicKey.serialize()
+    val identityKey = preKeyBundle.identityKey.serialize()
 }
 
 class PreKeyBundlePublishResponse : ErrorResponse()

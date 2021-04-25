@@ -4,7 +4,7 @@ import androidx.room.*
 import androidx.room.Dao
 import dev.superboring.aosp.chakonati.persistence.db
 import dev.superboring.aosp.chakonati.persistence.entities.RemoteAddress
-import dev.superboring.aosp.chakonati.persistence.entities.RemoteAddressAndIdentityKey
+import dev.superboring.aosp.chakonati.persistence.entities.RemoteIdentityKey
 
 @Dao
 interface RemoteAddressDao {
@@ -17,32 +17,27 @@ interface RemoteAddressDao {
 
     @Transaction
     @Query("select * from remote_addresses where address = :address")
-    fun get(address: String): RemoteAddressAndIdentityKey
+    fun get(address: String): RemoteAddress
 
     @Query("select * from remote_addresses where id = :id")
     fun getAddress(id: Int): RemoteAddress
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    infix fun insert(address: RemoteAddress)
+    infix fun insert(address: RemoteAddress): Long
 
     @Delete
     infix fun delete(address: RemoteAddress)
-
-    @Transaction
-    @Query("select * from remote_addresses")
-    fun allWithIdentityKeys(): List<RemoteAddressAndIdentityKey>
-
 }
 
 
-suspend infix fun RemoteAddressDao.insertWithIdentityKey(
-    addressWithKey: RemoteAddressAndIdentityKey
+suspend fun RemoteAddressDao.insertWithIdentityKey(
+    address: RemoteAddress,
+    identityKey: RemoteIdentityKey,
 ) {
-    addressWithKey.identityKey ?: throw MissingIdentityKey()
     db.run {
         withTransaction {
-            remoteIdentityKeys() insert addressWithKey.identityKey
-            remoteAddresses() insert addressWithKey.address
+            address.identityKeyId = remoteIdentityKeys().insert(identityKey).toInt()
+            remoteAddresses() insert address
         }
     }
 }

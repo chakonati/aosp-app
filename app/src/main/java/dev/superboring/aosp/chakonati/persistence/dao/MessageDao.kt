@@ -3,6 +3,7 @@ package dev.superboring.aosp.chakonati.persistence.dao
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.lifecycle.LiveData
 import androidx.paging.DataSource
 import androidx.room.Dao
 import androidx.room.Delete
@@ -12,9 +13,6 @@ import dev.superboring.aosp.chakonati.persistence.dbTx
 import dev.superboring.aosp.chakonati.persistence.entities.DBMessage
 import org.jetbrains.annotations.TestOnly
 import kotlin.collections.set
-
-var lastUpdatedChatId by mutableStateOf(0)
-var messageUpdateTracker = hashMapOf<Int, Long>()
 
 @Dao
 interface MessageDao {
@@ -34,7 +32,7 @@ interface MessageDao {
         select * from messages where chat_id = :chatId order by id desc limit :limit
         """
     )
-    fun last(chatId: Int, limit: Int): List<DBMessage>
+    fun last(chatId: Long, limit: Int): LiveData<List<DBMessage>>
 
     @Insert
     infix fun insert(message: DBMessage)
@@ -50,7 +48,5 @@ interface MessageDao {
 suspend infix fun MessageDao.add(message: DBMessage) {
     dbTx {
         insert(message)
-        messageUpdateTracker[message.chatId] = (messageUpdateTracker[message.chatId] ?: 0) + 1
-        lastUpdatedChatId = message.chatId
     }
 }

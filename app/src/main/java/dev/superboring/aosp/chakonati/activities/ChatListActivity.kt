@@ -27,11 +27,13 @@ import dev.superboring.aosp.chakonati.persistence.dao.isRelayServerSetUp
 import dev.superboring.aosp.chakonati.persistence.db
 import dev.superboring.aosp.chakonati.service.OwnRelayServer
 import dev.superboring.aosp.chakonati.signal.ChatSessionManager
+import dev.superboring.aosp.chakonati.signal.OneTimePreKeyRefresh
 import dev.superboring.aosp.chakonati.x.activity.launchActivity
 import dev.superboring.aosp.chakonati.x.activity.replaceActivity
 import dev.superboring.aosp.chakonati.x.handler.postMain
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.Job
 import kotlin.coroutines.CoroutineContext
 
@@ -57,8 +59,9 @@ class ChatListActivity : ComponentActivity(), CoroutineScope {
                 if (db.mySetup().get().relayServer.isNotEmpty()) {
                     db.mySetup().isRelayServerSetUp = true
                     OwnRelayServer.prepareCommunicator()
-                    // TODO: OneTimePreKeyRefresh.refreshOneTimePreKeys()
+                    OneTimePreKeyRefresh.refreshOneTimePreKeys()
 
+                    ChatSessionManager.restoreSessions()
                     ChatSessionManager.subscribe()
                 }
             } else {

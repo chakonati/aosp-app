@@ -5,6 +5,7 @@ import androidx.room.Dao
 import dev.superboring.aosp.chakonati.persistence.db
 import dev.superboring.aosp.chakonati.persistence.entities.RemoteAddress
 import dev.superboring.aosp.chakonati.persistence.entities.SignalSession
+import dev.superboring.aosp.chakonati.x.logging.logDebug
 
 @Dao
 interface SignalSessionDao {
@@ -14,6 +15,9 @@ interface SignalSessionDao {
 
     @Insert
     infix fun insert(session: SignalSession)
+
+    @Update
+    infix fun update(session: SignalSession)
 
     @Delete
     infix fun delete(session: SignalSession)
@@ -46,19 +50,26 @@ interface SignalSessionDao {
     fun getDeviceIds(address: String): List<Int>
 }
 
-fun SignalSessionDao.insertWithAddress(session: SignalSession, address: RemoteAddress) {
+fun SignalSessionDao.upsertWithAddress(session: SignalSession, address: RemoteAddress) {
+    logDebug("Inserting signal session with $address")
     if (address.Id <= 0) {
         throw InvalidSessionWithAddressInsertion("address ID is not > 0. Fetch it first.")
     }
     session.remoteAddressId = address.Id
-    db.signalSessions() insert session
+    if (db.signalSessions().hasSession(address.address)) {
+        db.signalSessions() update session
+    } else {
+        db.signalSessions() insert session
+    }
 }
 
 infix fun SignalSessionDao.deleteByRemoteAddress(address: RemoteAddress) {
+    logDebug("Deleting signal sessions by address $address")
     db.signalSessions().run { delete(getByAddress(address)) }
 }
 
 suspend infix fun SignalSessionDao.deleteByAddressName(address: String) {
+    logDebug("Deleting signal sessions by address name $address")
     db.withTransaction {
         db.signalSessions().run {
             delete(get(address))

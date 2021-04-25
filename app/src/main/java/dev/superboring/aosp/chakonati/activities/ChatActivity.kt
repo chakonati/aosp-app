@@ -52,21 +52,7 @@ private fun Content(chatSummary: ChatSummary) {
 
     coroutineScope.launchIO {
         val dbChat = db.chats() get chatSummary.chatId
-        val session = ChatSessionManager.chatSession(chatSummary.recipient).apply {
-            useChat(dbChat)
-            coroutineScope.launchIO {
-                listen {
-                    onMessage {
-                        db.messages() add (
-                                Message(
-                                    MessageFrom.THEM,
-                                    String(decrypt(it), StandardCharsets.UTF_8)
-                                ).asDBMessage(chat!!)
-                                )
-                    }
-                }
-            }
-        }
+        val session = ChatSessionManager.chatSession(chatSummary.recipient)
         postMain {
             chat = dbChat
             chatSession = session

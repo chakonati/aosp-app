@@ -9,6 +9,7 @@ import dev.superboring.aosp.chakonati.protocol.exceptions.UntrackedResponsePacke
 import dev.superboring.aosp.chakonati.protocol.requests.basic.HelloRequest
 import dev.superboring.aosp.chakonati.services.SubscriptionName
 import dev.superboring.aosp.chakonati.x.debug
+import dev.superboring.aosp.chakonati.x.logging.logDebug
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.Deferred
 
@@ -36,15 +37,19 @@ class Communicator(private val server: String) : WebSocketServiceListener {
         }
     }
 
+    init {
+        logDebug("New Communicator for %s", server)
+    }
+
     suspend fun doHandshake() {
+        logDebug("Doing handshake with %s", serverUri)
         val response = sendWithoutChecks(HelloRequest())
         if (response.reply != "hi!") {
-            debug {
-                println("got ${response.reply} as reply")
-            }
+            logDebug("got ${response.reply} as reply")
             throw HandshakeFailure("unexpected reply")
         }
         hasSentHello = true
+        logDebug("Handshake completed successfully")
     }
 
     suspend inline infix fun <reified R : Response> send(request: Request<R>): R {
@@ -56,12 +61,11 @@ class Communicator(private val server: String) : WebSocketServiceListener {
 
     suspend inline infix fun <reified R : Response> sendWithoutChecks(request: Request<R>): R {
         try {
+            logDebug("Sending request %s", request.toString())
             return sendAsync(request).await().deserialize()
         } catch (e: Exception) {
             // oops
-            debug {
-                println(CommunicatorRequestFailed("error in sendWithoutChecks", e))
-            }
+            logDebug(CommunicatorRequestFailed("error in sendWithoutChecks", e).toString())
             throw e
         }
     }
@@ -87,6 +91,7 @@ class Communicator(private val server: String) : WebSocketServiceListener {
     }
 
     override suspend fun onMessage(bytes: ByteArray) {
+        logDebug("Received message, length: %d", bytes.size)
         val message = bytes.deserialize<MessageHeader>()
         when (message.messageType) {
             MessageTypes.RESPONSE -> {
@@ -106,6 +111,7 @@ class Communicator(private val server: String) : WebSocketServiceListener {
     }
 
     override fun onError(t: Throwable) {
+        logDebug("Error: %s", t.toString())
         disconnect()
         synchronized(openRequests) {
             openRequests.forEach { it.value.deferredResponse.completeExceptionally(t) }

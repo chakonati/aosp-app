@@ -6,6 +6,7 @@ import com.fasterxml.jackson.module.kotlin.SingletonSupport
 import com.fasterxml.jackson.module.kotlin.readValue
 import com.fasterxml.jackson.module.paranamer.ParanamerModule
 import dev.superboring.aosp.chakonati.x.debug
+import dev.superboring.aosp.chakonati.x.logging.logDebug
 import kotlinx.serialization.Serializable
 import org.msgpack.jackson.dataformat.MessagePackFactory
 import java.util.concurrent.locks.ReentrantLock
@@ -21,21 +22,17 @@ val mapper: ObjectMapper by lazy {
         )
         .registerModule(ParanamerModule())
 }
-val mapperMut = ReentrantLock()
 
 inline val @Serializable Any.serialized: ByteArray
-    get() = mapperMut.withLock {
-        mapper.writeValueAsBytes(this)
-    }
+    get() = mapper.writeValueAsBytes(this)
 
-inline fun <reified D : @Serializable Any> ByteArray.deserialize() = mapperMut.withLock {
+inline fun <reified D : @Serializable Any> ByteArray.deserialize() =
     try {
         mapper.readValue<D>(this)
     } catch (e: Exception) {
-        debug { println("Failed to deserialize, got bytes: ${String(this)}") }
+        logDebug("Failed to deserialize, got bytes: ${String(this)}")
         throw DeserializationFailed(D::class.qualifiedName ?: "<no type name>", e)
     }
-}
 
 class DeserializationFailed(type: String, e: Exception) :
     RuntimeException("could not deserialize type $type", e)

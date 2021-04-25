@@ -10,8 +10,11 @@ interface RemoteIdentityKeyDao {
     @Query("select * from remote_identity_keys")
     fun all(): Array<RemoteIdentityKey>
 
+    @Query("select * from remote_identity_keys where id = :id")
+    infix fun get(id: Int): RemoteIdentityKey
+
     @Insert(onConflict = OnConflictStrategy.IGNORE)
-    infix fun insert(key: RemoteIdentityKey)
+    infix fun insert(key: RemoteIdentityKey): Long
 
     @Delete
     infix fun delete(key: RemoteIdentityKey)

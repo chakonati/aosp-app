@@ -8,7 +8,7 @@ typealias LastMessage = String
 
 @Serializable
 data class ChatSummary(
-    val chatId: Int,
+    val chatId: Long,
     val recipient: Recipient,
     val displayName: String,
     val lastMessage: LastMessage,

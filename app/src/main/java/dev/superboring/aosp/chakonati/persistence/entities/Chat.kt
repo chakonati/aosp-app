@@ -15,7 +15,7 @@ import dev.superboring.aosp.chakonati.persistence.db
     )]
 )
 data class Chat(
-    @ColumnInfo(name = "id") @PrimaryKey(autoGenerate = true) val id: Int = 0,
+    @ColumnInfo(name = "id") @PrimaryKey(autoGenerate = true) var id: Long = 0,
     @ColumnInfo(name = "remote_address_id") val remoteAddressId: Int,
     @ColumnInfo(name = "display_name") val displayName: String,
 ) {
@@ -29,5 +29,7 @@ data class Chat(
             "",
         )
     }
+
+    val remoteAddress get() = db.remoteAddresses().getAddress(remoteAddressId)
 
 }

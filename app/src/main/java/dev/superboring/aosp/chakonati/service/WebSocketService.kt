@@ -2,6 +2,7 @@ package dev.superboring.aosp.chakonati.service
 
 import dev.superboring.aosp.chakonati.extensions.kotlinx.coroutines.launchIO
 import dev.superboring.aosp.chakonati.extras.msgpack.serialized
+import dev.superboring.aosp.chakonati.x.logging.logDebug
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -37,7 +38,7 @@ class WebSocketService(private val uri: String) : WebSocketListener(), Coroutine
     }
 
     override fun onOpen(webSocket: WebSocket, response: Response) {
-
+        logDebug("WebSocket connection opened")
     }
 
     override fun onClosing(webSocket: WebSocket, code: Int, reason: String) {
@@ -57,6 +58,7 @@ class WebSocketService(private val uri: String) : WebSocketListener(), Coroutine
     }
 
     fun disconnect() {
+        logDebug("Disconnecting WebSocket")
         webSocket.close(1000, "normal close")
     }
 }

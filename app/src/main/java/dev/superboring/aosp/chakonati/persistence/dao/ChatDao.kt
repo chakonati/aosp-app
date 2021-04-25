@@ -13,14 +13,17 @@ interface ChatDao {
     @Query("select * from chats")
     fun all(): DataSource.Factory<Int, Chat>
 
+    @Query("select * from chats")
+    fun allFull(): List<Chat>
+
     @Query("select * from chats where id = :id")
-    infix fun get(id: Int): Chat
+    infix fun get(id: Long): Chat
 
     @Query("select * from chats where remote_address_id = :remoteAddressId")
     infix fun getByRemoteAddressId(remoteAddressId: Int): Chat
 
     @Insert
-    infix fun insert(chat: Chat)
+    infix fun insert(chat: Chat): Long
 
     @Delete
     infix fun delete(chat: Chat)
