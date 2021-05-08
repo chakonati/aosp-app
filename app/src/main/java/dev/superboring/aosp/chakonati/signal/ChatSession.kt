@@ -21,7 +21,7 @@ import org.whispersystems.libsignal.protocol.PreKeySignalMessage
 import org.whispersystems.libsignal.state.SessionRecord
 import kotlin.coroutines.CoroutineContext
 
-typealias MessageListener = suspend ChatSession.(ByteArray) -> Unit
+typealias MessageListener = suspend ChatSession.(ByteArray, Long) -> Unit
 
 class ChatSession(
     val remoteServer: String
@@ -139,7 +139,7 @@ class ChatSession(
             }
             subScope.messageListener?.let { messageListener ->
                 val message = Messaging.getMessage(notification.messageId)
-                messageListener(this, message.encryptedMessage)
+                messageListener(this, message.encryptedMessage, message.messageId)
             }
         } catch (e: Exception) {
             logDebug("oops, notification delivery FAILED")

@@ -10,6 +10,7 @@ import dev.superboring.aosp.chakonati.persistence.db
 import dev.superboring.aosp.chakonati.persistence.entities.Chat
 import dev.superboring.aosp.chakonati.service.OwnRelayServer
 import dev.superboring.aosp.chakonati.service.SubscriptionListener
+import dev.superboring.aosp.chakonati.services.Messaging
 import dev.superboring.aosp.chakonati.services.Subscription
 import dev.superboring.aosp.chakonati.services.Subscriptions
 import dev.superboring.aosp.chakonati.x.logging.logDebug
@@ -68,13 +69,14 @@ object ChatSessionManager : SubscriptionListener {
     fun startListeningOn(chatSession: ChatSession) {
         chatSession.apply {
             listen {
-                onMessage {
+                onMessage { msg, id ->
                     db.messages().add(
                         Message(
                             MessageFrom.THEM,
-                            String(decrypt(it), StandardCharsets.UTF_8)
+                            String(decrypt(msg), StandardCharsets.UTF_8)
                         ).asDBMessage(chat)
                     )
+                    Messaging.confirmMessageReceived(id)
                 }
             }
         }
