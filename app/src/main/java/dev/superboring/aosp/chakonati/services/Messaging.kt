@@ -42,7 +42,7 @@ object Messaging {
 
     suspend fun confirmMessageReceived(messageId: Long) {
         OwnRelayServer.comm.send(ConfirmReceivedRequest(messageId, relayServerPassword)).let {
-            it.error?.let { error -> throw MessageConfirmReceiveFailure(messageId, error)}
+            it.error?.let { error -> throw MessageConfirmReceiveFailure(messageId, error) }
         }
     }
 

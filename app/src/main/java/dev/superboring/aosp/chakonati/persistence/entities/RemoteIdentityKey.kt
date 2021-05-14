@@ -12,10 +12,11 @@ data class RemoteIdentityKey(
     @ColumnInfo(name = "public_key") var publicKey: IdentityPublicKey,
 ) {
 
-    val signalIdentityKey get() = IdentityKey(publicKey).apply {
-        this@RemoteIdentityKey.logDebug(
-            "Constructing Signal identity key out of remote identity key $id"
-        )
-    }
+    val signalIdentityKey
+        get() = IdentityKey(publicKey).apply {
+            this@RemoteIdentityKey.logDebug(
+                "Constructing Signal identity key out of remote identity key $id"
+            )
+        }
 
 }

@@ -3,13 +3,11 @@ package dev.superboring.aosp.chakonati.service
 import dev.superboring.aosp.chakonati.BuildConfig
 import dev.superboring.aosp.chakonati.extras.msgpack.deserialize
 import dev.superboring.aosp.chakonati.extras.msgpack.serialized
-import dev.superboring.aosp.chakonati.persistence.entities.Chat
 import dev.superboring.aosp.chakonati.protocol.*
 import dev.superboring.aosp.chakonati.protocol.exceptions.UnsupportedMessageType
 import dev.superboring.aosp.chakonati.protocol.exceptions.UntrackedResponsePacketException
 import dev.superboring.aosp.chakonati.protocol.requests.basic.HelloRequest
 import dev.superboring.aosp.chakonati.services.SubscriptionName
-import dev.superboring.aosp.chakonati.x.debug
 import dev.superboring.aosp.chakonati.x.logging.logDebug
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.Deferred

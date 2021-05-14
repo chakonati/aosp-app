@@ -14,7 +14,6 @@ import dev.superboring.aosp.chakonati.services.Messaging
 import dev.superboring.aosp.chakonati.services.Subscription
 import dev.superboring.aosp.chakonati.services.Subscriptions
 import dev.superboring.aosp.chakonati.x.logging.logDebug
-import kotlinx.coroutines.FlowPreview
 import java.nio.charset.StandardCharsets
 import java.util.*
 
@@ -36,10 +35,12 @@ object ChatSessionManager : SubscriptionListener {
 
     override suspend fun onNotification(bytes: ByteArray) {
         val messageNotification = bytes.deserialize<MessageNotification>()
-        chatSession(ChatSessionDetails(
-            messageNotification.from,
-            messageNotification.deviceId,
-        )).onNotification(messageNotification)
+        chatSession(
+            ChatSessionDetails(
+                messageNotification.from,
+                messageNotification.deviceId,
+            )
+        ).onNotification(messageNotification)
     }
 
     fun chatSession(details: ChatSessionDetails): ChatSession = synchronized(this) {

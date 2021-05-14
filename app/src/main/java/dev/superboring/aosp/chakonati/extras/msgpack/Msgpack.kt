@@ -5,12 +5,9 @@ import com.fasterxml.jackson.module.kotlin.KotlinModule
 import com.fasterxml.jackson.module.kotlin.SingletonSupport
 import com.fasterxml.jackson.module.kotlin.readValue
 import com.fasterxml.jackson.module.paranamer.ParanamerModule
-import dev.superboring.aosp.chakonati.x.debug
 import dev.superboring.aosp.chakonati.x.logging.logDebug
 import kotlinx.serialization.Serializable
 import org.msgpack.jackson.dataformat.MessagePackFactory
-import java.util.concurrent.locks.ReentrantLock
-import kotlin.concurrent.withLock
 
 val mapper: ObjectMapper by lazy {
     ObjectMapper(MessagePackFactory())

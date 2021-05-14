@@ -1,7 +1,9 @@
 package dev.superboring.aosp.chakonati.persistence.entities
 
-import androidx.room.*
+import androidx.room.ColumnInfo
 import androidx.room.Entity
+import androidx.room.Index
+import androidx.room.PrimaryKey
 import dev.superboring.aosp.chakonati.persistence.db
 import org.whispersystems.libsignal.SignalProtocolAddress
 

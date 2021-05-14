@@ -1,10 +1,7 @@
 package dev.superboring.aosp.chakonati.persistence.dao
 
-import android.util.Log
 import androidx.room.withTransaction
-import dev.superboring.aosp.chakonati.extensions.t.tag
 import dev.superboring.aosp.chakonati.persistence.db
-import dev.superboring.aosp.chakonati.x.debug
 import dev.superboring.aosp.chakonati.x.logging.logDebug
 
 interface DaoBase

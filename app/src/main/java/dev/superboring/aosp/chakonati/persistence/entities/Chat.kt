@@ -3,7 +3,6 @@ package dev.superboring.aosp.chakonati.persistence.entities
 import androidx.room.*
 import androidx.room.Entity
 import dev.superboring.aosp.chakonati.domain.ChatSummary
-import dev.superboring.aosp.chakonati.domain.LastMessage
 import dev.superboring.aosp.chakonati.persistence.db
 import dev.superboring.aosp.chakonati.signal.ChatSessionDetails
 
