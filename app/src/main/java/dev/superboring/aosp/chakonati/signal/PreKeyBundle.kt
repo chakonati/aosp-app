@@ -1,6 +1,8 @@
 package dev.superboring.aosp.chakonati.signal
 
 import dev.superboring.aosp.chakonati.persistence.dao.generateNewKeyId
+import dev.superboring.aosp.chakonati.persistence.dao.get
+import dev.superboring.aosp.chakonati.persistence.dao.save
 import dev.superboring.aosp.chakonati.persistence.db
 import dev.superboring.aosp.chakonati.services.KeyExchange
 import org.whispersystems.libsignal.ecc.Curve
@@ -23,14 +25,18 @@ object PreKeyBundle {
             signedPreKeyPair.publicKey.serialize()
         )
 
+        val deviceId = db.localPreKeys().generateNewKeyId()
         val preKeyBundle = PreKeyBundle(
             PersistentProtocolStore.localRegistrationId,
-            db.localPreKeys().generateNewKeyId(),
+            deviceId,
             db.localPreKeys().generateNewKeyId(), preKeyPair.publicKey,
             db.localPreKeys().generateNewKeyId(), signedPreKeyPair.publicKey,
             signedPreKeySignature,
             PersistentProtocolStore.identityKeyPair.publicKey
         )
+
+        db.mySetup().get().apply { this.deviceId = deviceId }.save()
+
         if (publish) {
             KeyExchange.publishPreKeyBundle(preKeyBundle)
         }

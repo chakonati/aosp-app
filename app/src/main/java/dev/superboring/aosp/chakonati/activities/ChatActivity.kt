@@ -52,7 +52,7 @@ private fun Content(chatSummary: ChatSummary) {
 
     coroutineScope.launchIO {
         val dbChat = db.chats() get chatSummary.chatId
-        val session = ChatSessionManager.chatSession(chatSummary.recipient)
+        val session = ChatSessionManager.chatSession(dbChat.sessionDetails)
         postMain {
             chat = dbChat
             chatSession = session

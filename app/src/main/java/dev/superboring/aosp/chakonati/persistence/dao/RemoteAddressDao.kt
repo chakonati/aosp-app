@@ -30,14 +30,18 @@ interface RemoteAddressDao {
 }
 
 
-suspend fun RemoteAddressDao.insertWithIdentityKey(
+suspend fun RemoteAddressDao.upsertWithIdentityKey(
     address: RemoteAddress,
     identityKey: RemoteIdentityKey,
 ) {
     db.run {
-        withTransaction {
-            address.identityKeyId = remoteIdentityKeys().insert(identityKey).toInt()
-            remoteAddresses() insert address
+        if (!exists(address.address)) {
+            withTransaction {
+                address.identityKeyId = remoteIdentityKeys().insert(identityKey).toInt()
+                remoteAddresses() insert address
+            }
+        } else {
+            // TODO: handle update
         }
     }
 }

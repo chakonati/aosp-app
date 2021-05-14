@@ -22,6 +22,7 @@ interface MySetupDao : SingleEntryDao<MySetup> {
             relayServer = "",
             relayServerPassword = "",
             isSetUp = false,
+            deviceId = -1,
         )
 
     @Query("select * from my_setup limit 1")

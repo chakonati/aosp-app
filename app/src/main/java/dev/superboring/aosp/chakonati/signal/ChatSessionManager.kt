@@ -18,9 +18,11 @@ import kotlinx.coroutines.FlowPreview
 import java.nio.charset.StandardCharsets
 import java.util.*
 
+data class ChatSessionDetails(val remoteServer: String, val deviceId: Int)
+
 object ChatSessionManager : SubscriptionListener {
 
-    val chatSessions = HashBasedTable.create<String, Int, ChatSession>()
+    private val chatSessions: HashBasedTable<String, Int, ChatSession> = HashBasedTable.create()
 
     init {
         OwnRelayServer.comm.apply {
@@ -34,22 +36,26 @@ object ChatSessionManager : SubscriptionListener {
 
     override suspend fun onNotification(bytes: ByteArray) {
         val messageNotification = bytes.deserialize<MessageNotification>()
-        chatSession(messageNotification.from)
-            .onNotification(messageNotification)
+        chatSession(ChatSessionDetails(
+            messageNotification.from,
+            messageNotification.deviceId,
+        )).onNotification(messageNotification)
     }
 
-    fun chatSession(remoteServer: String): ChatSession = synchronized(this) {
-        // TODO: handle device IDs?
-        val deviceId = 0
-        return chatSessions[remoteServer, deviceId] ?: run {
-            val chatSession = ChatSession(remoteServer)
-            if (db.signalSessions().hasSession(remoteServer)) {
-                val addressId = db.remoteAddresses().get(remoteServer).Id
+    fun chatSession(details: ChatSessionDetails): ChatSession = synchronized(this) {
+        return chatSessions[details.remoteServer, details.deviceId] ?: run {
+            val chatSession = ChatSession(details.remoteServer)
+            if (db.signalSessions().hasSession(details.remoteServer)) {
+                val addressId = db.remoteAddresses().get(details.remoteServer).Id
                 chatSession.useChat(db.chats().getByRemoteAddressId(addressId))
             }
-            chatSessions.put(remoteServer, deviceId, chatSession)
+            chatSessions.put(details.remoteServer, details.deviceId, chatSession)
             chatSession
         }
+    }
+
+    fun createFreshSession(remoteServer: String): ChatSession {
+        return ChatSession(remoteServer)
     }
 
     fun restoreSessions() {
@@ -61,8 +67,8 @@ object ChatSessionManager : SubscriptionListener {
 
     }
 
-    fun startListening(chat: Chat) {
-        startListeningOn(chatSession(chat.remoteAddress.address))
+    private fun startListening(chat: Chat) {
+        startListeningOn(chatSession(chat.sessionDetails))
         logDebug("Listening to messages for ${chat.remoteAddressId} – ${chat.id}")
     }
 

@@ -6,6 +6,7 @@ import androidx.room.Insert
 import androidx.room.Query
 import dev.superboring.aosp.chakonati.persistence.db
 import dev.superboring.aosp.chakonati.persistence.entities.LocalPreKey
+import dev.superboring.aosp.chakonati.signal.OneTimePreKeyRefresh
 import java.security.SecureRandom
 
 @Dao
@@ -18,7 +19,7 @@ interface LocalPreKeyDao {
     fun count(): Int
 
     @Query("select * from local_pre_keys where key_id = :keyId")
-    fun byPreKeyId(keyId: Int): LocalPreKey
+    fun byPreKeyId(keyId: Int): LocalPreKey?
 
     @Query("select * from local_pre_keys ORDER BY id DESC LIMIT 1")
     fun lastKey(): LocalPreKey
@@ -45,14 +46,14 @@ private val random = SecureRandom()
 fun LocalPreKeyDao.generateNewKeyId(): Int {
     var keyId: Int
     do {
-        keyId = random.nextInt(kotlin.Short.MAX_VALUE.toInt())
+        keyId = random.nextInt(Short.MAX_VALUE.toInt())
     } while (hasKey(keyId))
     return keyId
 }
 
 suspend infix fun LocalPreKeyDao.delete(key: LocalPreKey) {
     deleteNoEvents(key)
-    // TODO: OneTimePreKeyRefresh.refreshOneTimePreKeys()
+    OneTimePreKeyRefresh.refreshOneTimePreKeys()
 }
 
 val relayServerPassword get() = db.mySetup().get().relayServerPassword

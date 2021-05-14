@@ -2,11 +2,11 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "2267dbbc931eadd6c9005fa41b5f67fb",
+    "identityHash": "7c9b0bf71ecfbae4ee045d6225e3d488",
     "entities": [
       {
         "tableName": "my_setup",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER NOT NULL, `identity_public_key` BLOB NOT NULL, `identity_private_key` BLOB NOT NULL, `registration_id` INTEGER NOT NULL, `relay_server` TEXT NOT NULL, `relay_server_password` TEXT NOT NULL, `is_set_up` INTEGER NOT NULL, PRIMARY KEY(`id`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER NOT NULL, `identity_public_key` BLOB NOT NULL, `identity_private_key` BLOB NOT NULL, `registration_id` INTEGER NOT NULL, `device_id` INTEGER NOT NULL, `relay_server` TEXT NOT NULL, `relay_server_password` TEXT NOT NULL, `is_set_up` INTEGER NOT NULL, PRIMARY KEY(`id`))",
         "fields": [
           {
             "fieldPath": "id",
@@ -29,6 +29,12 @@
           {
             "fieldPath": "registrationId",
             "columnName": "registration_id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "deviceId",
+            "columnName": "device_id",
             "affinity": "INTEGER",
             "notNull": true
           },
@@ -241,7 +247,7 @@
       },
       {
         "tableName": "chats",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `remote_address_id` INTEGER NOT NULL, `display_name` TEXT NOT NULL)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `remote_address_id` INTEGER NOT NULL, `device_id` INTEGER NOT NULL, `display_name` TEXT NOT NULL)",
         "fields": [
           {
             "fieldPath": "id",
@@ -252,6 +258,12 @@
           {
             "fieldPath": "remoteAddressId",
             "columnName": "remote_address_id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "deviceId",
+            "columnName": "device_id",
             "affinity": "INTEGER",
             "notNull": true
           },
@@ -270,12 +282,13 @@
         },
         "indices": [
           {
-            "name": "index_chats_remote_address_id",
+            "name": "index_chats_remote_address_id_device_id",
             "unique": false,
             "columnNames": [
-              "remote_address_id"
+              "remote_address_id",
+              "device_id"
             ],
-            "createSql": "CREATE INDEX IF NOT EXISTS `index_chats_remote_address_id` ON `${TABLE_NAME}` (`remote_address_id`)"
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_chats_remote_address_id_device_id` ON `${TABLE_NAME}` (`remote_address_id`, `device_id`)"
           }
         ],
         "foreignKeys": []
@@ -343,7 +356,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '2267dbbc931eadd6c9005fa41b5f67fb')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '7c9b0bf71ecfbae4ee045d6225e3d488')"
     ]
   }
 }

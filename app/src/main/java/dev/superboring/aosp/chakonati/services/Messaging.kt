@@ -58,8 +58,7 @@ class RemoteMessaging(private val communicator: Communicator) : RemoteService(co
             SendMessageRequest(
                 encryptedMessage,
                 db.mySetup().get().relayServer,
-                // TODO: device id
-                0,
+                db.mySetup().get().deviceId,
             )
         ).error?.let {
             throw MessageSendFailure(it)

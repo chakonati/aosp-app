@@ -45,7 +45,7 @@ class ChatSession(
     private lateinit var signalSessionInternal: SessionRecord
     private val signalSessionLazy by lazy { signalSessionFromStore }
 
-    val subScope by lazy { SubscriptionScope(this) }
+    val subScope by lazy { SubscriptionScope() }
     private val remoteMessaging by lazy { RemoteMessaging(communicator) }
 
     private var signalSession: SessionRecord
@@ -63,8 +63,10 @@ class ChatSession(
     fun useChat(chat: Chat) {
         logDebug("Using existing chat ${chat.displayName} (ID ${chat.id})")
         this.chat = chat
-        // TODO: handle device IDs
-        signalAddress = SignalProtocolAddress(chat.remoteAddress.address, 0)
+        signalAddress = SignalProtocolAddress(
+            chat.sessionDetails.remoteServer,
+            chat.sessionDetails.deviceId,
+        )
     }
 
     suspend fun startNew(): Chat {
@@ -75,8 +77,7 @@ class ChatSession(
             throw RuntimeException("Pre-key bundle does not exist on remote server")
         }
         logDebug("Pre-key bundle exists, fetching pre-key bundle")
-        //val deviceId = keyExchange.deviceId()
-        val deviceId = 0
+        val deviceId = keyExchange.deviceId()
         val preKeyBundle = keyExchange.preKeyBundle()
         logDebug("Received pre-key bundle $preKeyBundle")
         signalAddress = SignalProtocolAddress(remoteServer, deviceId)
@@ -102,7 +103,8 @@ class ChatSession(
             ).Id
             chat = Chat(
                 remoteAddressId = remoteAddressId,
-                displayName = remoteServer
+                displayName = remoteServer,
+                deviceId = deviceId,
             )
             val chatId = db.chats() insert chat
             chat.id = chatId
@@ -156,7 +158,7 @@ class ChatSession(
 
     fun disconnect() = communicator.disconnect()
 
-    class SubscriptionScope(chatSession: ChatSession) {
+    class SubscriptionScope {
         var messageListener: MessageListener? = null
 
         fun onMessage(listener: MessageListener) {

@@ -1,5 +1,6 @@
 package dev.superboring.aosp.chakonati.signal
 
+import dev.superboring.aosp.chakonati.exceptions.UnexpectedNull
 import dev.superboring.aosp.chakonati.persistence.dao.*
 import dev.superboring.aosp.chakonati.persistence.db
 import dev.superboring.aosp.chakonati.persistence.entities.*
@@ -60,7 +61,7 @@ object PersistentProtocolStore : SignalProtocolStore {
         logDebug("Saving identity $identityKey for $address")
         val existed = db.remoteAddresses().exists(address.name)
         runBlocking {
-            db.remoteAddresses().insertWithIdentityKey(
+            db.remoteAddresses().upsertWithIdentityKey(
                 RemoteAddress from address,
                 RemoteIdentityKey(
                     publicKey = identityKey.serialize()
@@ -97,9 +98,9 @@ object PersistentProtocolStore : SignalProtocolStore {
     }
 
     override fun loadPreKey(preKeyId: Int) =
-        db.localPreKeys().byPreKeyId(preKeyId).signalPreKeyRecord.apply {
+        db.localPreKeys().byPreKeyId(preKeyId)?.signalPreKeyRecord?.apply {
             this@PersistentProtocolStore.logDebug("Loaded pre-key for ID $preKeyId")
-        }
+        } ?: throw UnexpectedNull("pre key by ID $preKeyId returned null!")
 
     override fun storePreKey(preKeyId: Int, record: PreKeyRecord) {
         logDebug("Storing pre-key record (ID $preKeyId)")

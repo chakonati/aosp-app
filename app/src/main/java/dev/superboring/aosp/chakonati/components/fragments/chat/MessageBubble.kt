@@ -46,7 +46,7 @@ data class Message(
         messageFrom = from.ordinal,
         // TODO: add sender when implementing groups
         messageText = text,
-        // TODO: MessageData when saving binary data (e. g. serialized info
+        // TODO: MessageData when saving binary data (e. g. serialized info)
     )
 }
 

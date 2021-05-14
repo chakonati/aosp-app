@@ -14,6 +14,7 @@ data class MySetup(
     @ColumnInfo(name = "identity_public_key") var identityPublicKey: IdentityPublicKey,
     @ColumnInfo(name = "identity_private_key") var identityPrivateKey: IdentityPrivateKey,
     @ColumnInfo(name = "registration_id") var registrationId: Int,
+    @ColumnInfo(name = "device_id") var deviceId: Int,
     @ColumnInfo(name = "relay_server") var relayServer: String,
     @ColumnInfo(name = "relay_server_password") var relayServerPassword: String,
     @ColumnInfo(name = "is_set_up") var isSetUp: Boolean,

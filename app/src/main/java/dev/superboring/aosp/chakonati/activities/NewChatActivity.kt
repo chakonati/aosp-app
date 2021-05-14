@@ -66,7 +66,7 @@ class NewChatActivity : ComponentActivity() {
                                     hasErrorOccurred = false
                                     coroutineScope.launchIO {
                                         val chatSession =
-                                            ChatSessionManager.chatSession(remoteServer)
+                                            ChatSessionManager.createFreshSession(remoteServer)
                                         try {
                                             val chat = chatSession.startNew()
                                             ChatSessionManager.startListeningOn(chatSession)

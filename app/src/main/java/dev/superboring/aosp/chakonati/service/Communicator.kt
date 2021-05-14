@@ -3,6 +3,7 @@ package dev.superboring.aosp.chakonati.service
 import dev.superboring.aosp.chakonati.BuildConfig
 import dev.superboring.aosp.chakonati.extras.msgpack.deserialize
 import dev.superboring.aosp.chakonati.extras.msgpack.serialized
+import dev.superboring.aosp.chakonati.persistence.entities.Chat
 import dev.superboring.aosp.chakonati.protocol.*
 import dev.superboring.aosp.chakonati.protocol.exceptions.UnsupportedMessageType
 import dev.superboring.aosp.chakonati.protocol.exceptions.UntrackedResponsePacketException
