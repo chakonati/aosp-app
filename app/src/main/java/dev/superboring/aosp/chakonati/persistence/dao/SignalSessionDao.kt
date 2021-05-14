@@ -51,14 +51,15 @@ interface SignalSessionDao {
 }
 
 fun SignalSessionDao.upsertWithAddress(session: SignalSession, address: RemoteAddress) {
-    logDebug("Inserting signal session with $address")
     if (address.Id <= 0) {
         throw InvalidSessionWithAddressInsertion("address ID is not > 0. Fetch it first.")
     }
     session.remoteAddressId = address.Id
     if (db.signalSessions().hasSession(address.address)) {
+        logDebug("Updating signal session with $address")
         db.signalSessions() update session
     } else {
+        logDebug("Inserting signal session with $address")
         db.signalSessions() insert session
     }
 }
